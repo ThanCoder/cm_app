@@ -1,6 +1,6 @@
-import 'package:cm_app/app/components/movie_item.dart';
+import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/providers/index.dart';
-import 'package:cm_app/app/screens/content_screens/series_content_screen.dart';
+import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +18,7 @@ class _SeeAllSeriesScreenState extends State<SeeAllSeriesScreen> {
   void initState() {
     scrollController.addListener(_onScroll);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => init());
   }
 
   @override
@@ -59,6 +60,7 @@ class _SeeAllSeriesScreenState extends State<SeeAllSeriesScreen> {
     final list = provider.getList;
 
     return MyScaffold(
+      contentPadding: 0,
       body: CustomScrollView(
         controller: scrollController,
         slivers: [
@@ -81,13 +83,13 @@ class _SeeAllSeriesScreenState extends State<SeeAllSeriesScreen> {
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
             ),
-            itemBuilder: (context, index) => MovieItem(
+            itemBuilder: (context, index) => MovieGridItem(
               movie: list[index],
               onClicked: (movie) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SeriesContentScreen(movie: movie),
+                    builder: (context) => MovieContentScreen(movie: movie),
                   ),
                 );
               },

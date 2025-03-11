@@ -1,4 +1,4 @@
-import 'package:cm_app/app/components/movie_item.dart';
+import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/providers/index.dart';
 import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
 import 'package:cm_app/app/widgets/index.dart';
@@ -18,12 +18,20 @@ class _SeeAllMovieScreenState extends State<SeeAllMovieScreen> {
   void initState() {
     scrollController.addListener(_onScroll);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => init());
   }
 
   @override
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  void init() {
+    setState(() {
+      isNextPage = false;
+    });
+    context.read<MovieProvider>().initList(isListClear: true);
   }
 
   double lastScroll = 0;
@@ -45,13 +53,6 @@ class _SeeAllMovieScreenState extends State<SeeAllMovieScreen> {
     context.read<MovieProvider>().nextPage();
   }
 
-  void init() {
-    setState(() {
-      isNextPage = false;
-    });
-    context.read<MovieProvider>().initList(isListClear: true);
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<MovieProvider>();
@@ -59,6 +60,7 @@ class _SeeAllMovieScreenState extends State<SeeAllMovieScreen> {
     final list = provider.getList;
 
     return MyScaffold(
+      contentPadding: 0,
       body: CustomScrollView(
         controller: scrollController,
         slivers: [
@@ -81,7 +83,7 @@ class _SeeAllMovieScreenState extends State<SeeAllMovieScreen> {
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
             ),
-            itemBuilder: (context, index) => MovieItem(
+            itemBuilder: (context, index) => MovieGridItem(
               movie: list[index],
               onClicked: (movie) {
                 Navigator.push(

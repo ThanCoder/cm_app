@@ -1,3 +1,4 @@
+import 'package:cm_app/app/pages/home/library_page.dart';
 import 'package:flutter/material.dart';
 
 import '../pages/index.dart';
@@ -8,11 +9,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: TabBarView(
           children: [
             HomePage(),
+            LibraryPage(),
             AppMorePage(),
           ],
         ),
@@ -21,6 +23,10 @@ class HomeScreen extends StatelessWidget {
             Tab(
               text: 'Home',
               icon: Icon(Icons.home),
+            ),
+            Tab(
+              text: 'Library',
+              icon: Icon(Icons.library_books_rounded),
             ),
             Tab(
               text: 'More',

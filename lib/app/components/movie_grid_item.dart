@@ -1,15 +1,30 @@
+import 'package:cm_app/app/components/imdb_icon.dart';
+import 'package:cm_app/app/components/movie_cache_image_widget.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 
-class MovieItem extends StatelessWidget {
+class MovieGridItem extends StatelessWidget {
   MovieModel movie;
   void Function(MovieModel movie) onClicked;
-  MovieItem({
+  MovieGridItem({
     super.key,
     required this.movie,
     required this.onClicked,
   });
+
+  Widget _getImdbWidget() {
+    if (movie.imdb.isEmpty) {
+      return SizedBox.shrink();
+    }
+    return Container(
+      padding: EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(184, 15, 15, 15),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: ImdbIcon(title: movie.imdb),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +37,11 @@ class MovieItem extends StatelessWidget {
             Column(
               children: [
                 Expanded(
-                  child: MyImageFile(
-                    path: movie.coverPath,
-                    width: double.infinity,
-                  ),
+                  child: MovieCacheImageWidget(movie: movie),
                 ),
               ],
             ),
+            //text
             Positioned(
               bottom: 0,
               left: 0,
@@ -49,6 +62,12 @@ class MovieItem extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            //imdb
+            Positioned(
+              left: 0,
+              top: 0,
+              child: _getImdbWidget(),
             ),
           ],
         ),

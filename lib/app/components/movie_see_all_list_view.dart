@@ -1,4 +1,4 @@
-import 'package:cm_app/app/components/movie_item.dart';
+import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +24,7 @@ class MovieSeeAllListView extends StatelessWidget {
     }
     return Column(
       spacing: 5,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //header
         Row(
@@ -58,7 +59,7 @@ class MovieSeeAllListView extends StatelessWidget {
                   child: SizedBox(
                     width: 160,
                     height: 180,
-                    child: MovieItem(movie: movie, onClicked: onClicked),
+                    child: MovieGridItem(movie: movie, onClicked: onClicked),
                   ),
                 );
               },

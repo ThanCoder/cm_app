@@ -1,10 +1,13 @@
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
 import 'package:flutter/material.dart';
+import 'package:html/dom.dart';
 
 class MovieProvider with ChangeNotifier {
   final List<MovieModel> _list = [];
+  final List<MovieModel> homeList = [];
   bool _isLoading = false;
   String? _nextUrl;
 
@@ -66,6 +69,35 @@ class MovieProvider with ChangeNotifier {
         },
       );
     } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> initHomeList({bool isListClear = false}) async {
+    try {
+      if (isListClear) {
+        homeList.clear();
+      }
+      //list ကို မရှင်းဘူးဆိုရင် တားဆီးထားမယ်
+      if (!isListClear && homeList.isNotEmpty) return;
+      _isLoading = true;
+      notifyListeners();
+
+      final res = await CMServices.instance
+          .getForwardProxyHtml(appConfigNotifier.value.hostUrl);
+
+      final dom = Document.html(res);
+      final eles = dom.querySelectorAll('.item_1 .item');
+
+      for (var ele in eles) {
+        final movie = MovieModel.fromElement(ele);
+        homeList.add(movie);
+      }
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
       debugPrint(e.toString());
     }
   }

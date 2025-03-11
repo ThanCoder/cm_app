@@ -1,8 +1,10 @@
 import 'dart:io';
-
+import 'package:cm_app/app/components/bookmark_button.dart';
+import 'package:cm_app/app/components/imdb_icon.dart';
 import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/widgets/cache_image_widget.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -26,15 +28,30 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   }
 
   bool isLoading = true;
+  bool isOverrideContentCache = false;
   String htmlContent = '';
   List<DownloadLinkModel> downloadList = [];
+  List<String> contentCoverList = [];
 
-  void init() async {
+  Future<void> init() async {
     try {
-      final res = await CMServices.instance.getDio.get(widget.movie.url);
-      final dom = html.Document.html(res.data.toString());
-      final content = dom.querySelector('.entry-content');
-      final result = content == null ? '' : content.outerHtml;
+      setState(() {
+        isLoading = true;
+        contentCoverList = [];
+        downloadList = [];
+      });
+      final res = await CMServices.instance.getCacheHtml(
+        url: widget.movie.url,
+        cacheName: widget.movie.title,
+        isOverride: isOverrideContentCache,
+      );
+      final dom = html.Document.html(res);
+      final movieContent = dom.querySelector('.entry-content');
+      final seriesContent = dom.querySelector('.contenidotv');
+      final movieResult = movieContent == null ? '' : movieContent.outerHtml;
+      final seriesResult = seriesContent == null ? '' : seriesContent.outerHtml;
+      //set content cover
+      contentCoverList = MovieModel.getContentCoverList(res);
 
       final downLinks =
           dom.querySelectorAll('.enlaces_box .enlaces .elemento a');
@@ -42,12 +59,11 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       for (var ele in downLinks) {
         downloadList.add(DownloadLinkModel.fromElement(ele));
       }
-      print(downloadList);
 
       if (!mounted) return;
       setState(() {
         isLoading = false;
-        htmlContent = result;
+        htmlContent = movieResult.isEmpty ? seriesResult : movieResult;
       });
     } catch (e) {
       if (!mounted) return;
@@ -56,6 +72,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       });
       debugPrint(e.toString());
     }
+    isOverrideContentCache = false;
   }
 
   Widget _getContent() {
@@ -77,92 +94,138 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
-      appBar: AppBar(
-        title: Text(widget.movie.title),
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              spacing: 10,
-              children: [
-                //header
-                Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 5,
-                    children: [
-                      SizedBox(
-                        width: 160,
-                        height: 180,
-                        child: MyImageFile(
-                          path: widget.movie.coverPath,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 5,
-                          children: [
-                            Text(
-                              widget.movie.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            Text(widget.movie.imdb),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                //content
-                isLoading ? TLoader() : _getContent(),
+      contentPadding: 0,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          isOverrideContentCache = true;
+          await init();
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              title: Text(widget.movie.title),
+              actions: [
+                Platform.isLinux
+                    ? IconButton(
+                        onPressed: () {
+                          isOverrideContentCache = true;
+                          init();
+                        },
+                        icon: Icon(Icons.refresh),
+                      )
+                    : SizedBox.shrink(),
               ],
             ),
-          ),
-          //download list
-          SliverList.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: downloadList.length,
-            itemBuilder: (context, index) {
-              final link = downloadList[index];
-              return GestureDetector(
-                onTap: () {
-                  if (Platform.isLinux) {
-                    launchUrlString(link.url);
-                  }
-                  if (Platform.isAndroid) {
-                    ThanPkg.android.app.openUrl(url: link.url);
-                  }
-                },
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: MyImageUrl(url: link.iconUrl),
+            SliverToBoxAdapter(
+              child: Column(
+                spacing: 10,
+                children: [
+                  //header
+                  Card(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
+                      children: [
+                        SizedBox(
+                          width: 160,
+                          height: 180,
+                          child: MyImageFile(
+                            path: widget.movie.coverPath,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 5,
+                            children: [
+                              Text(
+                                widget.movie.title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              ImdbIcon(title: widget.movie.imdb),
+                              //book mark
+                              BookmarkButton(movie: widget.movie),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SliverToBoxAdapter(child: SizedBox(height: 10)),
+            //content cover list
+            SliverToBoxAdapter(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(
+                    contentCoverList.length,
+                    (index) => Container(
+                      margin: EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                        width: 130,
+                        height: 140,
+                        child: CacheImageWidget(
+                          url: contentCoverList[index],
+                        ),
                       ),
-                      Text(link.title),
-                      Text(link.size),
-                      Text(link.quality),
-                      Text(link.url),
-                    ],
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+            //content
+            SliverToBoxAdapter(
+              child: isLoading ? TLoader() : _getContent(),
+            ),
+            //download list
+            SliverList.separated(
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: downloadList.length,
+              itemBuilder: (context, index) {
+                final link = downloadList[index];
+                return GestureDetector(
+                  onTap: () {
+                    if (Platform.isLinux) {
+                      launchUrlString(link.url);
+                    }
+                    if (Platform.isAndroid) {
+                      ThanPkg.android.app.openUrl(url: link.url);
+                    }
+                  },
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Column(
+                      spacing: 5,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: MyImageUrl(url: link.iconUrl),
+                        ),
+                        Text(link.title),
+                        Text(link.size),
+                        Text(link.quality),
+                        Text(link.url),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
