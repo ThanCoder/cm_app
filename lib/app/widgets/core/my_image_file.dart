@@ -34,6 +34,7 @@ class MyImageFile extends StatelessWidget {
           defaultAssetsPath,
           fit: fit,
         ),
+        filterQuality: FilterQuality.high,
       );
     } else {
       return Image.asset(

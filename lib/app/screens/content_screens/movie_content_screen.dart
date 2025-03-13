@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cm_app/app/components/bookmark_button.dart';
 import 'package:cm_app/app/components/imdb_icon.dart';
+import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
@@ -76,8 +77,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   }
 
   Widget _getContent() {
+    final dom = html.Document.html(htmlContent);
+    dom.querySelectorAll('img').forEach((img) {
+      final src = img.attributes['src'];
+      img.attributes['src'] = '$appForwardProxyHostUrl?url=$src';
+    });
     return Html(
-      data: htmlContent,
+      data: dom.outerHtml,
       shrinkWrap: true,
       onLinkTap: (url, attributes, element) {
         if (url == null) return;
@@ -145,12 +151,16 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                             children: [
                               Text(
                                 widget.movie.title,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
-                              ImdbIcon(title: widget.movie.imdb),
+                              ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: 55),
+                                  child: ImdbIcon(title: widget.movie.imdb)),
                               //book mark
                               BookmarkButton(movie: widget.movie),
                             ],
@@ -194,30 +204,32 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
               itemCount: downloadList.length,
               itemBuilder: (context, index) {
                 final link = downloadList[index];
-                return GestureDetector(
-                  onTap: () {
-                    if (Platform.isLinux) {
-                      launchUrlString(link.url);
-                    }
-                    if (Platform.isAndroid) {
-                      ThanPkg.android.app.openUrl(url: link.url);
-                    }
-                  },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Column(
-                      spacing: 5,
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: ListTile(
+                    onTap: () {
+                      if (Platform.isLinux) {
+                        launchUrlString(link.url);
+                      }
+                      if (Platform.isAndroid) {
+                        ThanPkg.android.app.openUrl(url: link.url);
+                      }
+                    },
+                    leading: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: MyImageUrl(
+                        url: '$appForwardProxyHostUrl?url=${link.iconUrl}',
+                        width: double.infinity,
+                      ),
+                    ),
+                    title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: MyImageUrl(url: link.iconUrl),
-                        ),
-                        Text(link.title),
-                        Text(link.size),
-                        Text(link.quality),
-                        Text(link.url),
+                        Text('Server: ${link.title.trim()}'),
+                        Text('Size: ${link.size}'),
+                        Text('Quality: ${link.quality}'),
+                        // Text(link.url),
                       ],
                     ),
                   ),

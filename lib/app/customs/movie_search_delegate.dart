@@ -3,6 +3,7 @@ import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/services/index.dart';
 import 'package:cm_app/app/widgets/index.dart';
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
 
@@ -97,10 +98,13 @@ class MovieSearchDelegate extends SearchDelegate {
                                   Text(movie.imdb),
                                 ],
                               ),
-                              Text(
+                              ExpandableText(
                                 movie.desc,
-                                maxLines: 5,
-                                overflow: TextOverflow.ellipsis,
+                                expandText: 'Read More',
+                                collapseOnTextTap: true,
+                                collapseText: 'Read Less',
+                                maxLines: 3,
+                                linkColor: Colors.blue,
                                 style: TextStyle(
                                   fontSize: 13,
                                 ),

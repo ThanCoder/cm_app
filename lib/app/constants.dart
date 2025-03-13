@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 //debug
 const isDebugPrint = false;
 
+const appBrowserProxyHostUrl = 'https://nodebrowser-production.up.railway.app';
+const appForwardProxyHostUrl = 'https://thanproxy-production.up.railway.app';
+
 //assets
 const defaultIconAssetsPath = 'assets/logo.webp';
 //version name

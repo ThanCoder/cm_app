@@ -16,14 +16,7 @@ class MovieGridItem extends StatelessWidget {
     if (movie.imdb.isEmpty) {
       return SizedBox.shrink();
     }
-    return Container(
-      padding: EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(184, 15, 15, 15),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: ImdbIcon(title: movie.imdb),
-    );
+    return ImdbIcon(title: movie.imdb);
   }
 
   @override
