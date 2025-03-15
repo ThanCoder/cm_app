@@ -1,7 +1,9 @@
 import 'package:cm_app/app/components/genres_select_all_view.dart';
 import 'package:cm_app/app/components/movie_cache_image_widget.dart';
 import 'package:cm_app/app/components/movie_year_select_all_view.dart';
+import 'package:cm_app/app/models/movie_genres_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/models/movie_year_model.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:cm_app/app/services/index.dart';
@@ -12,17 +14,23 @@ import 'package:html/dom.dart' as html;
 
 class MovieSearchDelegate extends SearchDelegate {
   void Function(MovieModel movie) onClicked;
-  MovieSearchDelegate({required this.onClicked});
+  Map<String, List<MovieModel>> cache = {};
   List<MovieModel> list = [];
+  List<MovieYearModel> yearList = [];
+  List<MovieGenresModel> genresList = [];
+  MovieSearchDelegate({required this.onClicked});
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: Icon(Icons.clear_all),
-      ),
+      query.isNotEmpty
+          ? IconButton(
+              onPressed: () {
+                query = '';
+              },
+              icon: Icon(Icons.clear_all),
+            )
+          : SizedBox.shrink(),
     ];
   }
 
@@ -47,8 +55,13 @@ class MovieSearchDelegate extends SearchDelegate {
   Widget _getSuggestion(BuildContext context) {
     return CustomScrollView(
       slivers: [
+        //year
         SliverToBoxAdapter(
           child: MovieYearSelectAllView(
+            list: yearList,
+            onLoaded: (result) {
+              yearList = result;
+            },
             onClicked: (year) {
               Navigator.push(
                 context,
@@ -63,6 +76,10 @@ class MovieSearchDelegate extends SearchDelegate {
         //genres
         SliverToBoxAdapter(
           child: GenresSelectAllView(
+            list: genresList,
+            onLoaded: (list) {
+              genresList = list;
+            },
             onClicked: (genres) {
               Navigator.push(
                 context,
@@ -79,6 +96,9 @@ class MovieSearchDelegate extends SearchDelegate {
   }
 
   Widget _getResult() {
+    if (cache.containsKey(query)) {
+      return _showMovieList(cache[query]!);
+    }
     final hostUrl = appConfigNotifier.value.hostUrl;
     final url = CMServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
     return FutureBuilder(
@@ -106,62 +126,66 @@ class MovieSearchDelegate extends SearchDelegate {
           return Center(child: Text('Movie မရှိပါ....'));
         }
         //movie ရှိနေရင်
-        return Center(
-          child: ListView.separated(
-              separatorBuilder: (context, index) => Divider(),
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final movie = list[index];
-                return GestureDetector(
-                  onTap: () => onClicked(movie),
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Row(
-                      spacing: 5,
-                      children: [
-                        SizedBox(
-                          width: 110,
-                          height: 130,
-                          child: MovieCacheImageWidget(movie: movie),
-                        ),
-                        Expanded(
-                          child: Column(
-                            spacing: 5,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+        return _showMovieList(list);
+      },
+    );
+  }
+
+  Widget _showMovieList(List<MovieModel> list) {
+    return Center(
+      child: ListView.separated(
+          separatorBuilder: (context, index) => Divider(),
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            final movie = list[index];
+            return GestureDetector(
+              onTap: () => onClicked(movie),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Row(
+                  spacing: 5,
+                  children: [
+                    SizedBox(
+                      width: 110,
+                      height: 130,
+                      child: MovieCacheImageWidget(movie: movie),
+                    ),
+                    Expanded(
+                      child: Column(
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(movie.title),
+                          Row(
+                            spacing: 2,
                             children: [
-                              Text(movie.title),
-                              Row(
-                                spacing: 2,
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                    size: 20,
-                                  ),
-                                  Text(movie.imdb),
-                                ],
+                              Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 20,
                               ),
-                              ExpandableText(
-                                movie.desc,
-                                expandText: 'Read More',
-                                collapseOnTextTap: true,
-                                collapseText: 'Read Less',
-                                maxLines: 3,
-                                linkColor: Colors.blue,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                ),
-                              ),
+                              Text(movie.imdb),
                             ],
                           ),
-                        ),
-                      ],
+                          ExpandableText(
+                            movie.desc,
+                            expandText: 'Read More',
+                            collapseOnTextTap: true,
+                            collapseText: 'Read Less',
+                            maxLines: 3,
+                            linkColor: Colors.blue,
+                            style: TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }),
-        );
-      },
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 }

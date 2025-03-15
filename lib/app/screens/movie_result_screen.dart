@@ -78,8 +78,8 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
                 SliverGrid.builder(
                   itemCount: list.length,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 180,
-                    mainAxisExtent: 200,
+                    maxCrossAxisExtent: 160,
+                    mainAxisExtent: 180,
                     mainAxisSpacing: 5,
                     crossAxisSpacing: 5,
                   ),

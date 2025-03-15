@@ -4,10 +4,14 @@ import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 
 class GenresSelectAllView extends StatefulWidget {
+  List<MovieGenresModel> list;
   void Function(MovieGenresModel genres) onClicked;
+  void Function(List<MovieGenresModel> list)? onLoaded;
   GenresSelectAllView({
     super.key,
+    this.list = const [],
     required this.onClicked,
+    this.onLoaded,
   });
 
   @override
@@ -18,10 +22,13 @@ class _GenresSelectAllViewState extends State<GenresSelectAllView> {
   @override
   void initState() {
     super.initState();
-    init();
+    list = widget.list;
+    if (list.isEmpty) {
+      init();
+    }
   }
 
-  bool isLoading = true;
+  bool isLoading = false;
   List<MovieGenresModel> list = [];
   bool isExpanded = false;
 
@@ -34,6 +41,10 @@ class _GenresSelectAllViewState extends State<GenresSelectAllView> {
       isLoading = true;
     });
     list = await CMServices.instance.getGenresList(isOverride: true);
+
+    if (widget.onLoaded != null) {
+      widget.onLoaded!(list);
+    }
 
     if (!mounted) return;
     setState(() {

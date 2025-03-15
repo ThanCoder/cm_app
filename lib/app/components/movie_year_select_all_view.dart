@@ -4,10 +4,16 @@ import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 
 class MovieYearSelectAllView extends StatefulWidget {
+  int showLength;
+  List<MovieYearModel> list;
   void Function(MovieYearModel year) onClicked;
+  void Function(List<MovieYearModel> list)? onLoaded;
   MovieYearSelectAllView({
     super.key,
+    this.list = const [],
     required this.onClicked,
+    this.showLength = 20,
+    this.onLoaded,
   });
 
   @override
@@ -18,15 +24,18 @@ class _MovieYearSelectAllViewState extends State<MovieYearSelectAllView> {
   @override
   void initState() {
     super.initState();
-    init();
+    list = widget.list;
+    if (list.isEmpty) {
+      init();
+    }
   }
 
-  bool isLoading = true;
+  bool isLoading = false;
   List<MovieYearModel> list = [];
   bool isExpanded = false;
 
   int getMinLength() {
-    return list.take(20).length;
+    return list.take(widget.showLength).length;
   }
 
   void init() async {
@@ -34,7 +43,9 @@ class _MovieYearSelectAllViewState extends State<MovieYearSelectAllView> {
       isLoading = true;
     });
     list = await CMServices.instance.getYearList(isOverride: true);
-
+    if (widget.onLoaded != null) {
+      widget.onLoaded!(list);
+    }
     if (!mounted) return;
     setState(() {
       isLoading = false;
