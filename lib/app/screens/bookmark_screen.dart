@@ -26,6 +26,8 @@ class BookmarkScreen extends StatelessWidget {
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 160,
                 mainAxisExtent: 180,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
               ),
               itemBuilder: (context, index) => MovieGridItem(
                 movie: list[index],

@@ -1,7 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cm_app/app/utils/index.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
+
+import '../services/html_query_selector_services.dart';
 
 class MovieModel {
   String title;
@@ -39,47 +42,13 @@ class MovieModel {
       };
 
   factory MovieModel.fromElement(html.Element ele) {
-    var title = '';
-    var url = '';
-    var coverUrl = '';
+    var title = getQuerySelectorText(ele, '.fixyear h2');
+    var url = getQuerySelectorAttr(ele, 'a', 'href');
+    var coverUrl = getQuerySelectorAttr(ele, '.image img', 'src');
+    var imdb = getQuerySelectorText(ele, '.imdb');
+    var desc = getQuerySelectorText(ele, '.boxinfo .ttx');
+
     var coverPath = '';
-    var imdb = '';
-    var desc = '';
-    if (ele.querySelector('.fixyear h2') != null) {
-      try {
-        title = ele.querySelector('.fixyear h2')!.text;
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-    if (ele.querySelector('a') != null) {
-      try {
-        url = ele.querySelector('a')!.attributes['href'] ?? '';
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-    if (ele.querySelector('.image img') != null) {
-      try {
-        coverUrl = ele.querySelector('.image img')!.attributes['src'] ?? '';
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-    if (ele.querySelector('.imdb') != null) {
-      try {
-        imdb = ele.querySelector('.imdb')!.text;
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-    if (ele.querySelector('.boxinfo .ttx') != null) {
-      try {
-        desc = ele.querySelector('.boxinfo .ttx')!.text;
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
     if (coverUrl.isNotEmpty) {
       coverPath =
           '${PathUtil.instance.getCachePath()}/${coverUrl.split('/').last}';
@@ -91,6 +60,22 @@ class MovieModel {
       coverPath: coverPath.trim(),
       imdb: imdb.trim(),
       desc: desc.trim(),
+    );
+  }
+
+  factory MovieModel.fromOvalElement(html.Element ele) {
+    var coverUrl = getQuerySelectorAttr(ele, 'img', 'src');
+    var coverPath = '';
+    if (coverUrl.isNotEmpty) {
+      coverPath =
+          '${PathUtil.instance.getCachePath()}/${coverUrl.split('/').last}';
+    }
+    return MovieModel(
+      title: getQuerySelectorText(ele, '.ttps'),
+      url: getQuerySelectorAttr(ele, 'a', 'href'),
+      coverUrl: coverUrl,
+      coverPath: coverPath,
+      imdb: getQuerySelectorText(ele, '.imdb'),
     );
   }
 

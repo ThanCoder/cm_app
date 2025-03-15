@@ -1,6 +1,9 @@
+import 'package:cm_app/app/components/genres_select_all_view.dart';
 import 'package:cm_app/app/components/movie_cache_image_widget.dart';
+import 'package:cm_app/app/components/movie_year_select_all_view.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
+import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:cm_app/app/services/index.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -13,7 +16,14 @@ class MovieSearchDelegate extends SearchDelegate {
   List<MovieModel> list = [];
   @override
   List<Widget>? buildActions(BuildContext context) {
-    return null;
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: Icon(Icons.clear_all),
+      ),
+    ];
   }
 
   @override
@@ -23,19 +33,52 @@ class MovieSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    if (query.isEmpty) {
+      return _getSuggestion(context);
+    }
     return _getResult();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Center(child: Text('တစ်ခုခုရေးပါ...'));
+    return _getSuggestion(context);
+  }
+
+  Widget _getSuggestion(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: MovieYearSelectAllView(
+            onClicked: (year) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MovieResultScreen(title: year.title, url: year.url),
+                ),
+              );
+            },
+          ),
+        ),
+        //genres
+        SliverToBoxAdapter(
+          child: GenresSelectAllView(
+            onClicked: (genres) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MovieResultScreen(title: genres.title, url: genres.url),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _getResult() {
-    if (query.isEmpty) {
-      return Center(child: Text('တစ်ခုခုရေးပါ...'));
-    }
-
     final hostUrl = appConfigNotifier.value.hostUrl;
     final url = CMServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
     return FutureBuilder(

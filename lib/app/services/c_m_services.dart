@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:cm_app/app/constants.dart';
+import 'package:cm_app/app/models/movie_genres_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/models/movie_year_model.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/utils/index.dart';
 import 'package:dio/dio.dart';
@@ -16,10 +19,89 @@ class CMServices {
   CMServices get service => CMServices();
 
   final _dio = Dio();
-  final proxyServer = 'https://thanproxy-production.up.railway.app';
 
-  String getForwardProxyUrl(String targetUrl) {
-    return '$proxyServer?url=$targetUrl';
+  Future<List<MovieModel>> getRelatedList(String url) async {
+    List<MovieModel> list = [];
+    try {
+      final res = await getForwardProxyHtml(url);
+      final dom = Document.html(res);
+      final eles = dom.querySelectorAll('.owl-carousel .item');
+      for (var ele in eles) {
+        final movie = MovieModel.fromOvalElement(ele);
+
+        list.add(movie);
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return list;
+  }
+
+  Future<List<MovieYearModel>> getYearList({bool isOverride = false}) async {
+    List<MovieYearModel> list = [];
+    try {
+      var res = await getCacheHtml(
+          url: appConfigNotifier.value.hostUrl,
+          cacheName: 'year',
+          isOverride: isOverride);
+      if (res.isEmpty) {
+        await getCacheHtml(
+            url: appConfigNotifier.value.hostUrl,
+            cacheName: 'year',
+            isOverride: true);
+      }
+      final dom = Document.html(res);
+      final eles = dom.querySelectorAll('.filtro_y li');
+      // print(eles.length);
+      for (var ele in eles) {
+        list.add(MovieYearModel.fromElement(ele));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return list;
+  }
+
+  Future<List<MovieGenresModel>> getGenresList(
+      {bool isOverride = false}) async {
+    List<MovieGenresModel> list = [];
+    try {
+      var res = await getCacheHtml(
+          url: appConfigNotifier.value.hostUrl,
+          cacheName: 'genres',
+          isOverride: isOverride);
+      if (res.isEmpty) {
+        await getCacheHtml(
+            url: appConfigNotifier.value.hostUrl,
+            cacheName: 'genres',
+            isOverride: true);
+      }
+      final dom = Document.html(res);
+      final eles = dom.querySelectorAll('.cat-item');
+      for (var ele in eles) {
+        list.add(MovieGenresModel.fromElement(ele));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return list;
+  }
+
+  Future<List<MovieModel>> getRandomList() async {
+    List<MovieModel> list = [];
+    try {
+      final res = await getForwardProxyHtml(appConfigNotifier.value.hostUrl);
+      final dom = Document.html(res);
+      final eles = dom.querySelectorAll('.owl-carousel .item');
+      for (var ele in eles) {
+        final movie = MovieModel.fromOvalElement(ele);
+
+        list.add(movie);
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return list;
   }
 
   Future<void> getMovieList({
@@ -64,6 +146,21 @@ class CMServices {
     return result;
   }
 
+  String getForwardProxyUrl(String targetUrl) {
+    return '$appForwardProxyHostUrl?url=$targetUrl';
+  }
+
+  Future<String> getBrowsesrProxyHtml(String url) async {
+    var result = '';
+    try {
+      final res = await getDio.get('$appBrowserProxyHostUrl?url=$url');
+      result = res.data.toString();
+    } catch (e) {
+      debugPrint('getBrowsesrProxyHtml: ${e.toString()}');
+    }
+    return result;
+  }
+
   Future<void> downloadCover({
     required String url,
     required String savePath,
@@ -95,7 +192,7 @@ class CMServices {
         return res;
       }
       //မရှိရင်
-      final result = await CMServices.instance.getForwardProxyHtml(url);
+      final result = await getForwardProxyHtml(url);
       await cacheFile.writeAsString(result);
       res = result;
     } catch (e) {

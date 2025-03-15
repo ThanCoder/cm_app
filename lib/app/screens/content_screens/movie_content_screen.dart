@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:cm_app/app/components/bookmark_button.dart';
 import 'package:cm_app/app/components/imdb_icon.dart';
+import 'package:cm_app/app/components/related_movie_list_view.dart';
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/services/core/app_services.dart';
 import 'package:cm_app/app/widgets/cache_image_widget.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +84,10 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       final src = img.attributes['src'];
       img.attributes['src'] = '$appForwardProxyHostUrl?url=$src';
     });
+    if (dom.querySelector('.generalmenu') != null) {
+      dom.querySelector('.generalmenu')!.remove();
+    }
+    // File('content.html').writeAsStringSync(dom.outerHtml);
     return Html(
       data: dom.outerHtml,
       shrinkWrap: true,
@@ -94,6 +100,22 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
           ThanPkg.platform.openUrl(url: url);
         }
       },
+    );
+  }
+
+  void _showImageDialog(String url) {
+    final width = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding: EdgeInsets.all(0),
+        content: SizedBox(
+          width: width,
+          child: CacheImageWidget(
+            url: url,
+          ),
+        ),
+      ),
     );
   }
 
@@ -124,11 +146,11 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                     : SizedBox.shrink(),
               ],
             ),
+            //header
             SliverToBoxAdapter(
               child: Column(
                 spacing: 10,
                 children: [
-                  //header
                   Card(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -138,9 +160,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                         SizedBox(
                           width: 160,
                           height: 180,
-                          child: MyImageFile(
-                            path: widget.movie.coverPath,
-                            fit: BoxFit.fill,
+                          child: GestureDetector(
+                            onTap: () =>
+                                _showImageDialog(widget.movie.coverUrl),
+                            child: MyImageFile(
+                              path: widget.movie.coverPath,
+                              fit: BoxFit.fill,
+                            ),
                           ),
                         ),
                         Expanded(
@@ -149,13 +175,18 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             spacing: 5,
                             children: [
-                              Text(
-                                widget.movie.title,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w300,
+                              GestureDetector(
+                                onLongPress: () {
+                                  copyText(widget.movie.title);
+                                },
+                                child: Text(
+                                  widget.movie.title,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
                               ),
                               ConstrainedBox(
@@ -180,13 +211,16 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                 child: Row(
                   children: List.generate(
                     contentCoverList.length,
-                    (index) => Container(
-                      margin: EdgeInsets.only(right: 8),
-                      child: SizedBox(
-                        width: 130,
-                        height: 140,
-                        child: CacheImageWidget(
-                          url: contentCoverList[index],
+                    (index) => GestureDetector(
+                      onTap: () => _showImageDialog(contentCoverList[index]),
+                      child: Container(
+                        margin: EdgeInsets.only(right: 8),
+                        child: SizedBox(
+                          width: 130,
+                          height: 140,
+                          child: CacheImageWidget(
+                            url: contentCoverList[index],
+                          ),
                         ),
                       ),
                     ),
@@ -235,6 +269,24 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                   ),
                 );
               },
+            ),
+            //related movie
+            SliverToBoxAdapter(
+              child: Container(
+                margin: EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(8.0),
+                child: RelatedMovieListView(
+                  url: widget.movie.url,
+                  onClicked: (movie) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieContentScreen(movie: movie),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

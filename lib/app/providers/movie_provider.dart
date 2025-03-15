@@ -25,6 +25,7 @@ class MovieProvider with ChangeNotifier {
       CMServices.instance.getMovieList(
         url: getNextUrl!,
         onResult: (list, nextUrl) {
+          print(list.length);
           _nextUrl = nextUrl;
           _list.addAll(list);
           _isLoading = false;
