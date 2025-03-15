@@ -1,16 +1,9 @@
-# flutter_boilerplate
+# channel myanmar app
 
-A new Flutter project.
+## Linux,Android
 
-## Getting Started
+# ScreenShot
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![1](https://github.com/user-attachments/assets/df780af7-e308-49f6-9ca9-49d8f8511b2a)
+![2](https://github.com/user-attachments/assets/35bc101f-9c03-423a-8b99-b453fce3fd51)
+![3](https://github.com/user-attachments/assets/32eeaac8-6a65-42e9-a921-3554e18c8f44)
