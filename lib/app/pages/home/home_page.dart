@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/components/random_movie_list_view.dart';
 import 'package:cm_app/app/customs/movie_search_delegate.dart';
+import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/providers/movie_provider.dart';
 import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
-import 'package:cm_app/app/screens/see_all_movie_screen.dart';
-import 'package:cm_app/app/screens/see_all_series_screen.dart';
+import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -135,7 +135,11 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SeeAllMovieScreen(),
+                                    builder: (context) => MovieResultScreen(
+                                      title: 'Movies',
+                                      url:
+                                          '${appConfigNotifier.value.hostUrl}/movies',
+                                    ),
                                   ),
                                 );
                               },
@@ -193,11 +197,15 @@ class _HomePageState extends State<HomePage> {
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          SeeAllSeriesScreen(),
-                                    ));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MovieResultScreen(
+                                      title: 'Series',
+                                      url:
+                                          '${appConfigNotifier.value.hostUrl}/tvshows',
+                                    ),
+                                  ),
+                                );
                               },
                               child: Text(
                                 'See All',

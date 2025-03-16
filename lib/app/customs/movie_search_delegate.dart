@@ -134,58 +134,59 @@ class MovieSearchDelegate extends SearchDelegate {
   Widget _showMovieList(List<MovieModel> list) {
     return Center(
       child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            final movie = list[index];
-            return GestureDetector(
-              onTap: () => onClicked(movie),
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    SizedBox(
-                      width: 110,
-                      height: 130,
-                      child: MovieCacheImageWidget(movie: movie),
-                    ),
-                    Expanded(
-                      child: Column(
-                        spacing: 5,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(movie.title),
-                          Row(
-                            spacing: 2,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 20,
-                              ),
-                              Text(movie.imdb),
-                            ],
-                          ),
-                          ExpandableText(
-                            movie.desc,
-                            expandText: 'Read More',
-                            collapseOnTextTap: true,
-                            collapseText: 'Read Less',
-                            maxLines: 3,
-                            linkColor: Colors.blue,
-                            style: TextStyle(
-                              fontSize: 13,
+        separatorBuilder: (context, index) => Divider(),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          final movie = list[index];
+          return GestureDetector(
+            onTap: () => onClicked(movie),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: Row(
+                spacing: 5,
+                children: [
+                  SizedBox(
+                    width: 110,
+                    height: 130,
+                    child: MovieCacheImageWidget(movie: movie),
+                  ),
+                  Expanded(
+                    child: Column(
+                      spacing: 5,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(movie.title),
+                        Row(
+                          spacing: 2,
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 20,
                             ),
+                            Text(movie.imdb),
+                          ],
+                        ),
+                        ExpandableText(
+                          movie.desc,
+                          expandText: 'Read More',
+                          collapseOnTextTap: true,
+                          collapseText: 'Read Less',
+                          maxLines: 3,
+                          linkColor: Colors.blue,
+                          style: TextStyle(
+                            fontSize: 13,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }),
+            ),
+          );
+        },
+      ),
     );
   }
 }

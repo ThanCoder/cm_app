@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cm_app/app/models/movie_genres_model.dart';
-import 'package:cm_app/app/screens/genres_movie_screen.dart';
+import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:cm_app/app/services/index.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -105,8 +105,9 @@ class _GenresPageState extends State<GenresPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => GenresMovieScreen(
-                                genres: genres,
+                              builder: (context) => MovieResultScreen(
+                                title: genres.title,
+                                url: genres.url,
                               ),
                             ),
                           );

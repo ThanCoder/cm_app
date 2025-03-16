@@ -26,6 +26,7 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
   final ScrollController scrollController = ScrollController();
   double lastScroll = 0;
   bool isLoading = true;
+  bool isDataLoading = false;
   bool isNextPage = false;
   List<MovieModel> list = [];
   String? nextUrl;
@@ -35,11 +36,12 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
       isLoading = true;
     });
 
-    CMServices.instance.getMovieList(
+    await CMServices.instance.getMovieList(
       url: url,
       onResult: (_list, _nextUrl) {
         if (!mounted) return;
         list.addAll(_list);
+
         setState(() {
           isLoading = false;
           isNextPage = false;
@@ -47,13 +49,16 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
         });
       },
     );
+    isDataLoading = false;
   }
 
   void _onScroll() {
-    if (lastScroll != scrollController.position.maxScrollExtent &&
+    if (!isDataLoading &&
+        lastScroll != scrollController.position.maxScrollExtent &&
         scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) {
       lastScroll = scrollController.position.maxScrollExtent;
+      isDataLoading = true;
       _loadData();
     }
   }
@@ -66,6 +71,7 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(list.length);
     return MyScaffold(
       appBar: AppBar(
         title: Text(widget.title),
