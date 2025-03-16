@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cm_app/app/components/bookmark_button.dart';
+import 'package:cm_app/app/components/core/app_components.dart';
 import 'package:cm_app/app/components/imdb_icon.dart';
 import 'package:cm_app/app/components/related_movie_list_view.dart';
 import 'package:cm_app/app/constants.dart';
@@ -7,6 +8,7 @@ import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
 import 'package:cm_app/app/services/core/app_services.dart';
+import 'package:cm_app/app/services/html_query_selector_services.dart';
 import 'package:cm_app/app/widgets/cache_image_widget.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   String htmlContent = '';
   List<DownloadLinkModel> downloadList = [];
   List<String> contentCoverList = [];
+  List<String> trailerList = [];
 
   Future<void> init() async {
     try {
@@ -62,11 +65,22 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       for (var ele in downLinks) {
         downloadList.add(DownloadLinkModel.fromElement(ele));
       }
+      //set html content
+      htmlContent = movieResult.isEmpty ? seriesResult : movieResult;
+      //trailer list
+      var trailerEles = dom.querySelectorAll(".youtube_id");
+      if (dom.querySelectorAll(".youtube_id_tv").isNotEmpty) {
+        trailerEles = dom.querySelectorAll(".youtube_id_tv");
+      }
+      for (var trailerEle in trailerEles) {
+        final url = getQuerySelectorAttr(trailerEle, 'iframe', 'src')
+            .replaceAll('//www', 'https://www');
+        trailerList.add(url);
+      }
 
       if (!mounted) return;
       setState(() {
         isLoading = false;
-        htmlContent = movieResult.isEmpty ? seriesResult : movieResult;
       });
     } catch (e) {
       if (!mounted) return;
@@ -115,6 +129,50 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
             url: url,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _getTrailerWidget() {
+    if (trailerList.isEmpty) return SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Trailer Link များ',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          Column(
+            children: List.generate(
+              trailerList.length,
+              (index) {
+                final url = trailerList[index];
+                return ListTile(
+                  onTap: () async {
+                    if (Platform.isAndroid) {
+                      await ThanPkg.android.app.openUrl(url: url);
+                    } else {
+                      if (await canLaunchUrlString(url)) {
+                        await launchUrlString(url);
+                      } else {
+                        copyText(url);
+                        if (!mounted) return;
+                        showMessage(context,
+                            '`url` ကို ဖွင့်မရတာကြောင့် copy ကူးယူလိုက်ပါပြီ');
+                      }
+                    }
+                  },
+                  title: Text(
+                    url,
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -231,6 +289,10 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
             //content
             SliverToBoxAdapter(
               child: isLoading ? TLoader() : _getContent(),
+            ),
+            //youtuble link
+            SliverToBoxAdapter(
+              child: _getTrailerWidget(),
             ),
             //download list
             SliverList.separated(

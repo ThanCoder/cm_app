@@ -22,10 +22,9 @@ class MovieProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      CMServices.instance.getMovieList(
+      await CMServices.instance.getMovieList(
         url: getNextUrl!,
         onResult: (list, nextUrl) {
-          print(list.length);
           _nextUrl = nextUrl;
           _list.addAll(list);
           _isLoading = false;

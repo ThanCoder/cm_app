@@ -1,4 +1,4 @@
-import 'package:cm_app/app/components/movie_grid_item.dart';
+import 'package:cm_app/app/components/movie_horizontal_list_view.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/index.dart';
 import 'package:cm_app/app/widgets/index.dart';
@@ -20,26 +20,10 @@ class RandomMovieListView extends StatelessWidget {
           final list = snapshot.data ?? [];
           if (list.isEmpty) return SizedBox.shrink();
 
-          return Column(
-            spacing: 5,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Random Movies'),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 5,
-                  children: List.generate(list.length, (index) {
-                    return SizedBox(
-                      width: 140,
-                      height: 160,
-                      child: MovieGridItem(
-                          movie: list[index], onClicked: onClicked),
-                    );
-                  }),
-                ),
-              ),
-            ],
+          return MovieHorizontalListView(
+            title: 'Random Movies',
+            list: list,
+            onClicked: onClicked,
           );
         }
         return SizedBox.shrink();

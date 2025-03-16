@@ -1,7 +1,7 @@
 name: cm_app
 description: "Channel Myanmar WebSoup"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 1.0.1
 
 environment:
   sdk: ^3.6.1
@@ -24,6 +24,7 @@ dependencies:
   than_pkg: ^1.6.2
   url_launcher: ^6.3.1
   uuid: ^4.5.1
+  # youtube_player_iframe: ^5.2.1
 
 dev_dependencies:
   change_app_package_name: ^1.4.0

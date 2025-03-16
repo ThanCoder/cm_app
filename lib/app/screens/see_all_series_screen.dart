@@ -29,21 +29,25 @@ class _SeeAllSeriesScreenState extends State<SeeAllSeriesScreen> {
 
   double lastScroll = 0;
   bool isNextPage = true;
+  bool isDataLoading = false;
 
   void _onScroll() {
-    if (lastScroll != scrollController.position.maxScrollExtent &&
+    if (!isDataLoading &&
+        lastScroll != scrollController.position.maxScrollExtent &&
         scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) {
       lastScroll = scrollController.position.maxScrollExtent;
+      isDataLoading = true;
       _loadData();
     }
   }
 
-  void _loadData() {
+  void _loadData() async {
     setState(() {
       isNextPage = true;
     });
-    context.read<SeriesProvider>().nextPage();
+    await context.read<SeriesProvider>().nextPage();
+    isDataLoading = false;
   }
 
   void init() {
@@ -61,49 +65,48 @@ class _SeeAllSeriesScreenState extends State<SeeAllSeriesScreen> {
 
     return MyScaffold(
       contentPadding: 0,
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          SliverAppBar(
-            title: Text('Series'),
-            floating: true,
-            snap: true,
-          ),
-          //is loading
-          SliverToBoxAdapter(
-            child: isLoading && !isNextPage ? TLoader() : SizedBox.shrink(),
-          ),
+      body: isLoading && !isNextPage
+          ? TLoader()
+          : CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                SliverAppBar(
+                  title: Text('Series'),
+                  floating: true,
+                  snap: true,
+                ),
 
-          //list
-          SliverGrid.builder(
-            itemCount: list.length,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 160,
-              mainAxisExtent: 180,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-            ),
-            itemBuilder: (context, index) => MovieGridItem(
-              movie: list[index],
-              onClicked: (movie) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MovieContentScreen(movie: movie),
+                //list
+                SliverGrid.builder(
+                  itemCount: list.length,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 160,
+                    mainAxisExtent: 180,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
                   ),
-                );
-              },
+                  itemBuilder: (context, index) => MovieGridItem(
+                    movie: list[index],
+                    onClicked: (movie) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MovieContentScreen(movie: movie),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: isLoading && isNextPage
+                      ? Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          child: TLoader(size: 30))
+                      : SizedBox.shrink(),
+                ),
+              ],
             ),
-          ),
-          SliverToBoxAdapter(
-            child: isLoading && isNextPage
-                ? Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: TLoader(size: 30))
-                : SizedBox.shrink(),
-          ),
-        ],
-      ),
     );
   }
 }

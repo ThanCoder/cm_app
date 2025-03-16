@@ -19,7 +19,7 @@ class SeriesProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      CMServices.instance.getMovieList(
+      await CMServices.instance.getMovieList(
         url: getNextUrl!,
         onResult: (list, nextUrl) {
           _nextUrl = nextUrl;

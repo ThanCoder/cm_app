@@ -139,6 +139,7 @@ class CMServices {
     var result = '';
     try {
       final res = await getDio.get(getForwardProxyUrl(url));
+
       result = res.data.toString();
     } catch (e) {
       debugPrint('getForwardProxy: ${e.toString()}');
