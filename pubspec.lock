@@ -541,6 +541,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  t_release:
+    dependency: "direct main"
+    description:
+      name: t_release
+      sha256: f5957219d546d4d0ab4a4c98adbafa80a3dba342316f19b8c5b10d19b1db4aff
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   term_glyph:
     dependency: transitive
     description:
@@ -561,10 +569,18 @@ packages:
     dependency: "direct main"
     description:
       name: than_pkg
-      sha256: "071e8a053ec568adb97347cba2f0ce4512b1016713151dac9ef2934e8248c15d"
+      sha256: f1e54107b04f894e8208949791f8b037c9a707bcf168238f3ab4417f425cfe84
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.2"
+    version: "1.6.5"
+  timeago:
+    dependency: "direct main"
+    description:
+      name: timeago
+      sha256: "3a38963615f1178531afa7177199e37522cf8dcbd93a144b597e32ec6d84bd9f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.2"
   typed_data:
     dependency: transitive
     description:

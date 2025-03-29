@@ -8,6 +8,8 @@ class MovieSeeAllListView extends StatelessWidget {
   int showItemCount;
   void Function(MovieModel movie) onClicked;
   void Function() onSeeAllClicked;
+  double? width;
+  double? height;
   MovieSeeAllListView({
     super.key,
     required this.title,
@@ -15,6 +17,8 @@ class MovieSeeAllListView extends StatelessWidget {
     required this.onClicked,
     required this.onSeeAllClicked,
     this.showItemCount = 7,
+    this.width = 160,
+    this.height = 180,
   });
 
   @override
@@ -57,8 +61,8 @@ class MovieSeeAllListView extends StatelessWidget {
                 return Container(
                   margin: EdgeInsets.only(right: 5),
                   child: SizedBox(
-                    width: 160,
-                    height: 180,
+                    width: width,
+                    height: height,
                     child: MovieGridItem(movie: movie, onClicked: onClicked),
                   ),
                 );

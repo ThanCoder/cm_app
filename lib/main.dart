@@ -1,5 +1,4 @@
 import 'package:cm_app/app/providers/index.dart';
-import 'package:cm_app/app/providers/movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:than_pkg/than_pkg.dart';

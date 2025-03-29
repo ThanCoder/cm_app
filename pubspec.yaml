@@ -1,7 +1,7 @@
 name: cm_app
 description: "Channel Myanmar WebSoup"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.0.2
+version: 1.0.3
 
 environment:
   sdk: ^3.6.1
@@ -21,10 +21,11 @@ dependencies:
   html: ^0.15.4
   intl: ^0.20.2
   provider: ^6.1.2
-  than_pkg: ^1.6.2
+  than_pkg: ^1.6.5
+  timeago: ^3.2.2
   url_launcher: ^6.3.1
   uuid: ^4.5.1
-  # youtube_player_iframe: ^5.2.1
+  t_release: ^0.0.3
 
 dev_dependencies:
   change_app_package_name: ^1.4.0
@@ -33,6 +34,10 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+
+t_release:
+  platfoms: android,linux 
+  cover_path: "assets/logo.webp" 
 
 flutter_launcher_icons:
   # dart run flutter_launcher_icons

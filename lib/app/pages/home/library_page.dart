@@ -40,6 +40,8 @@ class _LibraryPageState extends State<LibraryPage> {
                 }
                 if (snapshot.hasData) {
                   return MovieSeeAllListView(
+                    width: 150,
+                    height: 170,
                     title: 'BookMark',
                     list: snapshot.data!,
                     onClicked: (movie) {

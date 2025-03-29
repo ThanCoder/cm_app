@@ -1,3 +1,8 @@
+## 1.0.3
+
+## Fixed
+- movie title `/` error fixed.
+
 ## 1.0.2
 
 ## Fixed

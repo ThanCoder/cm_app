@@ -37,6 +37,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   String htmlContent = '';
   List<DownloadLinkModel> downloadList = [];
   List<String> contentCoverList = [];
+  List<String> descCoverList = [];
   List<String> trailerList = [];
 
   Future<void> init() async {
@@ -45,10 +46,11 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         isLoading = true;
         contentCoverList = [];
         downloadList = [];
+        descCoverList = [];
       });
       final res = await CMServices.instance.getCacheHtml(
         url: widget.movie.url,
-        cacheName: widget.movie.title,
+        cacheName: widget.movie.title.replaceAll('/', '--'),
         isOverride: isOverrideContentCache,
       );
       final dom = html.Document.html(res);
@@ -67,6 +69,17 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       }
       //set html content
       htmlContent = movieResult.isEmpty ? seriesResult : movieResult;
+      //desc cover list
+      html.Document.html(htmlContent).querySelectorAll('img').forEach((img) {
+        // final src = img.attributes['src'];
+        // img.attributes['src'] = '$appForwardProxyHostUrl?url=$src';
+        final src = img.attributes['src'] ?? '';
+        if (src.isNotEmpty) {
+          descCoverList.add('$appForwardProxyHostUrl?url=$src');
+        }
+        img.attributes['src'] = '';
+        img.remove();
+      });
       //trailer list
       var trailerEles = dom.querySelectorAll(".youtube_id");
       if (dom.querySelectorAll(".youtube_id_tv").isNotEmpty) {
@@ -94,14 +107,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
 
   Widget _getContent() {
     final dom = html.Document.html(htmlContent);
-    dom.querySelectorAll('img').forEach((img) {
-      final src = img.attributes['src'];
-      img.attributes['src'] = '$appForwardProxyHostUrl?url=$src';
-    });
+
     if (dom.querySelector('.generalmenu') != null) {
       dom.querySelector('.generalmenu')!.remove();
     }
-    // File('content.html').writeAsStringSync(dom.outerHtml);
+    dom.querySelectorAll('img').forEach((img) {
+      img.remove();
+    });
     return Html(
       data: dom.outerHtml,
       shrinkWrap: true,
@@ -286,7 +298,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                 ),
               ),
             ),
-            //content
+            //desc cover list
+            SliverList.builder(
+              itemCount: descCoverList.length,
+              itemBuilder: (context, index) =>
+                  CacheImageWidget(url: descCoverList[index]),
+            ),
+            //desc
             SliverToBoxAdapter(
               child: isLoading ? TLoader() : _getContent(),
             ),
