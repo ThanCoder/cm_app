@@ -1,5 +1,8 @@
 ## 1.0.3
 
+## Added
+- app version system ထည့်သွင်းခြင်း
+
 ## Fixed
 - movie title `/` error fixed.
 

@@ -23,7 +23,7 @@ class _MovieCacheImageWidgetState extends State<MovieCacheImageWidget> {
   Future<void> init() async {
     try {
       //download cache
-      await CMServices.instance.downloadCover(
+      await DioServices.instance.downloadCover(
           url: widget.movie.coverUrl, savePath: widget.movie.coverPath);
 
       if (!mounted) return;

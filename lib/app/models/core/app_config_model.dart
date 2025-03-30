@@ -10,6 +10,7 @@ class AppConfigModel {
   String proxyPort;
   bool isUseProxyServer;
   String hostUrl;
+  String forwardProxy;
 
   AppConfigModel({
     this.isUseCustomPath = false,
@@ -19,6 +20,7 @@ class AppConfigModel {
     this.proxyAddress = '',
     this.proxyPort = '8080',
     this.hostUrl = appHostUrl,
+    this.forwardProxy = appForwardProxyHostUrl,
   });
 
   factory AppConfigModel.fromJson(Map<String, dynamic> map) {
@@ -31,6 +33,7 @@ class AppConfigModel {
       proxyPort: map['proxy_port'] ?? '8080',
       isUseProxyServer: map['is_use_proxy_server'] ?? false,
       hostUrl: map['host_url'] ?? appHostUrl,
+      forwardProxy: map['forward_proxy'] ?? appForwardProxyHostUrl,
     );
   }
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class AppConfigModel {
         'proxy_port': proxyPort,
         'is_use_proxy_server': isUseProxyServer,
         'host_url': hostUrl,
+        'forward_proxy': forwardProxy,
       };
 }

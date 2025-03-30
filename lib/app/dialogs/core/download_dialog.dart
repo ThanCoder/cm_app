@@ -100,6 +100,7 @@ class _DownloadDialogState extends State<DownloadDialog> {
       actions: [
         TextButton(
           onPressed: () {
+            Navigator.pop(context);
             _downloadCancel();
           },
           child: const Text('Cancel'),

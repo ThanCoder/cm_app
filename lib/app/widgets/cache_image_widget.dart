@@ -34,7 +34,7 @@ class _CacheImageWidgetState extends State<CacheImageWidget> {
         savePath = widget.savedPath!;
       }
       //download cache
-      await CMServices.instance.downloadCover(
+      await DioServices.instance.downloadCover(
         url: widget.url,
         savePath: savePath,
       );

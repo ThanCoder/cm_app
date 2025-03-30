@@ -29,17 +29,14 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
   bool isCustomPathTextControllerTextSelected = false;
   late AppConfigModel config;
   TextEditingController customPathTextController = TextEditingController();
-  TextEditingController proxyAddressController = TextEditingController();
-  TextEditingController proxyPortController = TextEditingController();
   TextEditingController appHostUrlController = TextEditingController();
+  TextEditingController forwardProxyController = TextEditingController();
 
   void init() async {
     customPathTextController.text = '${getAppExternalRootPath()}/.$appName';
     config = appConfigNotifier.value;
-    proxyAddressController.text = config.proxyAddress;
-    proxyPortController.text = config.proxyPort;
     appHostUrlController.text = config.hostUrl;
-    print(config.hostUrl);
+    forwardProxyController.text = config.forwardProxy;
   }
 
   void _saveConfig() async {
@@ -54,9 +51,8 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
       }
       //set custom path
       config.customPath = customPathTextController.text;
-      config.proxyAddress = proxyAddressController.text;
-      config.proxyPort = proxyPortController.text;
       config.hostUrl = appHostUrlController.text;
+      config.forwardProxy = forwardProxyController.text;
       //save
       setConfigFile(config);
       appConfigNotifier.value = config;
@@ -114,7 +110,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
         ),
         body: SingleChildScrollView(
           child: Column(
-            spacing: 3,
+            spacing: 5,
             children: [
               //custom path
               ListTileWithDesc(
@@ -155,60 +151,6 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
                 )
               else
                 SizedBox.shrink(),
-              //proxy server
-              //custom path
-              ListTileWithDesc(
-                title: "Proxy Server",
-                desc: "192.168.191.253:8080",
-                trailing: Checkbox(
-                  value: config.isUseProxyServer,
-                  onChanged: (value) {
-                    setState(() {
-                      config.isUseProxyServer = value!;
-                      isChanged = true;
-                    });
-                  },
-                ),
-              ),
-              if (config.isUseProxyServer)
-                Column(
-                  spacing: 5,
-                  children: [
-                    Text('Proxy'),
-                    Card(
-                      child: Row(
-                        spacing: 5,
-                        children: [
-                          Expanded(
-                            child: TTextField(
-                              controller: proxyAddressController,
-                              hintText: '192.168.191.253',
-                              onChanged: (value) {
-                                setState(() {
-                                  isChanged = true;
-                                });
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: TTextField(
-                              controller: proxyPortController,
-                              hintText: '8080',
-                              onChanged: (value) {
-                                setState(() {
-                                  isChanged = true;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              else
-                SizedBox.shrink(),
 
               //host url
               Card(
@@ -221,7 +163,19 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
                     });
                   },
                 ),
-              )
+              ),
+              TTextField(
+                controller: forwardProxyController,
+                label: Text('Forward Proxy Server'),
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    forwardProxyController.text = appForwardProxyHostUrl;
+                  }
+                  setState(() {
+                    isChanged = true;
+                  });
+                },
+              ),
             ],
           ),
         ),

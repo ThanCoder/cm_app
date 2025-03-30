@@ -1,7 +1,7 @@
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/services/index.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 
@@ -83,7 +83,7 @@ class MovieProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final res = await CMServices.instance
+      final res = await DioServices.instance
           .getForwardProxyHtml(appConfigNotifier.value.hostUrl);
 
       final dom = Document.html(res);

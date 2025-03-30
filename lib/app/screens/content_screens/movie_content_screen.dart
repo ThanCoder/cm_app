@@ -6,8 +6,8 @@ import 'package:cm_app/app/components/related_movie_list_view.dart';
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
 import 'package:cm_app/app/services/core/app_services.dart';
+import 'package:cm_app/app/services/core/dio_services.dart';
 import 'package:cm_app/app/services/html_query_selector_services.dart';
 import 'package:cm_app/app/widgets/cache_image_widget.dart';
 import 'package:cm_app/app/widgets/index.dart';
@@ -48,7 +48,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         downloadList = [];
         descCoverList = [];
       });
-      final res = await CMServices.instance.getCacheHtml(
+      final res = await DioServices.instance.getCacheHtml(
         url: widget.movie.url,
         cacheName: widget.movie.title.replaceAll('/', '--'),
         isOverride: isOverrideContentCache,

@@ -100,9 +100,9 @@ class MovieSearchDelegate extends SearchDelegate {
       return _showMovieList(cache[query]!);
     }
     final hostUrl = appConfigNotifier.value.hostUrl;
-    final url = CMServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
+    final url = DioServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
     return FutureBuilder(
-      future: CMServices.instance.getCacheHtml(
+      future: DioServices.instance.getCacheHtml(
         url: url,
         cacheName: query,
       ),
