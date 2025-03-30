@@ -5,6 +5,7 @@ import 'package:cm_app/app/components/random_movie_list_view.dart';
 import 'package:cm_app/app/customs/movie_search_delegate.dart';
 import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/providers/movie_provider.dart';
+import 'package:cm_app/app/release_version_system/release_version_action_button.dart';
 import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
 import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: _search,
             icon: Icon(Icons.search),
           ),
+          ReleaseVersionActionButton(),
           Platform.isLinux
               ? IconButton(
                   onPressed: () {
@@ -219,6 +221,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
+
                       SliverToBoxAdapter(
                         child: SizedBox(height: 10),
                       ),
