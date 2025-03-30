@@ -1,4 +1,8 @@
-import 'package:cm_app/app/widgets/index.dart';
+import 'package:cm_app/app/release_version_system/pages/change_log_page.dart';
+import 'package:cm_app/app/release_version_system/pages/readme_page.dart';
+import 'package:cm_app/app/release_version_system/pages/release_license_page.dart';
+import 'package:cm_app/app/release_version_system/pages/release_list_page.dart';
+import 'package:cm_app/app/release_version_system/release_home_header.dart';
 import 'package:flutter/material.dart';
 
 class ReleaseHomeScreen extends StatelessWidget {
@@ -6,12 +10,43 @@ class ReleaseHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      appBar: AppBar(
-        title: Text('Release'),
-      ),
-      body: Column(
-        children: [],
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Release'),
+        ),
+        body: Column(
+          children: [
+            ReleaseHomeHeader(),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  ReleaseListPage(),
+                  ChangeLogPage(),
+                  ReadmePage(),
+                  ReleaseLicensePage(),
+                ],
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: TabBar(
+          tabs: [
+            Tab(
+              text: 'Release List',
+            ),
+            Tab(
+              text: 'Change Log',
+            ),
+            Tab(
+              text: 'Readme',
+            ),
+            Tab(
+              text: 'License',
+            ),
+          ],
+        ),
       ),
     );
   }

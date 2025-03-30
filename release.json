@@ -29,6 +29,13 @@
       "date": 1743311540939
     },
     {
+      "version": "1.0.2",
+      "platform": "linux",
+      "url": "https://github.com/ThanCoder/cm_app/releases/download/v1.0.2/cm_app-v1.0.2-linux.tar.gz",
+      "description": "",
+      "date": 1743311540939
+    },
+    {
       "version": "1.0.1",
       "platform": "android",
       "url": "https://github.com/ThanCoder/cm_app/releases/download/v1.0.1/v1.0.1.apk",
@@ -36,9 +43,23 @@
       "date": 1743311540939
     },
     {
+      "version": "1.0.1",
+      "platform": "linux",
+      "url": "https://github.com/ThanCoder/cm_app/releases/download/v1.0.1/cm_app-v1.0.1-linux.tar.gz",
+      "description": "",
+      "date": 1743311540939
+    },
+    {
       "version": "1.0.0",
       "platform": "android",
       "url": "https://github.com/ThanCoder/cm_app/releases/download/v.1.0.0/v1.0.0.apk",
+      "description": "",
+      "date": 1743311540939
+    },
+    {
+      "version": "1.0.0",
+      "platform": "linux",
+      "url": "https://github.com/ThanCoder/cm_app/releases/download/v.1.0.0/cm_app.v1.0.0.linux.tar.gz",
       "description": "",
       "date": 1743311540939
     }
