@@ -49,7 +49,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         descCoverList = [];
       });
       final res = await DioServices.instance.getCacheHtml(
-        url: widget.movie.url,
+        url: DioServices.instance.getForwardProxyUrl(widget.movie.url),
         cacheName: widget.movie.title.replaceAll('/', '--'),
         isOverride: isOverrideContentCache,
       );
@@ -138,7 +138,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         content: SizedBox(
           width: width,
           child: CacheImageWidget(
-            url: url,
+            url: DioServices.instance.getForwardProxyUrl(url),
           ),
         ),
       ),
@@ -233,9 +233,9 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                           child: GestureDetector(
                             onTap: () =>
                                 _showImageDialog(widget.movie.coverUrl),
-                            child: MyImageFile(
-                              path: widget.movie.coverPath,
-                              fit: BoxFit.fill,
+                            child: CacheImageWidget(
+                              url: DioServices.instance
+                                  .getForwardProxyUrl(widget.movie.coverUrl),
                             ),
                           ),
                         ),
@@ -333,7 +333,8 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                       width: 30,
                       height: 30,
                       child: MyImageUrl(
-                        url: '$appForwardProxyHostUrl?url=${link.iconUrl}',
+                        url: DioServices.instance
+                            .getForwardProxyUrl(link.iconUrl),
                         width: double.infinity,
                       ),
                     ),

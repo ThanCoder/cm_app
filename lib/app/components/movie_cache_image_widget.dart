@@ -24,7 +24,8 @@ class _MovieCacheImageWidgetState extends State<MovieCacheImageWidget> {
     try {
       //download cache
       await DioServices.instance.downloadCover(
-          url: widget.movie.coverUrl, savePath: widget.movie.coverPath);
+          url: DioServices.instance.getForwardProxyUrl(widget.movie.coverUrl),
+          savePath: widget.movie.coverPath);
 
       if (!mounted) return;
       setState(() {

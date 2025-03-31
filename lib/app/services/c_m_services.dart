@@ -34,12 +34,14 @@ class CMServices {
     List<MovieYearModel> list = [];
     try {
       var res = await DioServices.instance.getCacheHtml(
-          url: appConfigNotifier.value.hostUrl,
+          url: DioServices.instance
+              .getForwardProxyUrl(appConfigNotifier.value.hostUrl),
           cacheName: 'year',
           isOverride: isOverride);
       if (res.isEmpty) {
         await DioServices.instance.getCacheHtml(
-          url: appConfigNotifier.value.hostUrl,
+          url: DioServices.instance
+              .getForwardProxyUrl(appConfigNotifier.value.hostUrl),
           cacheName: 'year',
           isOverride: true,
         );
@@ -61,13 +63,15 @@ class CMServices {
     List<MovieGenresModel> list = [];
     try {
       var res = await DioServices.instance.getCacheHtml(
-        url: appConfigNotifier.value.hostUrl,
+        url: DioServices.instance
+            .getForwardProxyUrl(appConfigNotifier.value.hostUrl),
         cacheName: 'genres',
         isOverride: isOverride,
       );
       if (res.isEmpty) {
         await DioServices.instance.getCacheHtml(
-          url: appConfigNotifier.value.hostUrl,
+          url: DioServices.instance
+              .getForwardProxyUrl(appConfigNotifier.value.hostUrl),
           cacheName: 'genres',
           isOverride: true,
         );

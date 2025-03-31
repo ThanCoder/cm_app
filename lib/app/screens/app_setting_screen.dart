@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cm_app/app/github_hosting_server/forward_proxy_t_text_field.dart';
 import 'package:flutter/material.dart';
 
 import '../extensions/index.dart';
@@ -164,13 +165,9 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
                   },
                 ),
               ),
-              TTextField(
+              ForwardProxyTTextField(
                 controller: forwardProxyController,
-                label: Text('Forward Proxy Server'),
                 onChanged: (value) {
-                  if (value.isEmpty) {
-                    forwardProxyController.text = appForwardProxyHostUrl;
-                  }
                   setState(() {
                     isChanged = true;
                   });
