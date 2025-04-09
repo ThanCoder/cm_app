@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 class CacheImageWidget extends StatefulWidget {
   String url;
   String? savedPath;
+  BoxFit fit;
   CacheImageWidget({
     super.key,
     required this.url,
     this.savedPath,
+    this.fit = BoxFit.cover,
   });
 
   @override
@@ -58,9 +60,7 @@ class _CacheImageWidgetState extends State<CacheImageWidget> {
       return TLoader();
     } else {
       return MyImageFile(
-        path: savePath,
-        width: double.infinity,
-      );
+          path: savePath, width: double.infinity, fit: widget.fit);
     }
   }
 }

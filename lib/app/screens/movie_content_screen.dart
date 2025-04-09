@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cm_app/app/components/bookmark_button.dart';
-import 'package:cm_app/app/components/core/app_components.dart';
 import 'package:cm_app/app/components/imdb_icon.dart';
+import 'package:cm_app/app/components/index.dart';
 import 'package:cm_app/app/components/related_movie_list_view.dart';
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/download_link_model.dart';
@@ -9,13 +9,13 @@ import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/core/app_services.dart';
 import 'package:cm_app/app/services/core/dio_services.dart';
 import 'package:cm_app/app/services/html_query_selector_services.dart';
+import 'package:cm_app/app/utils/index.dart';
 import 'package:cm_app/app/widgets/cache_image_widget.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as html;
 import 'package:than_pkg/than_pkg.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class MovieContentScreen extends StatefulWidget {
   MovieModel movie;
@@ -105,6 +105,73 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
     isOverrideContentCache = false;
   }
 
+  String? _getContentText() {
+    try {
+      final dom = html.Document.html(htmlContent);
+      final desc = dom.querySelector('#cap1');
+      final desc2 = dom.querySelector('.contenidotv');
+      if (desc != null) {
+        return desc.text;
+      }
+      if (desc2 != null) {
+        return desc2.text;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  void _copyContentText() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('Copy Text'),
+              onTap: () {
+                Navigator.pop(context);
+                final text = _getContentText();
+                if (text == null) return;
+                copyText(text);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _saveImage() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('Save Image'),
+              onTap: () async {
+                Navigator.pop(context);
+                try {
+                  final file = File(widget.movie.coverPath);
+                  if (!await file.exists()) return;
+                  final savedPath =
+                      '${PathUtil.instance.getOutPath()}/${widget.movie.title.trim()}.png';
+                  await file.copy(savedPath);
+                  if (!mounted) return;
+                  showMessage(context, 'Saved: $savedPath');
+                } catch (e) {
+                  debugPrint(e.toString());
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _getContent() {
     final dom = html.Document.html(htmlContent);
 
@@ -114,18 +181,22 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
     dom.querySelectorAll('img').forEach((img) {
       img.remove();
     });
-    return Html(
-      data: dom.outerHtml,
-      shrinkWrap: true,
-      onLinkTap: (url, attributes, element) {
-        if (url == null) return;
-        if (Platform.isLinux) {
-          launchUrlString(url);
-        }
-        if (Platform.isAndroid) {
-          ThanPkg.platform.openUrl(url: url);
-        }
-      },
+    return GestureDetector(
+      onSecondaryTap: _copyContentText,
+      onLongPress: _copyContentText,
+      child: Html(
+        data: dom.outerHtml,
+        shrinkWrap: true,
+        onLinkTap: (url, attributes, element) async {
+          if (url == null) return;
+          if (Platform.isLinux) {
+            await ThanPkg.linux.app.launch(url);
+          }
+          if (Platform.isAndroid) {
+            await ThanPkg.platform.openUrl(url: url);
+          }
+        },
+      ),
     );
   }
 
@@ -138,6 +209,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         content: SizedBox(
           width: width,
           child: CacheImageWidget(
+            fit: BoxFit.fill,
             url: DioServices.instance.getForwardProxyUrl(url),
           ),
         ),
@@ -166,14 +238,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                     if (Platform.isAndroid) {
                       await ThanPkg.android.app.openUrl(url: url);
                     } else {
-                      if (await canLaunchUrlString(url)) {
-                        await launchUrlString(url);
-                      } else {
-                        copyText(url);
-                        if (!mounted) return;
-                        showMessage(context,
-                            '`url` ကို ဖွင့်မရတာကြောင့် copy ကူးယူလိုက်ပါပြီ');
-                      }
+                      await ThanPkg.linux.app.launch(url);
                     }
                   },
                   title: Text(
@@ -233,6 +298,8 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                           child: GestureDetector(
                             onTap: () =>
                                 _showImageDialog(widget.movie.coverUrl),
+                            onLongPress: _saveImage,
+                            onSecondaryTap: _saveImage,
                             child: CacheImageWidget(
                               url: DioServices.instance
                                   .getForwardProxyUrl(widget.movie.coverUrl),
@@ -301,8 +368,10 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
             //desc cover list
             SliverList.builder(
               itemCount: descCoverList.length,
-              itemBuilder: (context, index) =>
-                  CacheImageWidget(url: descCoverList[index]),
+              itemBuilder: (context, index) => CacheImageWidget(
+                url: descCoverList[index],
+                fit: BoxFit.fitWidth,
+              ),
             ),
             //desc
             SliverToBoxAdapter(
@@ -323,7 +392,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                   child: ListTile(
                     onTap: () {
                       if (Platform.isLinux) {
-                        launchUrlString(link.url);
+                        ThanPkg.linux.app.launch(link.url);
                       }
                       if (Platform.isAndroid) {
                         ThanPkg.android.app.openUrl(url: link.url);

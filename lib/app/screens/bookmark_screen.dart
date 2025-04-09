@@ -1,5 +1,5 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
-import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
+import 'package:cm_app/app/screens/movie_content_screen.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';

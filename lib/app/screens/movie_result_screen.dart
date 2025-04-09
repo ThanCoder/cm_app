@@ -1,6 +1,6 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
+import 'package:cm_app/app/screens/movie_content_screen.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
 import 'package:cm_app/app/widgets/core/index.dart';
 import 'package:flutter/material.dart';

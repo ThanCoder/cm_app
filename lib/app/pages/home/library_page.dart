@@ -1,6 +1,6 @@
 import 'package:cm_app/app/components/movie_see_all_list_view.dart';
 import 'package:cm_app/app/screens/bookmark_screen.dart';
-import 'package:cm_app/app/screens/content_screens/movie_content_screen.dart';
+import 'package:cm_app/app/screens/movie_content_screen.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
