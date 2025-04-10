@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cm_app/app/github_hosting_server/forward_proxy_t_text_field.dart';
+import 'package:cm_app/app/general_server/proxy_hosting_server/forward_proxy_t_text_field.dart';
 import 'package:flutter/material.dart';
 
 import '../extensions/index.dart';

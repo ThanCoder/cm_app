@@ -1,51 +1,55 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/core/index.dart';
-import 'proxy_services.dart';
+import '../../widgets/core/index.dart';
+import '../index.dart';
 
-class BrowserProxyTTextField extends StatefulWidget {
+class ForwardProxyTTextField extends StatefulWidget {
   TextEditingController controller;
   void Function(String value) onChanged;
-  BrowserProxyTTextField({
+  ForwardProxyTTextField({
     super.key,
     required this.controller,
     required this.onChanged,
   });
 
   @override
-  State<BrowserProxyTTextField> createState() => _BrowserProxyTTextFieldState();
+  State<ForwardProxyTTextField> createState() => _ForwardProxyTTextFieldState();
 }
 
-class _BrowserProxyTTextFieldState extends State<BrowserProxyTTextField> {
+class _ForwardProxyTTextFieldState extends State<ForwardProxyTTextField> {
   void _onChooseOnline() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Browser Proxy'),
+        title: Text('Forward Proxy'),
         content: SingleChildScrollView(
           child: FutureBuilder(
-            future: ProxyServices.getBrowserProxyList(),
+            future: GeneralServices.instance.getProxyList(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return TLoader();
               }
               if (snapshot.hasData) {
-                final list = snapshot.data ?? [];
+                var list = snapshot.data ?? [];
+                //filter
+                list = list.where((pro) => pro.type == 'forward').toList();
                 return Column(
                   spacing: 5,
                   children: List.generate(
                     list.length,
                     (index) {
-                      final url = list[index];
+                      final proxy = list[index];
                       return ListTile(
-                        textColor:
-                            url == widget.controller.text ? Colors.teal : null,
+                        textColor: proxy.url == widget.controller.text
+                            ? Colors.teal
+                            : null,
                         onTap: () {
-                          widget.controller.text = url;
-                          widget.onChanged(url);
+                          widget.controller.text = proxy.url;
+                          widget.onChanged(proxy.url);
                           Navigator.pop(context);
                         },
-                        title: Text(url),
+                        leading: Text(proxy.type),
+                        title: Text(proxy.url),
                       );
                     },
                   ),
@@ -67,7 +71,7 @@ class _BrowserProxyTTextFieldState extends State<BrowserProxyTTextField> {
         Expanded(
           child: TTextField(
             controller: widget.controller,
-            label: Text('Browser Proxy'),
+            label: Text('Forward Proxy'),
             onChanged: widget.onChanged,
           ),
         ),

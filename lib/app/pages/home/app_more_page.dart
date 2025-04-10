@@ -1,4 +1,3 @@
-import 'package:cm_app/app/release_version_system/release_version_checker_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/index.dart';
@@ -56,7 +55,6 @@ class AppMorePage extends StatelessWidget {
 
             //version
             const Divider(),
-            ReleaseVersionCheckerButton(),
           ],
         ),
       ),
