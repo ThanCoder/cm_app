@@ -63,7 +63,7 @@ class DioServices {
     var res = '';
     try {
       if (url.isEmpty) return res;
-      final savePath = '${PathUtil.instance.getCachePath()}/$cacheName.html';
+      final savePath = getCachePath(cacheName);
       final cacheFile = File(savePath);
       if (!isOverride && await cacheFile.exists()) {
         res = await cacheFile.readAsString();
@@ -104,5 +104,17 @@ class DioServices {
     //   );
     // }
     return _dio;
+  }
+
+  static String getCachePath(String cacheName) {
+    return '${PathUtil.instance.getCachePath()}/$cacheName.html';
+  }
+
+  static void removeCache(String cacheName) {
+    final path = '${PathUtil.instance.getCachePath()}/$cacheName.html';
+    final file = File(path);
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
   }
 }

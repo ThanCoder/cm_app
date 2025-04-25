@@ -1,3 +1,4 @@
+import 'package:cm_app/app/components/core/index.dart';
 import 'package:cm_app/app/components/genres_select_all_view.dart';
 import 'package:cm_app/app/components/movie_cache_image_widget.dart';
 import 'package:cm_app/app/components/movie_year_select_all_view.dart';
@@ -31,6 +32,14 @@ class MovieSearchDelegate extends SearchDelegate {
               icon: Icon(Icons.clear_all),
             )
           : SizedBox.shrink(),
+      IconButton(
+        onPressed: () {
+          if (query.isEmpty) return;
+          DioServices.removeCache(query);
+          showMessage(context, 'Cleaned Cache...', isOldStyle: true);
+        },
+        icon: Icon(Icons.delete_forever),
+      )
     ];
   }
 

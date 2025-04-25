@@ -1,12 +1,16 @@
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/material.dart';
 
-void showMessage(BuildContext context, String msg) {
-  // ScaffoldMessenger.of(context).showSnackBar(
-  //   SnackBar(
-  //     content: Text(msg),
-  //   ),
-  // );
+void showMessage(BuildContext context, String msg, {bool isOldStyle = false}) {
+  if (isOldStyle) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+      ),
+    );
+    return;
+  }
+
   CherryToast.success(
     title: Text(msg),
     inheritThemeColors: true,

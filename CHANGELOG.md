@@ -1,3 +1,8 @@
+## 1.0.4
+
+## Added
+- search movie bar -> add clear cache
+
 ## 1.0.3
 
 ## Added
