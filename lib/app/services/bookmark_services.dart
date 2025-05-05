@@ -6,7 +6,7 @@ import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/utils/path_util.dart';
 import 'package:flutter/widgets.dart';
 
-class BookmarkServices {
+class BookmarkServices extends ChangeNotifier {
   static final BookmarkServices instance = BookmarkServices._();
   BookmarkServices._();
   factory BookmarkServices() => instance;
@@ -46,6 +46,7 @@ class BookmarkServices {
       final data = jsonEncode(list.map((bm) => bm.toMap()).toList());
       final dbFile = File(getDBPath);
       await dbFile.writeAsString(data);
+      notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -59,6 +60,7 @@ class BookmarkServices {
       final data = jsonEncode(list.map((bm) => bm.toMap()).toList());
       final dbFile = File(getDBPath);
       await dbFile.writeAsString(data);
+      notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
     }

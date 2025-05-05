@@ -4,6 +4,7 @@ import 'package:cm_app/app/screens/movie_content_screen.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -13,13 +14,6 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => init());
-  }
-
-  Future<void> init() async {}
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
@@ -32,38 +26,42 @@ class _LibraryPageState extends State<LibraryPage> {
           spacing: 10,
           children: [
             //book mark
-            FutureBuilder(
-              future: BookmarkServices.instance.getList(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return TLoader();
-                }
-                if (snapshot.hasData) {
-                  return MovieSeeAllListView(
-                    width: 150,
-                    height: 170,
-                    title: 'BookMark',
-                    list: snapshot.data!,
-                    onClicked: (movie) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              MovieContentScreen(movie: movie),
-                        ),
+            Consumer<BookmarkServices>(
+              builder: (context, value, child) {
+                return FutureBuilder(
+                  future: BookmarkServices.instance.getList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return TLoader();
+                    }
+                    if (snapshot.hasData) {
+                      return MovieSeeAllListView(
+                        width: 150,
+                        height: 170,
+                        title: 'BookMark',
+                        list: snapshot.data!,
+                        onClicked: (movie) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MovieContentScreen(movie: movie),
+                            ),
+                          );
+                        },
+                        onSeeAllClicked: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookmarkScreen(),
+                            ),
+                          );
+                        },
                       );
-                    },
-                    onSeeAllClicked: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BookmarkScreen(),
-                        ),
-                      );
-                    },
-                  );
-                }
-                return SizedBox.shrink();
+                    }
+                    return SizedBox.shrink();
+                  },
+                );
               },
             ),
           ],

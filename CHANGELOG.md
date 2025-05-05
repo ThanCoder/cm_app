@@ -3,6 +3,9 @@
 ## Added
 - search movie bar -> add clear cache
 
+## Fixed
+- အချို့ error ပြင်ထားပါတယ်
+
 ## 1.0.3
 
 ## Added

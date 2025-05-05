@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 
 class BookmarkButton extends StatefulWidget {
   MovieModel movie;
-  BookmarkButton({super.key, required this.movie});
+  BookmarkButton({
+    super.key,
+    required this.movie,
+  });
 
   @override
   State<BookmarkButton> createState() => _BookmarkButtonState();

@@ -1,4 +1,5 @@
 import 'package:cm_app/app/providers/index.dart';
+import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:than_pkg/than_pkg.dart';
@@ -21,6 +22,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => MovieProvider()),
         ChangeNotifierProvider(create: (context) => SeriesProvider()),
+        ChangeNotifierProvider(create: (context) => BookmarkServices()),
       ],
       child: const MyApp(),
     ),

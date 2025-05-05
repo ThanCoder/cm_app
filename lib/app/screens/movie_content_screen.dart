@@ -8,6 +8,7 @@ import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/core/app_services.dart';
 import 'package:cm_app/app/services/core/dio_services.dart';
+import 'package:cm_app/app/services/html_dom_services.dart';
 import 'package:cm_app/app/services/html_query_selector_services.dart';
 import 'package:cm_app/app/utils/index.dart';
 import 'package:cm_app/app/widgets/cache_image_widget.dart';
@@ -19,7 +20,10 @@ import 'package:than_pkg/than_pkg.dart';
 
 class MovieContentScreen extends StatefulWidget {
   MovieModel movie;
-  MovieContentScreen({super.key, required this.movie});
+  MovieContentScreen({
+    super.key,
+    required this.movie,
+  });
 
   @override
   State<MovieContentScreen> createState() => _MovieContentScreenState();
@@ -54,7 +58,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         isOverride: isOverrideContentCache,
       );
       final dom = html.Document.html(res);
-      final movieContent = dom.querySelector('.entry-content');
+      final movieContent = dom.querySelector('.entry-content #cap1');
       final seriesContent = dom.querySelector('.contenidotv');
       final movieResult = movieContent == null ? '' : movieContent.outerHtml;
       final seriesResult = seriesContent == null ? '' : seriesContent.outerHtml;
@@ -179,13 +183,19 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
       dom.querySelector('.generalmenu')!.remove();
     }
     dom.querySelectorAll('img').forEach((img) {
+      // img.attributes['width'] = '100%';
+      // img.attributes.remove('height');
       img.remove();
     });
+    var htmlString = HtmlDomServices.cleanScriptTag(dom.outerHtml);
+    htmlString = HtmlDomServices.cleanStyleTag(htmlString);
+    // File('res.html').writeAsStringSync(htmlString);
+
     return GestureDetector(
       onSecondaryTap: _copyContentText,
       onLongPress: _copyContentText,
       child: Html(
-        data: dom.outerHtml,
+        data: htmlString,
         shrinkWrap: true,
         onLinkTap: (url, attributes, element) async {
           if (url == null) return;
@@ -254,6 +264,29 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
     );
   }
 
+  void _showMenu() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 150),
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.source),
+                title: Text('Copy Source Url'),
+                onTap: () {
+                  Navigator.pop(context);
+                  copyText(widget.movie.url);
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
@@ -279,6 +312,10 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
                         icon: Icon(Icons.refresh),
                       )
                     : SizedBox.shrink(),
+                IconButton(
+                  onPressed: _showMenu,
+                  icon: Icon(Icons.more_vert),
+                ),
               ],
             ),
             //header
