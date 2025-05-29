@@ -1,9 +1,10 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
-import 'package:cm_app/app/screens/movie_content_screen.dart';
+import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/screens/content/movie_content_screen.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
-import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -13,9 +14,31 @@ class BookmarkScreen extends StatefulWidget {
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
+  
+  void _showMenu(MovieModel movie) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 100,
+        child: Column(
+          children: [
+            ListTile(
+              leading: Icon(Icons.delete_forever),
+              title: Text('Remove'),
+              onTap: () {
+                Navigator.pop(context);
+                BookmarkServices.instance.remove(title: movie.title);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Book Mark'),
       ),
@@ -48,6 +71,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         ),
                       );
                     },
+                    onMenuClicked: _showMenu,
                   ),
                 );
               }

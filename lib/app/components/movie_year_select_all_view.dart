@@ -1,7 +1,7 @@
 import 'package:cm_app/app/models/movie_year_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
-import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieYearSelectAllView extends StatefulWidget {
   int showLength;
@@ -42,7 +42,7 @@ class _MovieYearSelectAllViewState extends State<MovieYearSelectAllView> {
     setState(() {
       isLoading = true;
     });
-    list = await CMServices.instance.getYearList(isOverride: true);
+    list = await CMServices.getYearList(isOverride: true);
     if (widget.onLoaded != null) {
       widget.onLoaded!(list);
     }
@@ -81,7 +81,7 @@ class _MovieYearSelectAllViewState extends State<MovieYearSelectAllView> {
                         isExpanded ? list.length : getMinLength(), (index) {
                       final year = list[index];
                       return TChip(
-                        title: year.title,
+                        title: Text(year.title),
                         onClick: () => widget.onClicked(year),
                       );
                     }),

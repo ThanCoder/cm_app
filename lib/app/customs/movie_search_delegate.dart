@@ -1,17 +1,16 @@
-import 'package:cm_app/app/components/core/index.dart';
-import 'package:cm_app/app/components/genres_select_all_view.dart';
 import 'package:cm_app/app/components/movie_cache_image_widget.dart';
 import 'package:cm_app/app/components/movie_year_select_all_view.dart';
 import 'package:cm_app/app/models/movie_genres_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/models/movie_year_model.dart';
-import 'package:cm_app/app/notifiers/app_notifier.dart';
 import 'package:cm_app/app/screens/movie_result_screen.dart';
-import 'package:cm_app/app/services/index.dart';
-import 'package:cm_app/app/widgets/index.dart';
+import 'package:cm_app/app/services/dio_services.dart';
+import 'package:cm_app/my_libs/setting/app_notifier.dart';
+import 'package:cm_app/my_libs/setting/t_messenger.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieSearchDelegate extends SearchDelegate {
   void Function(MovieModel movie) onClicked;
@@ -36,7 +35,7 @@ class MovieSearchDelegate extends SearchDelegate {
         onPressed: () {
           if (query.isEmpty) return;
           DioServices.removeCache(query);
-          showMessage(context, 'Cleaned Cache...', isOldStyle: true);
+          TMessenger.instance.showMessage(context, 'Cleaned Cache...');
         },
         icon: Icon(Icons.delete_forever),
       )
@@ -83,23 +82,23 @@ class MovieSearchDelegate extends SearchDelegate {
           ),
         ),
         //genres
-        SliverToBoxAdapter(
-          child: GenresSelectAllView(
-            list: genresList,
-            onLoaded: (list) {
-              genresList = list;
-            },
-            onClicked: (genres) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      MovieResultScreen(title: genres.title, url: genres.url),
-                ),
-              );
-            },
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: GenresSelectAllView(
+        //     list: genresList,
+        //     onLoaded: (list) {
+        //       genresList = list;
+        //     },
+        //     onClicked: (genres) {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) =>
+        //               MovieResultScreen(title: genres.title, url: genres.url),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

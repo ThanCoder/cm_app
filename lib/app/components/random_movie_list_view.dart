@@ -1,8 +1,9 @@
 import 'package:cm_app/app/components/movie_horizontal_list_view.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/services/index.dart';
-import 'package:cm_app/app/widgets/index.dart';
+import 'package:cm_app/app/services/c_m_services.dart';
+
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class RandomMovieListView extends StatelessWidget {
   void Function(MovieModel movie) onClicked;
@@ -11,7 +12,7 @@ class RandomMovieListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: CMServices.instance.getRandomList(),
+      future: CMServices.getRandomList(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return TLoader();

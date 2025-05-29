@@ -1,13 +1,12 @@
 import 'dart:io';
 
+import 'package:cm_app/my_libs/setting/app_services.dart';
+import 'package:cm_app/my_libs/setting/t_messenger.dart';
 import 'package:dio/dio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
-import '../../dialogs/core/index.dart';
-import '../../services/core/app_services.dart';
-import '../../widgets/index.dart';
-import '../index.dart';
 
 class CoverComponents extends StatefulWidget {
   String coverPath;
@@ -25,16 +24,15 @@ class _CoverComponentsState extends State<CoverComponents> {
   void initState() {
     imagePath = widget.coverPath;
     super.initState();
-    print('init');
   }
 
   void _downloadUrl() {
     showDialog(
       context: context,
-      builder: (context) => RenameDialog(
+      builder: (context) => TRenameDialog(
         renameLabelText: Text('Download From Url'),
         submitText: 'Download',
-        renameText: '',
+        text: '',
         onCancel: () {},
         onSubmit: (url) async {
           try {
@@ -58,7 +56,7 @@ class _CoverComponentsState extends State<CoverComponents> {
   }
 
   void _showMsg(String msg) {
-    showDialogMessage(context, msg);
+    TMessenger.instance.showDialogMessage(context, msg);
   }
 
   void _addFromPath() async {
@@ -82,7 +80,7 @@ class _CoverComponentsState extends State<CoverComponents> {
         if (widget.coverPath.isNotEmpty) {
           await file.copy(widget.coverPath);
           // clear image cache
-          await clearAndRefreshImage();
+          await AppServices.clearAndRefreshImage();
         }
         imagePath = path;
       }
@@ -134,7 +132,7 @@ class _CoverComponentsState extends State<CoverComponents> {
           height: 150,
           child: isLoading
               ? TLoader()
-              : MyImageFile(
+              : TImageFile(
                   path: imagePath,
                   borderRadius: 5,
                 ),

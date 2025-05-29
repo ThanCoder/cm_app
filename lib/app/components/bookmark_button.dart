@@ -1,7 +1,7 @@
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
-import 'package:cm_app/app/widgets/index.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class BookmarkButton extends StatefulWidget {
   MovieModel movie;

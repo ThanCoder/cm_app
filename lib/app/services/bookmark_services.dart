@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/utils/path_util.dart';
+import 'package:cm_app/my_libs/setting/path_util.dart';
 import 'package:flutter/widgets.dart';
 
 class BookmarkServices extends ChangeNotifier {
@@ -80,5 +80,5 @@ class BookmarkServices extends ChangeNotifier {
   }
 
   String get getDBPath =>
-      '${PathUtil.instance.getDatabasePath()}/$appBookmarkDatabaseName';
+      '${PathUtil.getDatabasePath()}/$appBookmarkDatabaseName';
 }

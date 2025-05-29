@@ -1,19 +1,13 @@
 import 'package:cm_app/app/models/movie_genres_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/models/movie_year_model.dart';
-import 'package:cm_app/app/notifiers/app_notifier.dart';
-import 'package:cm_app/app/services/index.dart';
+import 'package:cm_app/app/services/dio_services.dart';
+import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:html/dom.dart';
 
 class CMServices {
-  static final CMServices instance = CMServices._();
-  CMServices._();
-  factory CMServices() => instance;
-
-  CMServices get service => CMServices();
-
-  Future<List<MovieModel>> getRelatedList(String url) async {
+  static Future<List<MovieModel>> getRelatedList(String url) async {
     List<MovieModel> list = [];
     try {
       final res = await DioServices.instance.getForwardProxyHtml(url);
@@ -30,7 +24,8 @@ class CMServices {
     return list;
   }
 
-  Future<List<MovieYearModel>> getYearList({bool isOverride = false}) async {
+  static Future<List<MovieYearModel>> getYearList(
+      {bool isOverride = false}) async {
     List<MovieYearModel> list = [];
     try {
       var res = await DioServices.instance.getCacheHtml(
@@ -58,7 +53,7 @@ class CMServices {
     return list;
   }
 
-  Future<List<MovieGenresModel>> getGenresList(
+  static Future<List<MovieGenresModel>> getGenresList(
       {bool isOverride = false}) async {
     List<MovieGenresModel> list = [];
     try {
@@ -87,7 +82,7 @@ class CMServices {
     return list;
   }
 
-  Future<List<MovieModel>> getRandomList() async {
+  static Future<List<MovieModel>> getRandomList() async {
     List<MovieModel> list = [];
     try {
       final res = await DioServices.instance
@@ -105,7 +100,7 @@ class CMServices {
     return list;
   }
 
-  Future<void> getMovieList({
+  static Future<void> getMovieList({
     required String url,
     required void Function(List<MovieModel> list, String nextUrl) onResult,
     void Function(String err)? onError,

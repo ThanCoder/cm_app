@@ -1,6 +1,6 @@
-import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:flutter/material.dart';
 
 class SeriesProvider with ChangeNotifier {
@@ -19,7 +19,7 @@ class SeriesProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      await CMServices.instance.getMovieList(
+      await CMServices.getMovieList(
         url: getNextUrl!,
         onResult: (list, nextUrl) {
           _nextUrl = nextUrl;
@@ -51,8 +51,8 @@ class SeriesProvider with ChangeNotifier {
       }
       notifyListeners();
 
-      CMServices.instance.getMovieList(
-        url: '$appHostUrl/$_name',
+      CMServices.getMovieList(
+        url: '${appConfigNotifier.value.hostUrl}/$_name',
         onResult: (list, nextUrl) {
           _nextUrl = nextUrl;
           _list.addAll(list);

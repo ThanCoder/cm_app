@@ -1,9 +1,9 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/screens/movie_content_screen.dart';
+import 'package:cm_app/app/screens/content/movie_content_screen.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
-import 'package:cm_app/app/widgets/core/index.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieResultScreen extends StatefulWidget {
   String title;
@@ -36,16 +36,16 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
       isLoading = true;
     });
 
-    await CMServices.instance.getMovieList(
+    await CMServices.getMovieList(
       url: url,
-      onResult: (_list, _nextUrl) {
+      onResult: (list, nextUrl) {
         if (!mounted) return;
-        list.addAll(_list);
+        this.list.addAll(list);
 
         setState(() {
           isLoading = false;
           isNextPage = false;
-          nextUrl = _nextUrl;
+          this.nextUrl = nextUrl;
         });
       },
     );
@@ -71,8 +71,7 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(list.length);
-    return MyScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),

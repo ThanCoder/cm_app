@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 class MovieGridItem extends StatelessWidget {
   MovieModel movie;
   void Function(MovieModel movie) onClicked;
+  void Function(MovieModel movie)? onMenuClicked;
   MovieGridItem({
     super.key,
     required this.movie,
     required this.onClicked,
+    this.onMenuClicked,
   });
 
   Widget _getImdbWidget() {
@@ -23,6 +25,16 @@ class MovieGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onClicked(movie),
+      onLongPress: () {
+        if (onMenuClicked != null) {
+          onMenuClicked!(movie);
+        }
+      },
+      onSecondaryTap: () {
+        if (onMenuClicked != null) {
+          onMenuClicked!(movie);
+        }
+      },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Stack(

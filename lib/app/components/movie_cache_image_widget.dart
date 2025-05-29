@@ -1,7 +1,7 @@
 import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/services/index.dart';
-import 'package:cm_app/app/widgets/core/index.dart';
+import 'package:cm_app/app/services/dio_services.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieCacheImageWidget extends StatefulWidget {
   MovieModel movie;
@@ -45,7 +45,7 @@ class _MovieCacheImageWidgetState extends State<MovieCacheImageWidget> {
     if (isLoading) {
       return TLoader();
     } else {
-      return MyImageFile(
+      return TImageFile(
         path: widget.movie.coverPath,
         width: double.infinity,
       );

@@ -1,8 +1,8 @@
 import 'package:cm_app/app/components/movie_horizontal_list_view.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/services/c_m_services.dart';
-import 'package:cm_app/app/widgets/core/t_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class RelatedMovieListView extends StatelessWidget {
   String url;
@@ -16,7 +16,7 @@ class RelatedMovieListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: CMServices.instance.getRelatedList(url),
+      future: CMServices.getRelatedList(url),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return TLoader();

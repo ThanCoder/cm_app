@@ -7,70 +7,90 @@ class MovieSeeAllListView extends StatelessWidget {
   List<MovieModel> list;
   int showItemCount;
   void Function(MovieModel movie) onClicked;
-  void Function() onSeeAllClicked;
+  void Function(String title, List<MovieModel> list) onSeeAllClicked;
+  void Function(MovieModel movie)? onMenuClicked;
   double? width;
   double? height;
+  EdgeInsetsGeometry? margin;
+  double padding;
+  int showCount;
+  int? showLines;
+  double fontSize;
+
   MovieSeeAllListView({
     super.key,
     required this.title,
     required this.list,
     required this.onClicked,
     required this.onSeeAllClicked,
+    this.onMenuClicked,
     this.showItemCount = 7,
     this.width = 160,
     this.height = 180,
+    this.showCount = 8,
+    this.margin,
+    this.showLines,
+    this.fontSize = 11,
+    this.padding = 6,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (list.isEmpty) {
-      return SizedBox.shrink();
+    final showList = list.take(showCount).toList();
+    if (showList.isEmpty) return const SizedBox.shrink();
+    int _showLines = 1;
+    if (showLines == null && showList.length > 1) {
+      _showLines = 2;
+    } else {
+      _showLines = showLines ?? 1;
     }
-    return Column(
-      spacing: 5,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      margin: margin,
+      child: SizedBox(
+        height: _showLines * 160,
+        child: Column(
+          spacing: 5,
           children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(title),
+                list.length > showCount
+                    ? GestureDetector(
+                        onTap: () => onSeeAllClicked(title, list),
+                        child: const MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: Text(
+                            'See All',
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ],
             ),
-            TextButton(
-              onPressed: onSeeAllClicked,
-              child: Text(
-                'See All',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+            Expanded(
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: showList.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 170,
+                  mainAxisExtent: 130,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                ),
+                itemBuilder: (context, index) => MovieGridItem(
+                  movie: showList[index],
+                  onClicked: onClicked,
+                  onMenuClicked: onMenuClicked,
                 ),
               ),
             ),
           ],
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              list.take(showItemCount).length,
-              (index) {
-                final movie = list[index];
-                return Container(
-                  margin: EdgeInsets.only(right: 5),
-                  child: SizedBox(
-                    width: width,
-                    height: height,
-                    child: MovieGridItem(movie: movie, onClicked: onClicked),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

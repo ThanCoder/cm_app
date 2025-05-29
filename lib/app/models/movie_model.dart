@@ -1,5 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cm_app/app/utils/index.dart';
+import 'package:cm_app/my_libs/setting/path_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
@@ -50,8 +49,7 @@ class MovieModel {
 
     var coverPath = '';
     if (coverUrl.isNotEmpty) {
-      coverPath =
-          '${PathUtil.instance.getCachePath()}/${coverUrl.split('/').last}';
+      coverPath = '${PathUtil.getCachePath()}/${coverUrl.split('/').last}';
     }
     return MovieModel(
       title: title.trim(),
@@ -67,8 +65,7 @@ class MovieModel {
     var coverUrl = getQuerySelectorAttr(ele, 'img', 'src');
     var coverPath = '';
     if (coverUrl.isNotEmpty) {
-      coverPath =
-          '${PathUtil.instance.getCachePath()}/${coverUrl.split('/').last}';
+      coverPath = '${PathUtil.getCachePath()}/${coverUrl.split('/').last}';
     }
     return MovieModel(
       title: getQuerySelectorText(ele, '.ttps'),
