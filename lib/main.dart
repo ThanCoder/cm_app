@@ -19,7 +19,8 @@ void main() async {
   await TWidgets.instance.init(
     defaultImageAssetsPath: 'assets/logo.webp',
     getDarkMode: () => appConfigNotifier.value.isDarkTheme,
-    isDebugPrint: kDebugMode,
+    // isDebugPrint: kDebugMode,
+    isDebugPrint: false,
   );
 
   //init config

@@ -77,8 +77,9 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         // final src = img.attributes['src'];
         // img.attributes['src'] = '$appForwardProxyHostUrl?url=$src';
         final src = img.attributes['src'] ?? '';
-        if (src.isNotEmpty) {
-          descCoverList.add('${appConfigNotifier.value.forwardProxyUrl}?url=$src');
+        if (src.isNotEmpty && !src.endsWith('.gif')) {
+          descCoverList
+              .add('${appConfigNotifier.value.forwardProxyUrl}?url=$src');
         }
         img.attributes['src'] = '';
         img.remove();
@@ -190,10 +191,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
     htmlString = HtmlDomServices.cleanStyleTag(htmlString);
     // File('res.html').writeAsStringSync(htmlString);
 
+    // print(htmlString);
+
     return GestureDetector(
       onSecondaryTap: _copyContentText,
       onLongPress: _copyContentText,
       child: Html(
+        style: {'div': Style(fontSize: FontSize(18))},
         data: htmlString,
         shrinkWrap: true,
         onLinkTap: (url, attributes, element) async {
@@ -294,186 +298,194 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
           isOverrideContentCache = true;
           await init();
         },
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              title: Text(widget.movie.title),
-              actions: [
-                Platform.isLinux
-                    ? IconButton(
-                        onPressed: () {
-                          isOverrideContentCache = true;
-                          init();
-                        },
-                        icon: Icon(Icons.refresh),
-                      )
-                    : SizedBox.shrink(),
-                IconButton(
-                  onPressed: _showMenu,
-                  icon: Icon(Icons.more_vert),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 800),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  title: Text(widget.movie.title),
+                  actions: [
+                    Platform.isLinux
+                        ? IconButton(
+                            onPressed: () {
+                              isOverrideContentCache = true;
+                              init();
+                            },
+                            icon: Icon(Icons.refresh),
+                          )
+                        : SizedBox.shrink(),
+                    IconButton(
+                      onPressed: _showMenu,
+                      icon: Icon(Icons.more_vert),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            //header
-            SliverToBoxAdapter(
-              child: Column(
-                spacing: 10,
-                children: [
-                  Card(
+                //header
+                SliverToBoxAdapter(
+                  child: Column(
+                    spacing: 10,
+                    children: [
+                      Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 5,
+                          children: [
+                            SizedBox(
+                              width: 160,
+                              height: 180,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    _showImageDialog(widget.movie.coverUrl),
+                                onLongPress: _saveImage,
+                                onSecondaryTap: _saveImage,
+                                child: TCacheImage(
+                                  url: DioServices.instance.getForwardProxyUrl(
+                                      widget.movie.coverUrl),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 5,
+                                children: [
+                                  GestureDetector(
+                                    onLongPress: () {
+                                      AppServices.copyText(widget.movie.title);
+                                    },
+                                    child: Text(
+                                      widget.movie.title,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ),
+                                  ConstrainedBox(
+                                      constraints: BoxConstraints(maxWidth: 55),
+                                      child:
+                                          ImdbIcon(title: widget.movie.imdb)),
+                                  //book mark
+                                  BookmarkButton(movie: widget.movie),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 10)),
+                //content cover list
+                SliverToBoxAdapter(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 5,
-                      children: [
-                        SizedBox(
-                          width: 160,
-                          height: 180,
-                          child: GestureDetector(
-                            onTap: () =>
-                                _showImageDialog(widget.movie.coverUrl),
-                            onLongPress: _saveImage,
-                            onSecondaryTap: _saveImage,
-                            child: TCacheImage(
-                              url: DioServices.instance
-                                  .getForwardProxyUrl(widget.movie.coverUrl),
+                      children: List.generate(
+                        contentCoverList.length,
+                        (index) => GestureDetector(
+                          onTap: () =>
+                              _showImageDialog(contentCoverList[index]),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: SizedBox(
+                              width: 130,
+                              height: 140,
+                              child: TCacheImage(
+                                url: contentCoverList[index],
+                              ),
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 5,
-                            children: [
-                              GestureDetector(
-                                onLongPress: () {
-                                  AppServices.copyText(widget.movie.title);
-                                },
-                                child: Text(
-                                  widget.movie.title,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ),
-                              ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: 55),
-                                  child: ImdbIcon(title: widget.movie.imdb)),
-                              //book mark
-                              BookmarkButton(movie: widget.movie),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: 10)),
-            //content cover list
-            SliverToBoxAdapter(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(
-                    contentCoverList.length,
-                    (index) => GestureDetector(
-                      onTap: () => _showImageDialog(contentCoverList[index]),
-                      child: Container(
-                        margin: EdgeInsets.only(right: 8),
-                        child: SizedBox(
-                          width: 130,
-                          height: 140,
-                          child: TCacheImage(
-                            url: contentCoverList[index],
-                          ),
-                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            //desc cover list
-            SliverList.builder(
-              itemCount: descCoverList.length,
-              itemBuilder: (context, index) => TCacheImage(
-                url: descCoverList[index],
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            //desc
-            SliverToBoxAdapter(
-              child: isLoading ? TLoader() : _getContent(),
-            ),
-            //youtuble link
-            SliverToBoxAdapter(
-              child: _getTrailerWidget(),
-            ),
-            //download list
-            SliverList.separated(
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: downloadList.length,
-              itemBuilder: (context, index) {
-                final link = downloadList[index];
-                return MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: ListTile(
-                    onTap: () {
-                      if (Platform.isLinux) {
-                        ThanPkg.linux.app.launch(link.url);
-                      }
-                      if (Platform.isAndroid) {
-                        ThanPkg.android.app.openUrl(url: link.url);
-                      }
-                    },
-                    leading: SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: TImageUrl(
-                        url: DioServices.instance
-                            .getForwardProxyUrl(link.iconUrl),
-                        width: double.infinity,
-                      ),
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Server: ${link.title.trim()}'),
-                        Text('Size: ${link.size}'),
-                        Text('Quality: ${link.quality}'),
-                        // Text(link.url),
-                      ],
-                    ),
+                //desc cover list
+                SliverList.builder(
+                  itemCount: descCoverList.length,
+                  itemBuilder: (context, index) => TCacheImage(
+                    url: descCoverList[index],
+                    fit: BoxFit.fitWidth,
                   ),
-                );
-              },
-            ),
-            //related movie
-            SliverToBoxAdapter(
-              child: Container(
-                margin: EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.all(8.0),
-                child: RelatedMovieListView(
-                  url: widget.movie.url,
-                  onClicked: (movie) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MovieContentScreen(movie: movie),
+                ),
+                //desc
+                SliverToBoxAdapter(
+                  child: isLoading ? TLoader() : _getContent(),
+                ),
+                //youtuble link
+                SliverToBoxAdapter(
+                  child: _getTrailerWidget(),
+                ),
+                //download list
+                SliverList.separated(
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: downloadList.length,
+                  itemBuilder: (context, index) {
+                    final link = downloadList[index];
+                    return MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: ListTile(
+                        onTap: () {
+                          if (Platform.isLinux) {
+                            ThanPkg.linux.app.launch(link.url);
+                          }
+                          if (Platform.isAndroid) {
+                            ThanPkg.android.app.openUrl(url: link.url);
+                          }
+                        },
+                        leading: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: TImageUrl(
+                            url: DioServices.instance
+                                .getForwardProxyUrl(link.iconUrl),
+                            width: double.infinity,
+                          ),
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Server: ${link.title.trim()}'),
+                            Text('Size: ${link.size}'),
+                            Text('Quality: ${link.quality}'),
+                            // Text(link.url),
+                          ],
+                        ),
                       ),
                     );
                   },
                 ),
-              ),
+                //related movie
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(8.0),
+                    child: RelatedMovieListView(
+                      url: widget.movie.url,
+                      onClicked: (movie) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MovieContentScreen(movie: movie),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

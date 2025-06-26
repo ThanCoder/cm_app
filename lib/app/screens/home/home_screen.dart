@@ -56,42 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
               duration: Duration(
                 milliseconds: 800,
               ),
-              child: list[page],
+              child: Center(
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 800),
+                    child: list[page]),
+              ),
             ),
           );
         });
-    // return DefaultTabController(
-    //   length: 4,
-    //   child: Scaffold(
-    //     body: TabBarView(
-    //       children: [
-    //         HomePage(),
-    //         GenresPage(),
-    //         LibraryPage(),
-    //         AppMorePage(),
-    //       ],
-    //     ),
-    //     bottomNavigationBar: TabBar(
-    //       tabs: [
-    //         Tab(
-    //           text: 'Home',
-    //           icon: Icon(Icons.home),
-    //         ),
-    //         Tab(
-    //           text: 'Genres',
-    //           icon: Icon(Icons.movie_filter_rounded),
-    //         ),
-    //         Tab(
-    //           text: 'Library',
-    //           icon: Icon(Icons.library_books_rounded),
-    //         ),
-    //         Tab(
-    //           text: 'More',
-    //           icon: Icon(Icons.grid_view_rounded),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

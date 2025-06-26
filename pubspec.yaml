@@ -1,7 +1,7 @@
 name: cm_app
 description: "Channel Myanmar WebSoup"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.1.4
+version: 1.1.5
 repository: https://github.com/ThanCoder/cm_app
 
 environment:

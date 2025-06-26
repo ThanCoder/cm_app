@@ -1,3 +1,8 @@
+## 1.1.5
+
++ desktop အတွက် ပြင်ဆင်ခြင်း
+- some error fixed
+
 ## 1.1.4
 
 ## Changed
