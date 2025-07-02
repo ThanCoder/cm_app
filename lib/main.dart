@@ -4,7 +4,6 @@ import 'package:cm_app/my_libs/general_server_v1.0.0/index.dart';
 import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:cm_app/my_libs/setting/setting.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_widgets/t_widgets.dart';

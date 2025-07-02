@@ -38,18 +38,15 @@ class MovieSeeAllListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final showList = list.take(showCount).toList();
     if (showList.isEmpty) return const SizedBox.shrink();
-    int _showLines = 1;
-    if (showLines == null && showList.length > 1) {
-      _showLines = 2;
-    } else {
-      _showLines = showLines ?? 1;
+    if (showLines != null && showList.length > 1) {
+      showLines = 2;
     }
 
     return Container(
       padding: EdgeInsets.all(padding),
       margin: margin,
       child: SizedBox(
-        height: _showLines * 160,
+        height: (showLines ?? 1) * 160,
         child: Column(
           spacing: 5,
           children: [

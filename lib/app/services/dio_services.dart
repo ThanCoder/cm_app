@@ -59,21 +59,18 @@ class DioServices {
     bool isOverride = false,
   }) async {
     var res = '';
-    try {
-      if (url.isEmpty) return res;
-      final savePath = '${PathUtil.getCachePath()}/$cacheName.html';
-      final cacheFile = File(savePath);
-      if (!isOverride && await cacheFile.exists()) {
-        res = await cacheFile.readAsString();
-        return res;
-      }
-      //မရှိရင်
-      final result = await getDio.get(url);
-      await cacheFile.writeAsString(result.data.toString());
-      res = result.data.toString();
-    } catch (e) {
-      debugPrint(e.toString());
+
+    if (url.isEmpty) return res;
+    final savePath = '${PathUtil.getCachePath()}/$cacheName.html';
+    final cacheFile = File(savePath);
+    if (!isOverride && await cacheFile.exists()) {
+      res = await cacheFile.readAsString();
+      return res;
     }
+    //မရှိရင်
+    final result = await getDio.get(url);
+    await cacheFile.writeAsString(result.data.toString());
+    res = result.data.toString();
     return res;
   }
 
