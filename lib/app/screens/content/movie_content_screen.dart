@@ -3,12 +3,14 @@ import 'package:cm_app/app/models/download_link_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/screens/content/download_tab_page.dart';
 import 'package:cm_app/app/screens/content/home_tag_page.dart';
+import 'package:cm_app/app/screens/content/tab_class.dart';
 import 'package:cm_app/app/screens/content/trailer_tab_page.dart';
 import 'package:cm_app/app/services/dio_services.dart';
 import 'package:cm_app/app/services/html_query_selector_services.dart';
 import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieContentScreen extends StatefulWidget {
   MovieModel movie;
@@ -35,15 +37,19 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
   List<String> contentCoverList = [];
   List<String> descCoverList = [];
   List<String> trailerList = [];
+  List<TabClass> tabs = [];
 
   Future<void> init() async {
     try {
+      contentCoverList = [];
+      downloadList = [];
+      descCoverList = [];
+      tabs = [];
+
       setState(() {
         isLoading = true;
-        contentCoverList = [];
-        downloadList = [];
-        descCoverList = [];
       });
+
       final res = await DioServices.instance.getCacheHtml(
         url: DioServices.instance.getForwardProxyUrl(widget.movie.url),
         cacheName: widget.movie.title.replaceAll('/', '--'),
@@ -78,6 +84,7 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
         img.attributes['src'] = '';
         img.remove();
       });
+
       //trailer list
       var trailerEles = dom.querySelectorAll(".youtube_id");
       if (dom.querySelectorAll(".youtube_id_tv").isNotEmpty) {
@@ -88,7 +95,40 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
             .replaceAll('//www', 'https://www');
         trailerList.add(url);
       }
+      // change ui
+      // home tab
+      tabs.add(
+        TabClass(
+          tabBar: Tab(
+            text: 'Home',
+          ),
+          tabViewWidget: HomeTagPage(
+            movie: widget.movie,
+            htmlContent: htmlContent,
+            onRefresh: init,
+            contentCoverList: contentCoverList,
+            descCoverList: descCoverList,
+          ),
+        ),
+      );
 
+      if (trailerList.isNotEmpty) {
+        tabs.add(TabClass(
+            tabBar: Tab(
+              text: 'Trailer',
+            ),
+            tabViewWidget: TrailerTabPage(trailerList: trailerList)));
+      }
+      if (downloadList.isNotEmpty) {
+        tabs.add(
+          TabClass(
+            tabBar: Tab(
+              text: 'Download Link',
+            ),
+            tabViewWidget: DownloadTabPage(downloadList: downloadList),
+          ),
+        );
+      }
       if (!mounted) return;
       setState(() {
         isLoading = false;
@@ -105,8 +145,16 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Content'),
+        ),
+        body: TLoader(),
+      );
+    }
     return DefaultTabController(
-      length: 3,
+      length: tabs.length,
       child: Scaffold(
         body: RefreshIndicator(
           onRefresh: () async {
@@ -117,33 +165,13 @@ class _MovieContentScreenState extends State<MovieContentScreen> {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 800),
               child: TabBarView(
-                children: [
-                  HomeTagPage(
-                    movie: widget.movie,
-                    htmlContent: htmlContent,
-                    onRefresh: init,
-                    contentCoverList: contentCoverList,
-                    descCoverList: descCoverList,
-                  ),
-                  TrailerTabPage(trailerList: trailerList),
-                  DownloadTabPage(downloadList: downloadList),
-                ],
+                children: tabs.map((e) => e.tabViewWidget).toList(),
               ),
             ),
           ),
         ),
         bottomNavigationBar: TabBar(
-          tabs: [
-            Tab(
-              text: 'Home',
-            ),
-            Tab(
-              text: 'Trailer',
-            ),
-            Tab(
-              text: 'Download Link',
-            ),
-          ],
+          tabs: tabs.map((e) => e.tabBar).toList(),
         ),
       ),
     );

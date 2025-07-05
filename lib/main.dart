@@ -1,5 +1,6 @@
 import 'package:cm_app/app/providers/movie_provider.dart';
 import 'package:cm_app/app/providers/series_provider.dart';
+import 'package:cm_app/app/services/dio_services.dart';
 import 'package:cm_app/my_libs/general_server_v1.0.0/index.dart';
 import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
@@ -20,6 +21,10 @@ void main() async {
     getDarkMode: () => appConfigNotifier.value.isDarkTheme,
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
+    onDownloadCacheImage: (url, savePath) async {
+      return await DioServices.instance
+          .downloadCover(url: url, savePath: savePath);
+    },
   );
 
   //init config
