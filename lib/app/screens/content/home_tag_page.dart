@@ -36,35 +36,6 @@ class HomeTagPage extends StatefulWidget {
 }
 
 class _HomeTagPageState extends State<HomeTagPage> {
-  void _saveImage() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => SingleChildScrollView(
-        child: Column(
-          children: [
-            ListTile(
-              title: Text('Save Image'),
-              onTap: () async {
-                Navigator.pop(ctx);
-                try {
-                  final file = File(widget.movie.coverPath);
-                  if (!await file.exists()) return;
-                  final savedPath =
-                      '${PathUtil.getOutPath()}/${widget.movie.title.trim()}.png';
-                  await file.copy(savedPath);
-                  if (!ctx.mounted) return;
-                  TMessenger.instance.showMessage(ctx, 'Saved: $savedPath');
-                } catch (e) {
-                  debugPrint(e.toString());
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   String? _getContentText() {
     try {
       final dom = html.Document.html(widget.htmlContent);
@@ -80,27 +51,6 @@ class _HomeTagPageState extends State<HomeTagPage> {
       debugPrint(e.toString());
     }
     return null;
-  }
-
-  void _copyContentText() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SingleChildScrollView(
-        child: Column(
-          children: [
-            ListTile(
-              title: Text('Copy Text'),
-              onTap: () {
-                Navigator.pop(context);
-                final text = _getContentText();
-                if (text == null) return;
-                AppServices.copyText(text);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _getContent() {
@@ -120,23 +70,11 @@ class _HomeTagPageState extends State<HomeTagPage> {
 
     // print(htmlString);
 
-    return GestureDetector(
-      onSecondaryTap: _copyContentText,
-      onLongPress: _copyContentText,
-      child: Html(
-        style: {'div': Style(fontSize: FontSize(15))},
-        data: htmlString,
-        shrinkWrap: true,
-        onLinkTap: (url, attributes, element) async {
-          if (url == null) return;
-          if (Platform.isLinux) {
-            await ThanPkg.linux.app.launch(url);
-          }
-          if (Platform.isAndroid) {
-            await ThanPkg.platform.openUrl(url: url);
-          }
-        },
-      ),
+    return Html(
+      style: {'div': Style(fontSize: FontSize(15))},
+      data: htmlString,
+      shrinkWrap: true,
+      onLinkTap: (url, attributes, element) => _showContentLinkMenu(url ?? ''),
     );
   }
 
@@ -151,6 +89,43 @@ class _HomeTagPageState extends State<HomeTagPage> {
           child: TCacheImage(
             fit: BoxFit.fill,
             url: DioServices.instance.getForwardProxyUrl(url),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showContentLinkMenu(String url) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 150),
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.open_in_browser),
+                title: Text('Open Brower'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  if (url.isEmpty) return;
+                  if (Platform.isLinux) {
+                    await ThanPkg.linux.app.launch(url);
+                  }
+                  if (Platform.isAndroid) {
+                    await ThanPkg.platform.openUrl(url: url);
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.copy_all),
+                title: Text('Copy Url'),
+                onTap: () {
+                  Navigator.pop(context);
+                  ThanPkg.appUtil.copyText(url);
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -172,7 +147,36 @@ class _HomeTagPageState extends State<HomeTagPage> {
                   Navigator.pop(context);
                   AppServices.copyText(widget.movie.url);
                 },
-              )
+              ),
+              ListTile(
+                leading: Icon(Icons.copy_all),
+                title: Text('Copy Content Text'),
+                onTap: () {
+                  Navigator.pop(context);
+                  final text = _getContentText();
+                  if (text == null) return;
+                  AppServices.copyText(text);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.save_alt_rounded),
+                title: Text('Save Cover'),
+                onTap: () async {
+                  try {
+                    Navigator.pop(context);
+                    final file = File(widget.movie.coverPath);
+                    if (!await file.exists()) return;
+                    final savedPath =
+                        '${PathUtil.getOutPath()}/${widget.movie.title.trim()}.png';
+                    await file.copy(savedPath);
+                    if (!context.mounted) return;
+                    TMessenger.instance
+                        .showMessage(context, 'Saved: $savedPath');
+                  } catch (e) {
+                    debugPrint(e.toString());
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -221,8 +225,6 @@ class _HomeTagPageState extends State<HomeTagPage> {
                       height: 180,
                       child: GestureDetector(
                         onTap: () => _showImageDialog(widget.movie.coverUrl),
-                        onLongPress: _saveImage,
-                        onSecondaryTap: _saveImage,
                         child: TCacheImage(
                           url: DioServices.instance
                               .getForwardProxyUrl(widget.movie.coverUrl),

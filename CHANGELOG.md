@@ -1,3 +1,7 @@
+## 1.2.5
++ Changed Search UI
+- some error fixed
+
 ## 1.1.5
 
 + desktop အတွက် ပြင်ဆင်ခြင်း

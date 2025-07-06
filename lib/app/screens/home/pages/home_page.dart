@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:cm_app/app/components/movie_grid_item.dart';
 import 'package:cm_app/app/components/random_movie_list_view.dart';
-import 'package:cm_app/app/customs/movie_search_delegate.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/providers/movie_provider.dart';
+import 'package:cm_app/app/screens/search/search_screen.dart';
 import 'package:cm_app/my_libs/general_server_v1.0.0/general_server_noti_button.dart';
 import 'package:cm_app/my_libs/setting/app_notifier.dart';
 import 'package:cm_app/app/screens/content/movie_content_screen.dart';
@@ -42,21 +42,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _search() {
-    showSearch(
-      context: context,
-      delegate: MovieSearchDelegate(
-        onClicked: (movie) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MovieContentScreen(
-                movie: movie,
-              ),
-            ),
-          );
-        },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchScreen(),
       ),
     );
+    // showSearch(
+    //   context: context,
+    //   delegate: MovieSearchDelegate(
+    //     onClicked: (movie) {
+    //       Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //           builder: (context) => MovieContentScreen(
+    //             movie: movie,
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   Widget _getList(List<MovieModel> list) {

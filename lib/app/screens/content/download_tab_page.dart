@@ -35,6 +35,9 @@ class DownloadTabPage extends StatelessWidget {
                   ThanPkg.android.app.openUrl(url: link.url);
                 }
               },
+              onLongPress: () {
+                ThanPkg.appUtil.copyText(link.url);
+              },
               leading: SizedBox(
                 width: 30,
                 height: 30,

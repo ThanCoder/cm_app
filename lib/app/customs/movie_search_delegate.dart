@@ -1,5 +1,5 @@
 import 'package:cm_app/app/components/movie_cache_image_widget.dart';
-import 'package:cm_app/app/components/movie_year_select_all_view.dart';
+import 'package:cm_app/app/screens/search/movie_year_select_all_view.dart';
 import 'package:cm_app/app/models/movie_genres_model.dart';
 import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/models/movie_year_model.dart';
