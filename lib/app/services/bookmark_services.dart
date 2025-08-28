@@ -2,16 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cm_app/app/constants.dart';
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/my_libs/setting/path_util.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/core/path_util.dart';
 import 'package:flutter/widgets.dart';
 
-class BookmarkServices extends ChangeNotifier {
+mixin BookmarkDBListener {
+  void onBookmarkDBChanged();
+}
+
+class BookmarkServices {
   static final BookmarkServices instance = BookmarkServices._();
   BookmarkServices._();
   factory BookmarkServices() => instance;
 
-  Future<void> toggle({required MovieModel movie}) async {
+  Future<void> toggle({required Movie movie}) async {
     try {
       if (await exists(title: movie.title)) {
         await remove(title: movie.title);
@@ -43,36 +47,38 @@ class BookmarkServices extends ChangeNotifier {
       var list = await getList();
       list = list.where((bm) => bm.title != title).toList();
       //save
-      final data = jsonEncode(list.map((bm) => bm.toMap()).toList());
-      final dbFile = File(getDBPath);
-      await dbFile.writeAsString(data);
-      notifyListeners();
+      await save(list);
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  Future<void> add({required MovieModel movie}) async {
+  Future<void> add({required Movie movie}) async {
     try {
       final list = await getList();
       list.insert(0, movie);
       //save
-      final data = jsonEncode(list.map((bm) => bm.toMap()).toList());
-      final dbFile = File(getDBPath);
-      await dbFile.writeAsString(data);
-      notifyListeners();
+      //save
+      await save(list);
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  Future<List<MovieModel>> getList() async {
-    List<MovieModel> list = [];
+  Future<void> save(List<Movie> list) async {
+    final dbFile = File(getDBPath);
+    final jsonList = list.map((bm) => bm.toMap()).toList();
+    await dbFile.writeAsString(JsonEncoder.withIndent(' ').convert(jsonList));
+    notifyListeners();
+  }
+
+  Future<List<Movie>> getList() async {
+    List<Movie> list = [];
     try {
       final dbFile = File(getDBPath);
       if (!await dbFile.exists()) return [];
       List<dynamic> res = await jsonDecode(await dbFile.readAsString());
-      list = res.map((map) => MovieModel.fromMap(map)).toList();
+      list = res.map((map) => Movie.fromMap(map)).toList();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -81,4 +87,21 @@ class BookmarkServices extends ChangeNotifier {
 
   String get getDBPath =>
       '${PathUtil.getDatabasePath()}/$appBookmarkDatabaseName';
+
+  // listener
+  static final List<BookmarkDBListener> _listener = [];
+
+  void addListener(BookmarkDBListener eve) {
+    _listener.add(eve);
+  }
+
+  void removeListener(BookmarkDBListener eve) {
+    _listener.remove(eve);
+  }
+
+  void notifyListeners() {
+    for (var eve in _listener) {
+      eve.onBookmarkDBChanged();
+    }
+  }
 }

@@ -1,11 +1,11 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
-import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/models/movie.dart';
 import 'package:flutter/cupertino.dart';
 
 class MovieHorizontalListView extends StatelessWidget {
   String title;
-  List<MovieModel> list;
-  void Function(MovieModel movie) onClicked;
+  List<Movie> list;
+  void Function(Movie movie) onClicked;
   MovieHorizontalListView({
     super.key,
     required this.title,

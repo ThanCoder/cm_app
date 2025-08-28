@@ -1,12 +1,13 @@
 import 'package:cm_app/app/components/imdb_icon.dart';
-import 'package:cm_app/app/components/movie_cache_image_widget.dart';
-import 'package:cm_app/app/models/movie_model.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/core/index.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/widgets/index.dart';
 
 class MovieGridItem extends StatelessWidget {
-  MovieModel movie;
-  void Function(MovieModel movie) onClicked;
-  void Function(MovieModel movie)? onMenuClicked;
+  Movie movie;
+  void Function(Movie movie) onClicked;
+  void Function(Movie movie)? onMenuClicked;
   MovieGridItem({
     super.key,
     required this.movie,
@@ -25,26 +26,17 @@ class MovieGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onClicked(movie),
-      onLongPress: () {
-        if (onMenuClicked != null) {
-          onMenuClicked!(movie);
-        }
-      },
-      onSecondaryTap: () {
-        if (onMenuClicked != null) {
-          onMenuClicked!(movie);
-        }
-      },
+      onLongPress: () => onMenuClicked?.call(movie),
+      onSecondaryTap: () => onMenuClicked?.call(movie),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Stack(
           children: [
-            Column(
-              children: [
-                Expanded(
-                  child: MovieCacheImageWidget(movie: movie),
-                ),
-              ],
+            Positioned.fill(
+              child: TCacheImage(
+                url: movie.coverUrl,
+                cachePath: PathUtil.getCachePath(),
+              ),
             ),
             //text
             Positioned(
@@ -53,27 +45,21 @@ class MovieGridItem extends StatelessWidget {
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                    color: const Color.fromARGB(139, 27, 27, 27),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(5),
-                      bottomRight: Radius.circular(5),
-                    )),
+                  color: const Color.fromARGB(139, 27, 27, 27),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5),
+                  ),
+                ),
                 child: Text(
                   movie.title,
                   maxLines: 2,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ),
             //imdb
-            Positioned(
-              left: 0,
-              top: 0,
-              child: _getImdbWidget(),
-            ),
+            Positioned(left: 0, top: 0, child: _getImdbWidget()),
           ],
         ),
       ),

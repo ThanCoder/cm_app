@@ -1,15 +1,13 @@
-import 'package:cm_app/app/components/movie_cache_image_widget.dart';
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/screens/content/movie_content_screen.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/app/routes_helper.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/core/index.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/widgets/index.dart';
 
 class SearchResultList extends StatelessWidget {
-  List<MovieModel> list;
-  SearchResultList({
-    super.key,
-    required this.list,
-  });
+  List<Movie> list;
+  SearchResultList({super.key, required this.list});
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +21,7 @@ class SearchResultList extends StatelessWidget {
         final movie = list[index];
         return GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MovieContentScreen(
-                  movie: movie,
-                ),
-              ),
-            );
+            goMovieContent(context, movie: movie);
           },
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
@@ -40,7 +31,10 @@ class SearchResultList extends StatelessWidget {
                 SizedBox(
                   width: 110,
                   height: 130,
-                  child: MovieCacheImageWidget(movie: movie),
+                  child: TCacheImage(
+                    url: movie.coverUrl,
+                    cachePath: PathUtil.getCachePath(),
+                  ),
                 ),
                 Expanded(
                   child: Column(
@@ -51,11 +45,7 @@ class SearchResultList extends StatelessWidget {
                       Row(
                         spacing: 2,
                         children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 20,
-                          ),
+                          Icon(Icons.star, color: Colors.amber, size: 20),
                           Text(movie.imdb),
                         ],
                       ),
@@ -66,9 +56,7 @@ class SearchResultList extends StatelessWidget {
                         collapseText: 'Read Less',
                         maxLines: 3,
                         linkColor: Colors.blue,
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
+                        style: TextStyle(fontSize: 13),
                       ),
                     ],
                   ),

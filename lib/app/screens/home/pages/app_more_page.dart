@@ -1,7 +1,4 @@
-import 'package:cm_app/my_libs/clean_cache/cache_component.dart';
-import 'package:cm_app/my_libs/general_server_v1.0.0/current_version_component.dart';
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
-import 'package:cm_app/my_libs/setting/app_setting_list_tile.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
@@ -11,9 +8,7 @@ class AppMorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('More'),
-      ),
+      appBar: AppBar(title: Text('More')),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,27 +18,28 @@ class AppMorePage extends StatelessWidget {
               leading: Icon(Icons.dark_mode_outlined),
               title: 'Dark Theme',
               trailing: ValueListenableBuilder(
-                valueListenable: appConfigNotifier,
+                valueListenable: Setting.getAppConfigNotifier,
                 builder: (context, config, child) => Checkbox(
                   value: config.isDarkTheme,
                   onChanged: (value) {
-                    appConfigNotifier.value =
-                        config.copyWith(isDarkTheme: value);
+                    Setting.getAppConfigNotifier.value = config.copyWith(
+                      isDarkTheme: value,
+                    );
                     //set config
-                    appConfigNotifier.value.save();
+                    Setting.getAppConfigNotifier.value.save();
                   },
                 ),
               ),
             ),
             //version
-            CurrentVersionComponent(),
+            Setting.getCurrentVersionWidget,
             //Clean Cache
-            CacheComponent(),
+            Setting.getCacheManagerWidget,
 
             //version
             const Divider(),
             //setting
-            AppSettingListTile(),
+            Setting.getSettingListTileWidget,
           ],
         ),
       ),

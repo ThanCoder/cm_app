@@ -1,12 +1,6 @@
-import 'package:cm_app/app/providers/movie_provider.dart';
-import 'package:cm_app/app/providers/series_provider.dart';
 import 'package:cm_app/app/services/dio_services.dart';
-import 'package:cm_app/my_libs/general_server_v1.0.0/index.dart';
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
-import 'package:cm_app/app/services/bookmark_services.dart';
-import 'package:cm_app/my_libs/setting/setting.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
@@ -17,29 +11,23 @@ void main() async {
   await ThanPkg.instance.init();
 
   await TWidgets.instance.init(
-    defaultImageAssetsPath: 'assets/logo.webp',
-    getDarkMode: () => appConfigNotifier.value.isDarkTheme,
+    defaultImageAssetsPath: 'assets/logo.png',
+    getDarkMode: () => Setting.getAppConfig.isDarkTheme,
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
-    onDownloadCacheImage: (url, savePath) async {
-      return await DioServices.instance
-          .downloadCover(url: url, savePath: savePath);
+    onDownloadImage: (url, savePath) async {
+      await DioServices.instance.getDio().download(url, savePath);
     },
   );
 
   //init config
-  await Setting.initAppConfigService();
-
-  await GeneralServices.instance.init(packageName: 'cm_app');
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => MovieProvider()),
-        ChangeNotifierProvider(create: (context) => SeriesProvider()),
-        ChangeNotifierProvider(create: (context) => BookmarkServices()),
-      ],
-      child: const MyApp(),
-    ),
+  await Setting.instance.initSetting(
+    appName: 'cm_app',
+    appVersionLabel: 'CM App Pre',
+    onShowMessage: (context, message) {
+      showTSnackBar(context, message);
+    },
   );
+
+  runApp(const MyApp());
 }

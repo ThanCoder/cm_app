@@ -1,7 +1,7 @@
 import 'package:cm_app/app/components/movie_grid_item.dart';
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/screens/content/movie_content_screen.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/app/routes_helper.dart';
+import 'package:cm_app/app/services/cm_services.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
@@ -28,7 +28,7 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
   bool isLoading = true;
   bool isDataLoading = false;
   bool isNextPage = false;
-  List<MovieModel> list = [];
+  List<Movie> list = [];
   String? nextUrl;
 
   void init(String url) async {
@@ -36,19 +36,15 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
       isLoading = true;
     });
 
-    await CMServices.getMovieList(
-      url: url,
-      onResult: (list, nextUrl) {
-        if (!mounted) return;
-        this.list.addAll(list);
+    final res = await CMServices.getMovieList(url: url);
 
-        setState(() {
-          isLoading = false;
-          isNextPage = false;
-          this.nextUrl = nextUrl;
-        });
-      },
-    );
+    if (!mounted) return;
+    list.addAll(res.list);
+    setState(() {
+      isLoading = false;
+      isNextPage = false;
+      nextUrl = res.nextUrl;
+    });
     isDataLoading = false;
   }
 
@@ -72,11 +68,9 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: !isNextPage && isLoading
-          ? TLoader()
+          ? TLoader.random()
           : CustomScrollView(
               controller: scrollController,
               slivers: [
@@ -90,16 +84,7 @@ class _MovieResultScreenState extends State<MovieResultScreen> {
                   ),
                   itemBuilder: (context, index) => MovieGridItem(
                     movie: list[index],
-                    onClicked: (movie) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MovieContentScreen(
-                            movie: movie,
-                          ),
-                        ),
-                      );
-                    },
+                    onClicked: (movie) => goMovieContent(context, movie: movie),
                   ),
                 ),
                 //loader

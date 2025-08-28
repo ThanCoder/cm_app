@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:cm_app/app/components/core/app_components.dart';
+import 'package:cm_app/app/models/movie.dart';
 import 'package:cm_app/app/models/movie_genres_model.dart';
-import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/models/movie_year_model.dart';
 import 'package:cm_app/app/services/dio_services.dart';
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart' as html;
+import 'package:t_html_parser/t_html_extensions.dart';
 import 'package:t_widgets/t_widgets.dart';
 
 import 'search_field.dart';
@@ -24,7 +23,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   bool isShowResult = false;
   bool isLoading = false;
-  List<MovieModel> resultList = [];
+  List<Movie> resultList = [];
   List<MovieYearModel> yearList = [];
   List<MovieGenresModel> genresList = [];
 
@@ -34,29 +33,29 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         isLoading = true;
       });
-      final hostUrl = appConfigNotifier.value.hostUrl;
+      final hostUrl = Setting.getAppConfig.hostUrl;
       final url = DioServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
       // final htmlText = await DioServices.instance.getCacheHtml(
       //   url: url,
       //   cacheName: query,
       // );
-      final htmlText = await DioServices.instance.getDio.get(url);
-      final dom = html.Document.html(htmlText.data ?? '');
+      final htmlText = await DioServices.instance.getHtml(url);
+      final dom = htmlText.toHtmlDocument;
       final eles = dom.querySelectorAll('.item_1 .item');
       resultList.clear();
       for (var ele in eles) {
-        resultList.add(MovieModel.fromElement(ele));
+        resultList.add(Movie.fromElement(ele));
       }
       setState(() {
         isShowResult = true;
         isLoading = false;
       });
     } catch (e) {
+      debugPrint(e.toString());
       if (!mounted) return;
       setState(() {
         isLoading = false;
       });
-      showDialogMessage(context, e.toString());
     }
   }
 
@@ -76,11 +75,8 @@ class _SearchScreenState extends State<SearchScreen> {
       body: isLoading
           ? TLoader()
           : isShowResult
-              ? SearchResultList(list: resultList)
-              : SearchHome(
-                  yearList: yearList,
-                  genresList: genresList,
-                ),
+          ? SearchResultList(list: resultList)
+          : SearchHome(yearList: yearList, genresList: genresList),
     );
   }
 }

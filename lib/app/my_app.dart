@@ -1,4 +1,4 @@
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:flutter/material.dart';
 import 'screens/home/home_screen.dart';
 
@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: appConfigNotifier,
+      valueListenable: Setting.getAppConfigNotifier,
       builder: (context, config, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,

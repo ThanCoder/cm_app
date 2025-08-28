@@ -1,12 +1,12 @@
 import 'package:cm_app/app/components/movie_horizontal_list_view.dart';
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/app/services/cm_services.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
 class RelatedMovieListView extends StatelessWidget {
   String url;
-  void Function(MovieModel movie) onClicked;
+  void Function(Movie movie) onClicked;
   RelatedMovieListView({
     super.key,
     required this.url,

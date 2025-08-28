@@ -1,0 +1,1 @@
+enum MovieTypes { movie, series }

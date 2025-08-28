@@ -1,5 +1,5 @@
 import 'package:cm_app/app/models/movie_genres_model.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
+import 'package:cm_app/app/services/cm_services.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 

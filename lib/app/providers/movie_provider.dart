@@ -1,17 +1,16 @@
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/services/c_m_services.dart';
-import 'package:cm_app/app/services/dio_services.dart';
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/app/services/cm_services.dart';
+import 'package:cm_app/app/types/movie_types.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart';
 
 class MovieProvider with ChangeNotifier {
-  final List<MovieModel> _list = [];
-  final List<MovieModel> homeList = [];
+  final List<Movie> _list = [];
+  final List<Movie> homeList = [];
   bool _isLoading = false;
   String? _nextUrl;
 
-  List<MovieModel> get getList => _list;
+  List<Movie> get getList => _list;
   bool get isLoading => _isLoading;
   final String _name = 'movies';
   String? get getNextUrl => _nextUrl;
@@ -22,23 +21,24 @@ class MovieProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      await CMServices.getMovieList(
-        url: getNextUrl!,
-        onResult: (list, nextUrl) {
-          _nextUrl = nextUrl;
-          _list.addAll(list);
-          _isLoading = false;
-          notifyListeners();
-        },
-        onError: (err) {
-          _isLoading = false;
-          notifyListeners();
-          debugPrint(err);
-        },
+      final res = await CMServices.getMovieList(
+        url: '${Setting.getAppConfig.hostUrl}/$_name',
       );
+      if (res.error != null) {
+        debugPrint(res.error);
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      _nextUrl = res.nextUrl;
+      _list.addAll(res.list);
+      _isLoading = false;
+      notifyListeners();
+
       // await Future.delayed(Duration(seconds: 4));
-      // _isLoading = false;
-      // notifyListeners();
+      _isLoading = false;
+      notifyListeners();
     } catch (e) {
       _isLoading = false;
       notifyListeners();
@@ -46,7 +46,10 @@ class MovieProvider with ChangeNotifier {
     }
   }
 
-  Future<void> initList({bool isListClear = false}) async {
+  Future<void> initList({
+    required MovieTypes type,
+    bool isListClear = false,
+  }) async {
     try {
       _isLoading = true;
       if (isListClear) {
@@ -54,50 +57,21 @@ class MovieProvider with ChangeNotifier {
       }
       notifyListeners();
 
-      CMServices.getMovieList(
-        url: '${appConfigNotifier.value.hostUrl}/$_name',
-        onResult: (list, nextUrl) {
-          _nextUrl = nextUrl;
-          _list.addAll(list);
-          _isLoading = false;
-          notifyListeners();
-        },
-        onError: (err) {
-          _isLoading = false;
-          notifyListeners();
-          debugPrint(err);
-        },
+      final res = await CMServices.getMovieList(
+        url: '${Setting.getAppConfig.hostUrl}/$_name',
       );
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<void> initHomeList({bool isListClear = false}) async {
-    try {
-      if (isListClear) {
-        homeList.clear();
+      if (res.error != null) {
+        debugPrint(res.error);
+        _isLoading = false;
+        notifyListeners();
+        return;
       }
-      //list ကို မရှင်းဘူးဆိုရင် တားဆီးထားမယ်
-      if (!isListClear && homeList.isNotEmpty) return;
-      _isLoading = true;
-      notifyListeners();
-
-      final res = await DioServices.instance
-          .getForwardProxyHtml(appConfigNotifier.value.hostUrl);
-
-      final dom = Document.html(res);
-      final eles = dom.querySelectorAll('.item_1 .item');
-
-      for (var ele in eles) {
-        final movie = MovieModel.fromElement(ele);
-        homeList.add(movie);
-      }
+      // is success
+      _nextUrl = res.nextUrl;
+      _list.addAll(res.list);
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      notifyListeners();
       debugPrint(e.toString());
     }
   }

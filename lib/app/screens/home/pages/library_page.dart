@@ -1,10 +1,8 @@
-import 'package:cm_app/app/components/movie_see_all_list_view.dart';
-import 'package:cm_app/app/models/movie_model.dart';
-import 'package:cm_app/app/screens/bookmark_screen.dart';
-import 'package:cm_app/app/screens/content/movie_content_screen.dart';
+import 'package:cm_app/app/components/movie_grid_item.dart';
+import 'package:cm_app/app/models/movie.dart';
+import 'package:cm_app/app/routes_helper.dart';
 import 'package:cm_app/app/services/bookmark_services.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:t_widgets/t_widgets.dart';
 
 class LibraryPage extends StatefulWidget {
@@ -14,9 +12,59 @@ class LibraryPage extends StatefulWidget {
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
-class _LibraryPageState extends State<LibraryPage> {
-  
-  void _showMenu(MovieModel movie) {
+class _LibraryPageState extends State<LibraryPage> with BookmarkDBListener {
+  @override
+  void initState() {
+    BookmarkServices.instance.addListener(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    BookmarkServices.instance.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Library'), automaticallyImplyLeading: false),
+      body: CustomScrollView(slivers: [_getBookmarkWidge()]),
+    );
+  }
+
+  Widget _getBookmarkWidge() {
+    return FutureBuilder(
+      future: BookmarkServices.instance.getList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SliverToBoxAdapter(child: TLoader.random());
+        }
+        final list = snapshot.data ?? [];
+        return SliverGrid.builder(
+          itemCount: list.length,
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 160,
+            mainAxisExtent: 180,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
+          ),
+          itemBuilder: (context, index) {
+            final item = list[index];
+            return MovieGridItem(
+              movie: item,
+              onClicked: (movie) {
+                goMovieContent(context, movie: movie);
+              },
+              onMenuClicked: _showMenu,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showMenu(Movie movie) {
     showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
@@ -30,7 +78,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 Navigator.pop(context);
                 BookmarkServices.instance.remove(title: movie.title);
               },
-            )
+            ),
           ],
         ),
       ),
@@ -38,59 +86,7 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Library'),
-        automaticallyImplyLeading: false,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          spacing: 10,
-          children: [
-            //book mark
-            Consumer<BookmarkServices>(
-              builder: (context, value, child) {
-                return FutureBuilder(
-                  future: BookmarkServices.instance.getList(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return TLoader();
-                    }
-                    if (snapshot.hasData) {
-                      return MovieSeeAllListView(
-                        width: 150,
-                        height: 170,
-                        title: 'BookMark',
-                        list: snapshot.data!,
-                        onClicked: (movie) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  MovieContentScreen(movie: movie),
-                            ),
-                          );
-                        },
-                        onSeeAllClicked: (title, list) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BookmarkScreen(),
-                            ),
-                          );
-                        },
-                        onMenuClicked: _showMenu,
-                      );
-                    }
-                    return SizedBox.shrink();
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+  void onBookmarkDBChanged() {
+    setState(() {});
   }
 }

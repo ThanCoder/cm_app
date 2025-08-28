@@ -1,21 +1,21 @@
-import 'package:cm_app/app/components/movie_cache_image_widget.dart';
+
+import 'package:cm_app/app/models/movie.dart';
 import 'package:cm_app/app/screens/search/movie_year_select_all_view.dart';
 import 'package:cm_app/app/models/movie_genres_model.dart';
-import 'package:cm_app/app/models/movie_model.dart';
 import 'package:cm_app/app/models/movie_year_model.dart';
 import 'package:cm_app/app/screens/movie_result_screen.dart';
 import 'package:cm_app/app/services/dio_services.dart';
-import 'package:cm_app/my_libs/setting/app_notifier.dart';
-import 'package:cm_app/my_libs/setting/t_messenger.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/core/index.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as html;
 import 'package:t_widgets/t_widgets.dart';
 
 class MovieSearchDelegate extends SearchDelegate {
-  void Function(MovieModel movie) onClicked;
-  Map<String, List<MovieModel>> cache = {};
-  List<MovieModel> list = [];
+  void Function(Movie movie) onClicked;
+  Map<String, List<Movie>> cache = {};
+  List<Movie> list = [];
   List<MovieYearModel> yearList = [];
   List<MovieGenresModel> genresList = [];
   MovieSearchDelegate({required this.onClicked});
@@ -35,10 +35,10 @@ class MovieSearchDelegate extends SearchDelegate {
         onPressed: () {
           if (query.isEmpty) return;
           DioServices.removeCache(query);
-          TMessenger.instance.showMessage(context, 'Cleaned Cache...');
+          showTSnackBar(context, 'Cleaned Cache...');
         },
         icon: Icon(Icons.delete_forever),
-      )
+      ),
     ];
   }
 
@@ -107,13 +107,10 @@ class MovieSearchDelegate extends SearchDelegate {
     if (cache.containsKey(query)) {
       return _showMovieList(cache[query]!);
     }
-    final hostUrl = appConfigNotifier.value.hostUrl;
+    final hostUrl = Setting.getAppConfig.hostUrl;
     final url = DioServices.instance.getForwardProxyUrl('$hostUrl/?s=$query');
     return FutureBuilder(
-      future: DioServices.instance.getCacheHtml(
-        url: url,
-        cacheName: query,
-      ),
+      future: DioServices.instance.getCacheHtml(url: url, cacheName: query),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return TLoader();
@@ -126,7 +123,7 @@ class MovieSearchDelegate extends SearchDelegate {
           final dom = html.Document.html(snapshot.data!);
           final eles = dom.querySelectorAll('.item_1 .item');
           for (var ele in eles) {
-            list.add(MovieModel.fromElement(ele));
+            list.add(Movie.fromElement(ele));
           }
         }
 
@@ -139,7 +136,7 @@ class MovieSearchDelegate extends SearchDelegate {
     );
   }
 
-  Widget _showMovieList(List<MovieModel> list) {
+  Widget _showMovieList(List<Movie> list) {
     return Center(
       child: ListView.separated(
         separatorBuilder: (context, index) => Divider(),
@@ -156,7 +153,7 @@ class MovieSearchDelegate extends SearchDelegate {
                   SizedBox(
                     width: 110,
                     height: 130,
-                    child: MovieCacheImageWidget(movie: movie),
+                    child: TCacheImage(url: movie.url,cachePath: PathUtil.getCachePath(),)
                   ),
                   Expanded(
                     child: Column(
@@ -167,11 +164,7 @@ class MovieSearchDelegate extends SearchDelegate {
                         Row(
                           spacing: 2,
                           children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 20,
-                            ),
+                            Icon(Icons.star, color: Colors.amber, size: 20),
                             Text(movie.imdb),
                           ],
                         ),
@@ -182,9 +175,7 @@ class MovieSearchDelegate extends SearchDelegate {
                           collapseText: 'Read Less',
                           maxLines: 3,
                           linkColor: Colors.blue,
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(fontSize: 13),
                         ),
                       ],
                     ),

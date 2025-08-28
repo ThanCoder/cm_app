@@ -1,56 +1,30 @@
 import 'dart:io';
 
-import 'package:cm_app/my_libs/setting/constants.dart';
-import 'package:cm_app/my_libs/setting/path_util.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/core/path_util.dart';
+import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/io.dart';
 
 class DioServices {
   static final DioServices instance = DioServices._();
   DioServices._();
   factory DioServices() => instance;
 
-  final _dio = Dio();
+  final _dio = Dio(
+    BaseOptions(
+      sendTimeout: Duration(seconds: 8),
+      connectTimeout: Duration(seconds: 8),
+      receiveTimeout: Duration(seconds: 8),
+    ),
+  );
 
-  Future<String> getForwardProxyHtml(String url) async {
-    try {
-      final res = await getDio.get(getForwardProxyUrl(url));
-
-      return res.data.toString();
-    } catch (e) {
-      debugPrint('getForwardProxy: ${e.toString()}');
-      return '';
-    }
+  Future<String> getHtml(String url) async {
+    final res = await getDio().get(getForwardProxyUrl(url));
+    return res.data.toString();
   }
 
-  String getForwardProxyUrl(String targetUrl) {
-    return '$appForwardProxyHostUrl?url=$targetUrl';
-  }
-
-  Future<String> getBrowsesrProxyHtml(String url) async {
-    try {
-      final res = await getDio.get('$appBrowserProxyHostUrl?url=$url');
-      return res.data.toString();
-    } catch (e) {
-      debugPrint('getBrowsesrProxyHtml: ${e.toString()}');
-      return '';
-    }
-  }
-
-  Future<void> downloadCover({
-    required String url,
-    required String savePath,
-  }) async {
-    try {
-      if (url.isEmpty) return;
-
-      final cacheFile = File(savePath);
-      if (await cacheFile.exists()) return;
-      //မရှိရင်
-      await getDio.download(url, savePath);
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+  String getForwardProxyUrl(String url) {
+    return Setting.getForwardProxyUrl(url);
   }
 
   Future<String> getCacheHtml({
@@ -58,25 +32,21 @@ class DioServices {
     required String cacheName,
     bool isOverride = false,
   }) async {
-    var res = '';
-
-    if (url.isEmpty) return res;
+    if (url.isEmpty) return '';
     final savePath = '${PathUtil.getCachePath()}/$cacheName.html';
     final cacheFile = File(savePath);
     if (!isOverride && await cacheFile.exists()) {
-      res = await cacheFile.readAsString();
-      return res;
+      return await cacheFile.readAsString();
     }
     //မရှိရင်
-    final result = await getDio.get(url);
-    await cacheFile.writeAsString(result.data.toString());
-    res = result.data.toString();
-    return res;
+    final html = await getHtml(url);
+    await cacheFile.writeAsString(html);
+    return html;
   }
 
   Future<int?> getContentSize(String url) async {
     try {
-      var response = await getDio.head(url);
+      var response = await getDio().head(url);
       return int.tryParse(response.headers.value('content-length') ?? '0');
     } catch (e) {
       return null;
@@ -90,21 +60,24 @@ class DioServices {
     }
   }
 
-  Dio get getDio {
-    // if (appConfigNotifier.value.isUseProxyServer) {
-    //   final proxyAddress = appConfigNotifier.value.proxyAddress;
-    //   final proxyPort = appConfigNotifier.value.proxyPort;
-    //   _dio.httpClientAdapter = IOHttpClientAdapter(
-    //     createHttpClient: () {
-    //       final client = HttpClient();
-    //       client.findProxy = (uri) {
-    //         // return "PROXY 192.168.191.253:8081";
-    //         return "PROXY $proxyAddress:$proxyPort";
-    //       };
-    //       return client;
-    //     },
-    //   );
-    // }
+  Dio getDio() {
+    if (Setting.getAppConfig.isUseProxy) {
+      _dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
+          // Config the client.
+          client.findProxy = (uri) {
+            // Forward all request to proxy "localhost:8888".
+            // Be aware, the proxy should went through you running device,
+            // not the host platform.
+            return 'PROXY ${Setting.getAppConfig.proxyUrl}';
+          };
+          // You can also create a new HttpClient for Dio instead of returning,
+          // but a client must being returned here.
+          return client;
+        },
+      );
+    }
     return _dio;
   }
 }
