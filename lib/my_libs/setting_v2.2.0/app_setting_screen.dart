@@ -225,7 +225,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
       setState(() {
         isChanged = false;
       });
-      Setting.instance.showMessage(context, 'Config Saved');
+      Setting.instance.onSettingSaved?.call(context, 'Config Saved');
       // custome path ပြောင်လဲလား စစ်ဆေးမယ်
       if (oldPath != customPathTextController.text) {
         // app refresh

@@ -3,6 +3,7 @@ import 'package:cm_app/app/services/dio_services.dart';
 import 'package:flutter/material.dart';
 import 'package:t_html_parser/t_html_extensions.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_pkg/than_pkg.dart';
 
 typedef OnFetchedCallback = void Function(String htmlContent);
 
@@ -30,8 +31,15 @@ class _HtmlFetcherDialogState extends State<HtmlFetcherDialog> {
     WidgetsBinding.instance.addPostFrameCallback((_) => init());
   }
 
+  String? errorText;
+  bool isLoading = true;
+
   Future<void> init() async {
     try {
+      final isInternetConnected = await ThanPkg.platform.isInternetConnected();
+      if (!isInternetConnected) {
+        throw Exception('Please Turn On Internet!.\nInternet ဖွင့်ပေးပါ!');
+      }
       var html = '';
       if (widget.isUseCacheHtml) {
         html = await DioServices.instance.getCacheHtml(
@@ -62,9 +70,12 @@ class _HtmlFetcherDialogState extends State<HtmlFetcherDialog> {
         widget.onSeriesFetched?.call(html);
       }
     } catch (e) {
+      await Future.delayed(Duration(milliseconds: 1500));
       if (!mounted) return;
-      showTMessageDialogError(context, e.toString());
-      Navigator.pop(context);
+      setState(() {
+        errorText = e.toString();
+        isLoading = false;
+      });
     }
   }
 
@@ -75,8 +86,13 @@ class _HtmlFetcherDialogState extends State<HtmlFetcherDialog> {
       content: Column(
         spacing: 5,
         children: [
-          SizedBox(height: 80, width: 80, child: TLoader.random()),
-          Text('ခဏစောင့်ဆိုင်းပေးပါ....'),
+          !isLoading
+              ? SizedBox.shrink()
+              : SizedBox(height: 80, width: 80, child: TLoader.random()),
+          Text(
+            errorText != null ? errorText! : 'ခဏစောင့်ဆိုင်းပေးပါ....',
+            style: TextStyle(color: errorText != null ? Colors.red : null),
+          ),
         ],
       ),
       actions: [

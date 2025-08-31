@@ -12,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
-import '../../../constants.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -70,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(appTitle),
+        title: Text(Setting.appVersionLabel),
         actions: [
           IconButton(onPressed: _search, icon: Icon(Icons.search)),
           Platform.isLinux
