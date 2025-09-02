@@ -1,3 +1,4 @@
+import 'package:cm_app/my_libs/desktop_exe/desktop_exe.dart';
 import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,12 @@ void main() async {
     onSettingSaved: (context, message) {
       showTSnackBar(context, message);
     },
+  );
+
+  // gen desktop icon
+  await DesktopExe.instance.exportNotExists(
+    name: 'CM App',
+    assetsIconPath: 'assets/logo.png',
   );
 
   runApp(const MyApp());

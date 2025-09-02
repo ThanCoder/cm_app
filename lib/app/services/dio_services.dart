@@ -14,7 +14,7 @@ class DioServices {
     BaseOptions(
       sendTimeout: Duration(seconds: 8),
       connectTimeout: Duration(seconds: 8),
-      receiveTimeout: Duration(seconds: 8),
+      receiveTimeout: Duration(seconds: 15),
     ),
   );
 
@@ -42,6 +42,12 @@ class DioServices {
     final html = await getHtml(url);
     await cacheFile.writeAsString(html);
     return html;
+  }
+
+  bool isCacheHtmlExists({required String cacheName}) {
+    final savePath = '${PathUtil.getCachePath()}/$cacheName.html';
+    final cacheFile = File(savePath);
+    return cacheFile.existsSync();
   }
 
   Future<int?> getContentSize(String url) async {

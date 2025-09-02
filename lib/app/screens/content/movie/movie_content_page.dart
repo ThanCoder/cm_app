@@ -38,6 +38,7 @@ class _MovieContentPageState extends State<MovieContentPage> {
   List<String> contentImagesUrls = [];
   List<String> trailerList = [];
   List<DownloadLink> downloadList = [];
+  int pageIndex = 0;
 
   Future<void> init() async {
     contentImagesUrls.clear();
@@ -67,7 +68,6 @@ class _MovieContentPageState extends State<MovieContentPage> {
     _fetchDownloadLink();
   }
 
-  int pageIndex = 0;
   @override
   Widget build(BuildContext context) {
     return TScaffold(
@@ -82,10 +82,11 @@ class _MovieContentPageState extends State<MovieContentPage> {
         ],
       ),
       body: DefaultTabController(
+        animationDuration: Duration(milliseconds: 5),
         initialIndex: pageIndex,
-        length: 4,
+        length: _getPages().length,
         child: Scaffold(
-          body: _getPageWidget(),
+          body: _getPages()[pageIndex].$1,
           bottomNavigationBar: TabBar(
             isScrollable: true,
             onTap: (value) {
@@ -93,30 +94,38 @@ class _MovieContentPageState extends State<MovieContentPage> {
                 pageIndex = value;
               });
             },
-            tabs: [
-              Tab(text: 'home'),
-              Tab(text: 'Cover Images'),
-              Tab(text: 'Download Link'),
-              Tab(text: 'Trailer'),
-            ],
+            tabs: _getPages().map((e) => e.$2).toList(),
+            // [
+            //   Tab(text: 'home'),
+            //   Tab(text: 'Cover Images'),
+            //   Tab(text: 'Download Link'),
+            //   Tab(text: 'Trailer'),
+            // ]
           ),
         ),
       ),
     );
   }
 
-  Widget _getPageWidget() {
-    if (pageIndex == 1) {
-      return ContentCoverPage(coverUrls: contentImagesUrls);
+  List<(Widget, Tab)> _getPages() {
+    final list = [
+      (_getHomeWidget(), Tab(text: 'Home')),
+      (DownloadTabPage(downloadList: downloadList), Tab(text: 'Download Link')),
+    ];
+    if (trailerList.isNotEmpty) {
+      list.add((
+        TrailerTabPage(trailerList: trailerList),
+        Tab(text: 'Trailer'),
+      ));
     }
-    if (pageIndex == 2) {
-      return DownloadTabPage(downloadList: downloadList);
-    }
-    if (pageIndex == 3) {
-      return TrailerTabPage(trailerList: trailerList);
+    if (contentImagesUrls.isNotEmpty) {
+      list.add((
+        ContentCoverPage(coverUrls: contentImagesUrls),
+        Tab(text: 'Cover Images'),
+      ));
     }
 
-    return _getHomeWidget();
+    return list;
   }
 
   Widget _getHomeWidget() {

@@ -8,7 +8,7 @@ import 'package:cm_app/app/services/dio_services.dart';
 import 'package:cm_app/my_libs/setting_v2.2.0/core/path_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:t_html_parser/t_html_parser.dart';
+import 'package:t_html_parser/t_html_parser.dart' hide Text;
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 

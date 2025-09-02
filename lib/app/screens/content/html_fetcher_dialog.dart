@@ -36,15 +36,21 @@ class _HtmlFetcherDialogState extends State<HtmlFetcherDialog> {
 
   Future<void> init() async {
     try {
+      final cacheName = widget.movie.title.replaceAll('/', '--');
+
       final isInternetConnected = await ThanPkg.platform.isInternetConnected();
-      if (!isInternetConnected) {
+      if (!isInternetConnected &&
+          !DioServices.instance.isCacheHtmlExists(cacheName: cacheName)) {
+        throw Exception('Please Turn On Internet!.\nInternet ဖွင့်ပေးပါ!');
+      }
+      if (!isInternetConnected && !widget.isUseCacheHtml) {
         throw Exception('Please Turn On Internet!.\nInternet ဖွင့်ပေးပါ!');
       }
       var html = '';
       if (widget.isUseCacheHtml) {
         html = await DioServices.instance.getCacheHtml(
           url: widget.movie.url,
-          cacheName: widget.movie.title.replaceAll('/', '--'),
+          cacheName: cacheName,
         );
       } else {
         html = await DioServices.instance.getHtml(widget.movie.url);
@@ -70,7 +76,7 @@ class _HtmlFetcherDialogState extends State<HtmlFetcherDialog> {
         widget.onSeriesFetched?.call(html);
       }
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 1500));
+      // await Future.delayed(Duration(milliseconds: 1500));
       if (!mounted) return;
       setState(() {
         errorText = e.toString();
