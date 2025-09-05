@@ -35,7 +35,7 @@ class AppConfig {
     String forwardProxyUrl = 'https://express-forward-proxy2.vercel.app',
     String browserForwardProxyUrl = 'https://node-browser.vercel.app',
     String proxyUrl = '',
-    String hostUrl = 'https://www.channelmyanmar.to',
+    String hostUrl = 'https://www.entzip.com',
     bool isUseCustomPath = false,
     bool isUseForwardProxy = true,
     bool isUseProxy = false,

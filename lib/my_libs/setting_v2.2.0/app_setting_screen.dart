@@ -31,6 +31,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
   final forwardProxyController = TextEditingController();
   final customServerPathController = TextEditingController();
   final customProxyController = TextEditingController();
+  final hostUrlController = TextEditingController();
 
   void init() async {
     customPathTextController.text =
@@ -41,6 +42,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
       customPathTextController.text = config.customPath;
     }
     customProxyController.text = config.proxyUrl;
+    hostUrlController.text = config.hostUrl;
   }
 
   @override
@@ -59,6 +61,8 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
               ThemeComponent(),
               //custom path
               _getCustomPathWidget(),
+              // host url
+              _getHostUrlWidget(),
               // custom
               _getCustomProxyWidget(),
               //proxy server
@@ -117,6 +121,27 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
               )
             : SizedBox.shrink(),
       ],
+    );
+  }
+
+  Widget _getHostUrlWidget() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TTextField(
+          label: Text('Host Url'),
+          controller: hostUrlController,
+          maxLines: 1,
+          isSelectedAll: true,
+          onChanged: (value) {
+            if (!isChanged) {
+              isChanged = true;
+            }
+            config.hostUrl = value;
+            setState(() {});
+          },
+        ),
+      ),
     );
   }
 

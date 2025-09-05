@@ -11,6 +11,7 @@ class CMHomePageServices {
 
   static Future<List<Movie>> getHomeMovies({bool isReset = false}) async {
     try {
+      print(Setting.getAppConfig.hostUrl);
       if (!isReset && _cacheList.isNotEmpty) {
         return _cacheList;
       }
