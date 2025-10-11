@@ -43,4 +43,19 @@ class MovieDetail {
       downloadList: dList.map((map) => MovieDownloadLink.fromMap(map)).toList(),
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'slug': slug,
+      'year': year,
+      'poster': poster,
+      'overview': overview,
+      'original_title': originalTitle,
+      'rating': rating,
+      'runtime': runtime,
+      'isAdult': isAdult,
+      'movie_download_links': downloadList.map((e) => e.toMap()).toList(),
+    };
+  }
 }

@@ -26,6 +26,14 @@ class MovieDownloadLink {
       resolution: map.getString(['resolution']),
     );
   }
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'url': url,
+    'server_name': serverName,
+    'size': size,
+    'quality': quality,
+    'resolution': resolution,
+  };
 
   @override
   String toString() {

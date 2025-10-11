@@ -6,6 +6,8 @@ import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 
 class MovieServices {
   static final String apiMovieUrl = 'https://www.homietv.com/api/movies';
+  static final String api1HostName = 'homietv';
+  static final String api2HostName = 'ysflix';
   static final String apiTvShowUrl = 'https://www.homietv.com/api/tv-shows';
 
   static Future<List<Movie>> getMovies(String url) async {

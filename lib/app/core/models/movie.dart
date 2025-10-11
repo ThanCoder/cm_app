@@ -49,6 +49,7 @@ class Movie {
 
     return Movie(
       id: map.getString(['id']),
+      url: url,
       title: map.getString(['title']),
       slug: map.getString(['slug']),
       year: map.getString(['year']),
@@ -57,9 +58,21 @@ class Movie {
       categories: cat.map((e) => Categories.fromMap(e)).toList(),
       type: movieType,
       isAdult: isAdultInt != 0,
-      url: url,
     );
   }
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'url': url,
+    'title': title,
+    'slug': slug,
+    'year': year,
+    'poster': poster,
+    'rating': rating,
+    'categories': categories.map((e) => e.toMap()).toList(),
+    'type': type.name,
+    'is_adult': isAdult ? 1 : 0,
+  };
 
   @override
   String toString() {

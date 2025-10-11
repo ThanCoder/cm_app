@@ -2,6 +2,9 @@ import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
+import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
+import 'package:cm_app/app/ui/search_screen.dart';
+import 'package:cm_app/app/ui/see_all_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
@@ -47,6 +50,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // print(movieList);
     return Scaffold(
+      drawer: HomeDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(5.0),
         child: RefreshIndicator.adaptive(
@@ -54,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           child: CustomScrollView(slivers: _getViews()),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: init),
+      // floatingActionButton: FloatingActionButton(onPressed: init),
     );
   }
 
@@ -67,23 +71,48 @@ class _HomePageState extends State<HomePage> {
     }
     return [
       _getAppbar(),
+      // search
+      _getSearchBar(),
       // movie grid
       ..._getMovieGrid(
         list: movieList,
         title: 'Movies',
         type: MovieTypes.movie,
+        onSeeAllPage: _goSeeAllScreen,
       ),
       SliverToBoxAdapter(child: SizedBox(height: 15)),
       ..._getMovieGrid(
         list: tvList,
         title: 'TV Shows',
         type: MovieTypes.tvShow,
+        onSeeAllPage: _goSeeAllScreen,
       ),
     ];
   }
 
   Widget _getAppbar() {
     return SliverAppBar(title: Text('CM Movie'));
+  }
+
+  Widget _getSearchBar() {
+    return SliverAppBar(
+      title: GestureDetector(
+        onTap: _goSearchScreen,
+        child: Card(
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Search...'),
+              ),
+              Spacer(),
+              IconButton(onPressed: _goSearchScreen, icon: Icon(Icons.search)),
+            ],
+          ),
+        ),
+      ),
+      automaticallyImplyLeading: false,
+    );
   }
 
   List<Widget> _getMovieGrid({
@@ -147,5 +176,13 @@ class _HomePageState extends State<HomePage> {
 
   void _goMovieDetailScreen(Movie movie) {
     goMovieDetailScreen(context, movie: movie);
+  }
+
+  void _goSeeAllScreen(MovieTypes type) {
+    goRoute(context, builder: (context) => SeeAllScreen(type: type));
+  }
+
+  void _goSearchScreen() {
+    goRoute(context, builder: (context) => SearchScreen());
   }
 }
