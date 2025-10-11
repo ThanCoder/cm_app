@@ -1,0 +1,143 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:than_pkg/than_pkg.dart';
+
+import 'core/theme_services.dart';
+import 'setting.dart';
+
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+class AppConfig {
+  String customPath;
+  String forwardProxyUrl;
+  String browserForwardProxyUrl;
+  String proxyUrl;
+  String hostUrl;
+  bool isUseCustomPath;
+  bool isUseForwardProxy;
+  bool isUseProxy;
+  bool isDarkTheme;
+  ThemeModes themeMode;
+  AppConfig({
+    required this.customPath,
+    required this.forwardProxyUrl,
+    required this.browserForwardProxyUrl,
+    required this.proxyUrl,
+    required this.hostUrl,
+    required this.isUseCustomPath,
+    required this.isUseForwardProxy,
+    required this.isUseProxy,
+    required this.isDarkTheme,
+    required this.themeMode,
+  });
+
+  factory AppConfig.create({
+    String customPath = '',
+    String forwardProxyUrl = 'https://express-forward-proxy.vercel.app',
+    String browserForwardProxyUrl = '',
+    String proxyUrl = '',
+    String hostUrl = '',
+    bool isUseCustomPath = false,
+    bool isUseForwardProxy = true,
+    bool isUseProxy = false,
+    bool isDarkTheme = false,
+    ThemeModes themeMode = ThemeModes.light,
+  }) {
+    return AppConfig(
+      customPath: customPath,
+      forwardProxyUrl: forwardProxyUrl,
+      browserForwardProxyUrl: browserForwardProxyUrl,
+      proxyUrl: proxyUrl,
+      hostUrl: hostUrl,
+      isUseCustomPath: isUseCustomPath,
+      isUseForwardProxy: isUseForwardProxy,
+      isUseProxy: isUseProxy,
+      isDarkTheme: isDarkTheme,
+      themeMode: themeMode,
+    );
+  }
+
+  AppConfig copyWith({
+    String? customPath,
+    String? forwardProxyUrl,
+    String? browserForwardProxyUrl,
+    String? proxyUrl,
+    String? hostUrl,
+    bool? isUseCustomPath,
+    bool? isUseForwardProxy,
+    bool? isUseProxy,
+    bool? isDarkTheme,
+    ThemeModes? themeMode,
+  }) {
+    return AppConfig(
+      customPath: customPath ?? this.customPath,
+      forwardProxyUrl: forwardProxyUrl ?? this.forwardProxyUrl,
+      browserForwardProxyUrl:
+          browserForwardProxyUrl ?? this.browserForwardProxyUrl,
+      proxyUrl: proxyUrl ?? this.proxyUrl,
+      hostUrl: hostUrl ?? this.hostUrl,
+      isUseCustomPath: isUseCustomPath ?? this.isUseCustomPath,
+      isUseForwardProxy: isUseForwardProxy ?? this.isUseForwardProxy,
+      isUseProxy: isUseProxy ?? this.isUseProxy,
+      isDarkTheme: isDarkTheme ?? this.isDarkTheme,
+      themeMode: themeMode ?? this.themeMode,
+    );
+  }
+
+  // map
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'customPath': customPath,
+      'forwardProxyUrl': forwardProxyUrl,
+      'browserForwardProxyUrl': browserForwardProxyUrl,
+      'proxyUrl': proxyUrl,
+      'hostUrl': hostUrl,
+      'isUseCustomPath': isUseCustomPath,
+      'isUseForwardProxy': isUseForwardProxy,
+      'isUseProxy': isUseProxy,
+      'isDarkTheme': isDarkTheme,
+      'themeMode': themeMode.name,
+    };
+  }
+
+  factory AppConfig.fromMap(Map<String, dynamic> map) {
+    final themeModeStr = map.getString(['themeMode']);
+    return AppConfig(
+      customPath: map.getString(['customPath']),
+      forwardProxyUrl: map.getString(['forwardProxyUrl']),
+      browserForwardProxyUrl: map.getString(['browserForwardProxyUrl']),
+      proxyUrl: map.getString(['proxyUrl']),
+      hostUrl: map.getString(['hostUrl']),
+      isUseCustomPath: map.getBool(['isUseCustomPath']),
+      isUseForwardProxy: map.getBool(['isUseForwardProxy']),
+      isUseProxy: map.getBool(['isUseProxy']),
+      isDarkTheme: map.getBool(['isDarkTheme']),
+      themeMode: ThemeModes.getName(themeModeStr),
+    );
+  }
+
+  // void
+  Future<void> save() async {
+    try {
+      final file = File('${Setting.appConfigPath}/$configName');
+      final contents = JsonEncoder.withIndent(' ').convert(toMap());
+      await file.writeAsString(contents);
+      // appConfigNotifier.value = this;
+      Setting.instance.initSetConfigFile();
+    } catch (e) {
+      Setting.showDebugLog(e.toString(), tag: 'AppConfig:save');
+    }
+  }
+
+  // get config
+  static Future<AppConfig> getConfig() async {
+    final file = File('${Setting.appConfigPath}/$configName');
+    if (file.existsSync()) {
+      final source = await file.readAsString();
+      return AppConfig.fromMap(jsonDecode(source));
+    }
+    return AppConfig.create();
+  }
+
+  static String configName = 'main.config.json';
+}

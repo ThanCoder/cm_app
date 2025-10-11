@@ -1,7 +1,7 @@
 name: cm_app
 description: "Channel Myanmar WebSoup"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.5.1
+version: 2.0.0
 repository: https://github.com/ThanCoder/cm_app
 
 environment:
@@ -13,12 +13,12 @@ dependencies:
   expandable_text: ^2.3.0
   flutter:
     sdk: flutter
-  provider: ^6.1.2
-  than_pkg: ^3.5.1
-  t_html_parser: ^1.0.0
-  t_widgets: ^1.1.2
+  provider: ^6.1.5+1
+  than_pkg: ^4.5.3
+  t_widgets: ^1.5.1
   flutter_html: ^3.0.0
-  html: ^0.15.6
+  t_client: ^0.1.6
+  flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
   change_app_package_name: ^1.5.0
@@ -39,6 +39,8 @@ flutter:
   assets:
     - assets/
     - assets/test/
+    - CHANGELOG.md
+    - README.md
   # example:
   # fonts:
   #   - family: Schyler

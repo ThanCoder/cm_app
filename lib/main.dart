@@ -1,17 +1,15 @@
-import 'package:cm_app/my_libs/desktop_exe/desktop_exe.dart';
-import 'package:cm_app/my_libs/setting_v2.2.0/setting.dart';
-import 'package:dio/dio.dart';
+import 'package:cm_app/app/my_app.dart';
+import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
+import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
-
-import 'app/my_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThanPkg.instance.init();
 
-  final dio = Dio();
+  final client = TClient();
 
   await TWidgets.instance.init(
     defaultImageAssetsPath: 'assets/logo.png',
@@ -19,24 +17,18 @@ void main() async {
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
     onDownloadImage: (url, savePath) async {
-      await dio.download(url, savePath);
+      await client.download(url, savePath: savePath);
     },
   );
 
   //init config
-  await Setting.instance.initSetting(
-    appName: 'cm_app',
-    appVersionLabel: 'CM App Pre',
-    onSettingSaved: (context, message) {
-      showTSnackBar(context, message);
-    },
-  );
+  await Setting.instance.initSetting(appName: 'cm_app');
 
   // gen desktop icon
-  await DesktopExe.instance.exportNotExists(
-    name: 'CM App',
-    assetsIconPath: 'assets/logo.png',
-  );
+  // await DesktopExe.instance.exportNotExists(
+  //   name: 'CM App',
+  //   assetsIconPath: 'assets/logo.png',
+  // );
 
   runApp(const MyApp());
 }

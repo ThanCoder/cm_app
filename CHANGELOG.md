@@ -1,44 +1,59 @@
+# 2.0.0
+
+- Movie Site အသစ်ထည့်ခြင်း
+- Core Code တစ်ခုလုံးပြင်ဆင်ခြင်း
+
 ## 1.2.5
-+ Changed Search UI
-- some error fixed
+
+- Changed Search UI
+
+* some error fixed
 
 ## 1.1.5
 
-+ desktop အတွက် ပြင်ဆင်ခြင်း
-- some error fixed
+- desktop အတွက် ပြင်ဆင်ခြင်း
+
+* some error fixed
 
 ## 1.1.4
 
 ## Changed
-+ ui ပြောင်းလဲခြင်း
 
+- ui ပြောင်းလဲခြင်း
 
 ## 1.0.4
 
 ## Added
+
 - search movie bar -> add clear cache
 
 ## Fixed
+
 - အချို့ error ပြင်ထားပါတယ်
 
 ## 1.0.3
 
 ## Added
+
 - app version system ထည့်သွင်းခြင်း
 
 ## Fixed
+
 - movie title `/` error fixed.
 
 ## 1.0.2
 
 ## Fixed
+
 - movie list 2 ထပ်ခြင်းကို ဖြေရှင်းပြီး
 
 ## 1.0.1
 
 ## Added
+
 - movie,series trailer link ထည့်သွင်းခြင်း
 
 ## Fixed
+
 - movie ထပ်နေခြင်းကို ပြင်ဆင်ခြင်း
 - random,related list တွေကို listview.builder ပြောင်းလဲခြင်း
