@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
       drawer: HomeDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: RefreshIndicator.adaptive(
+        child: RefreshIndicator.noSpinner(
           onRefresh: init,
           child: CustomScrollView(slivers: _getViews()),
         ),

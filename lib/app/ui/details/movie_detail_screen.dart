@@ -99,7 +99,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           Navigator.pop(context);
         },
         icon: Container(
-          padding: EdgeInsets.only(left: 5, bottom: 2, top: 2),
+          padding: EdgeInsets.only(left: 6, bottom: 2, top: 2),
           decoration: BoxDecoration(
             color: Colors.black.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(4),
@@ -162,32 +162,42 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Widget _getDetail() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 4,
-          children: [
-            Text('Original Title: `${detail!.originalTitle}`'),
-            Text('Runtime: ${detail!.runtime}'),
-            Text('Year: ${widget.movie.year}'),
-            Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
-            Divider(),
-            Text(detail!.overview, style: TextStyle(fontSize: 16)),
-          ],
+    return RefreshIndicator.noSpinner(
+      onRefresh: () async {
+        init(isUsedCached: false);
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
+            children: [
+              Text('Original Title: `${detail!.originalTitle}`'),
+              Text('Runtime: ${detail!.runtime}'),
+              Text('Year: ${widget.movie.year}'),
+              Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
+              Divider(),
+              Text(detail!.overview, style: TextStyle(fontSize: 16)),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _getDownloadWidget() {
-    return ListView.builder(
-      shrinkWrap: true,
-      primary: false, // controller reuse မဖြစ်စေဖို့
-      itemCount: detail!.downloadList.length,
-      itemBuilder: (context, index) =>
-          _getDownloadListItem(detail!.downloadList[index]),
+    return RefreshIndicator.noSpinner(
+      onRefresh: () async {
+        init(isUsedCached: false);
+      },
+      child: ListView.builder(
+        // shrinkWrap: true,
+        // primary: false, // controller reuse မဖြစ်စေဖို့
+        itemCount: detail!.downloadList.length,
+        itemBuilder: (context, index) =>
+            _getDownloadListItem(detail!.downloadList[index]),
+      ),
     );
   }
 

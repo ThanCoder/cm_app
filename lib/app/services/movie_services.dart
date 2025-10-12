@@ -9,6 +9,8 @@ class MovieServices {
   static final String api1HostName = 'homietv';
   static final String api2HostName = 'ysflix';
   static final String apiTvShowUrl = 'https://www.homietv.com/api/tv-shows';
+  static final String apiSearchUrl =
+      'https://www.homietv.com/api/search?keyword';
 
   static Future<List<Movie>> getMovies(String url) async {
     List<Movie> list = [];

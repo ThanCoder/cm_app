@@ -27,9 +27,16 @@ class _MovieBookmarkButtonState extends State<MovieBookmarkButton> {
             }
             setState(() {});
           },
-          icon: Icon(
-            color: isExists ? Colors.red : Colors.teal,
-            isExists ? Icons.bookmark_remove : Icons.bookmark_add,
+          icon: Container(
+            padding: EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: Icon(
+              color: isExists ? Colors.red : Colors.white,
+              isExists ? Icons.bookmark_remove : Icons.bookmark_add,
+            ),
           ),
         );
       },
