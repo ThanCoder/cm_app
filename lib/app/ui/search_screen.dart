@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
@@ -37,13 +38,13 @@ class _SearchScreenState extends State<SearchScreen> {
           autofocus: true,
           onSubmitted: _onSearch,
           onChanged: (text) {
-            if (isSearching) return;
+            // if (isSearching) return;
 
             if (_timer?.isActive ?? false) {
               _timer?.cancel();
             }
 
-            Timer(Duration(milliseconds: 1200), () => _onSearch(text));
+            Timer(Duration(milliseconds: 1800), () => _onSearch(text));
           },
         ),
       ),
@@ -82,7 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         isSearching = true;
       });
-      final url = '${MovieServices.apiSearchUrl}=$text';
+      final url = '$apiSearchUrl=$text';
       list = await MovieServices.getMovies(url);
 
       if (!mounted) return;

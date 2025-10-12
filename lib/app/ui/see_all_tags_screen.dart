@@ -1,25 +1,25 @@
-import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/internal.dart';
 import 'package:t_widgets/t_widgets.dart';
 
-class SeeAllScreen extends StatefulWidget {
-  final MovieTypes type;
-  const SeeAllScreen({super.key, required this.type});
+class SeeAllTagsScreen extends StatefulWidget {
+  final Widget title;
+  final String url;
+  const SeeAllTagsScreen({super.key, required this.title, required this.url});
 
   @override
-  State<SeeAllScreen> createState() => _SeeAllScreenState();
+  State<SeeAllTagsScreen> createState() => _SeeAllTagsScreenState();
 }
 
-class _SeeAllScreenState extends State<SeeAllScreen> {
+class _SeeAllTagsScreenState extends State<SeeAllTagsScreen> {
   final scrollController = ScrollController();
 
   @override
   void initState() {
+    hostUrl = widget.url;
     scrollController.addListener(_onScroll);
     super.initState();
     init();
@@ -43,12 +43,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
       setState(() {
         isLoading = true;
       });
-      String url = apiMovieUrl;
-      if (widget.type == MovieTypes.tvShow) {
-        url = '$apiTvShowUrl/all';
-      }
-      list = await MovieServices.getMovies(url);
-      hostUrl = url;
+      list = await MovieServices.getMovies(widget.url);
 
       if (!mounted) return;
       isLoading = false;
@@ -92,7 +87,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   Widget _getAppbar() {
     return SliverAppBar(
-      title: Text(widget.type.name.toCaptalize()),
+      title: widget.title,
       floating: true,
       // pinned: true,
       snap: true,

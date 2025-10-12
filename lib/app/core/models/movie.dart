@@ -1,4 +1,4 @@
-import 'package:cm_app/app/services/movie_services.dart';
+import 'package:cm_app/app/constants.dart';
 import 'package:than_pkg/services/t_map.dart';
 
 enum MovieTypes {
@@ -42,9 +42,9 @@ class Movie {
     final movieType = MovieTypes.getName(typeStr);
     final isAdultInt = map.getInt(['is_adult']);
     List<dynamic> cat = map['categories'] ?? [];
-    String url = '${MovieServices.apiMovieUrl}/${map.getString(['slug'])}';
+    String url = '$apiMovieUrl/${map.getString(['slug'])}';
     if (movieType == MovieTypes.tvShow) {
-      url = '${MovieServices.apiTvShowUrl}/${map.getString(['slug'])}';
+      url = '$apiTvShowUrl/${map.getString(['slug'])}';
     }
 
     return Movie(

@@ -1,8 +1,10 @@
+import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
+import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/search_screen.dart';
 import 'package:cm_app/app/ui/see_all_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,17 +24,18 @@ class _HomePageState extends State<HomePage> {
     init();
   }
 
-  List<Movie> movieList = [];
-  List<Movie> tvList = [];
+  static List<Movie> movieList = [];
+  static List<Movie> tvList = [];
   bool isLoading = false;
 
-  Future<void> init() async {
+  Future<void> init({bool isUsedCache = true}) async {
     try {
+      if (isUsedCache && movieList.isNotEmpty) return;
       setState(() {
         isLoading = true;
       });
-      movieList = await MovieServices.getMovies(MovieServices.apiMovieUrl);
-      tvList = await MovieServices.getMovies(MovieServices.apiTvShowUrl);
+      movieList = await MovieServices.getMovies(apiMovieUrl);
+      tvList = await MovieServices.getMovies(apiTvShowUrl);
       if (!mounted) return;
       setState(() {
         isLoading = false;
@@ -53,7 +56,7 @@ class _HomePageState extends State<HomePage> {
       drawer: HomeDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: RefreshIndicator.noSpinner(
+        child: RefreshIndicator.adaptive(
           onRefresh: init,
           child: CustomScrollView(slivers: _getViews()),
         ),
@@ -73,6 +76,29 @@ class _HomePageState extends State<HomePage> {
       _getAppbar(),
       // search
       _getSearchBar(),
+      // trending
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: 180,
+          child: TrendingMovieComponent(
+            title: 'Trending Movies',
+            url: apiMovieTrendingUrl,
+            onClicked: _goMovieDetailScreen,
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: 180,
+          child: TrendingMovieComponent(
+            title: 'Trending TV Shows',
+            url: apiTvShowTrendingUrl,
+            onClicked: _goMovieDetailScreen,
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
       // movie grid
       ..._getMovieGrid(
         list: movieList,
@@ -137,12 +163,15 @@ class _HomePageState extends State<HomePage> {
               ),
               GestureDetector(
                 onTap: () => onSeeAllPage?.call(type),
-                child: Text(
-                  'More >',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Text(
+                    'More >',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
               ),
