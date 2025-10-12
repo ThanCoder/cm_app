@@ -18,6 +18,10 @@ class MovieGridItem extends StatelessWidget {
           children: [
             Positioned.fill(
               child: TImage(source: Setting.getForwardProxyUrl(movie.poster)),
+              // child: TCacheImage(
+              //   url: Setting.getForwardProxyUrl(movie.poster),
+              //   cachePath: PathUtil.getCachePath(),
+              // ),
             ),
             // imdb
             Positioned(left: 0, child: _getImdb(movie)),

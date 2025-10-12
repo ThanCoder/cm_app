@@ -24,7 +24,7 @@ abstract class JsonDatabase<T> extends TDatabase<T> {
 
   @override
   Future<void> add(T value) async {
-    _list.add(value);
+    _list.insert(0, value);
     notify(TDatabaseListenerTypes.add, null);
     await save(_list);
   }

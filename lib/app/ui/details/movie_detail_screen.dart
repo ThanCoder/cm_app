@@ -91,8 +91,24 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
       expandedHeight: size.height * 0.6,
-      flexibleSpace: TImage(
-        source: Setting.getForwardProxyUrl(widget.movie.poster),
+      flexibleSpace: Stack(
+        fit: StackFit.expand,
+        children: [
+          TImage(source: Setting.getForwardProxyUrl(widget.movie.poster)),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _getAppbarImageGradientColor(),
+                  Colors.transparent,
+                  _getAppbarImageGradientColor(),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       leading: IconButton(
         onPressed: () {
@@ -125,6 +141,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
       ],
     );
+  }
+
+  Color _getAppbarImageGradientColor() {
+    if (Setting.getAppConfig.isDarkTheme) {
+      return Colors.black.withValues(alpha: 0.1);
+    }
+    return Colors.white.withValues(alpha: 0.1);
   }
 
   Widget _getHeader() {
@@ -162,7 +185,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Widget _getDetail() {
-    return RefreshIndicator.noSpinner(
+    return RefreshIndicator.adaptive(
       onRefresh: () async {
         init(isUsedCached: false);
       },
@@ -187,7 +210,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Widget _getDownloadWidget() {
-    return RefreshIndicator.noSpinner(
+    return RefreshIndicator.adaptive(
       onRefresh: () async {
         init(isUsedCached: false);
       },
