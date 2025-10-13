@@ -22,9 +22,13 @@ class _CacheImageState extends State<CacheImage> {
   }
 
   File? cacheImageFile;
+  bool isLoading = false;
 
   Future<void> init() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       String defaultCache = PathUtil.getCachePath();
       if (widget.cachePath != null) {
         defaultCache = widget.cachePath!;
@@ -34,20 +38,33 @@ class _CacheImageState extends State<CacheImage> {
       if (file.existsSync()) {
         cacheImageFile = file;
         if (!mounted) return;
-        setState(() {});
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
       await TWidgets.instance.onDownloadImage?.call(widget.url, file.path);
       cacheImageFile = file;
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
 
       // debugPrint('download: ${file.path}');
     } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
       debugPrint('[CacheImage:init]: ${e.toString()}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return TLoader.random();
+    }
     if (cacheImageFile != null) {
       // print('cache: $cacheImageFile');
       return Image.file(

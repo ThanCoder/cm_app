@@ -31,5 +31,21 @@ void main() async {
     assetsIconPath: 'assets/logo.png',
   );
 
+  if (TPlatform.isDesktop) {
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(602, 568), // စတင်ဖွင့်တဲ့အချိန် window size
+
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      center: false,
+      title: "Novel V3",
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
+
   runApp(const MyApp());
 }

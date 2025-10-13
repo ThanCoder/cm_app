@@ -9,7 +9,7 @@ import 'package:cm_app/app/services/client_services.dart';
 import 'package:cm_app/app/ui/components/season_view.dart';
 import 'package:cm_app/app/ui/details/movie_casts_page.dart';
 import 'package:cm_app/app/ui/details/poster_app_bar.dart';
-import 'package:cm_app/app/ui/ep_download_link_screen.dart';
+import 'package:cm_app/app/ui/screens/ep_download_link_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';

@@ -1,7 +1,7 @@
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/ui/home/tag_and_genres_page.dart';
-import 'package:cm_app/app/ui/see_all_tags_screen.dart';
+import 'package:cm_app/app/ui/screens/see_all_tags_screen.dart';
 import 'package:flutter/material.dart';
 
 class LibraryPage extends StatefulWidget {

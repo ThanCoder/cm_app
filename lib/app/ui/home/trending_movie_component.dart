@@ -1,6 +1,6 @@
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/services/movie_services.dart';
-import 'package:cm_app/app/ui/components/movie_grid_item.dart';
+import 'package:cm_app/app/ui/components/one_line_movie_component.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
@@ -53,34 +53,10 @@ class _TrendingMovieComponentState extends State<TrendingMovieComponent> {
     if (isLoading) {
       return Center(child: TLoader.random());
     }
-    return _getViews();
-  }
-
-  Widget _getViews() {
-    return Column(
-      spacing: 8,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(widget.title, style: TextStyle(fontSize: 18)),
-        Expanded(
-          child: ListView.builder(
-            itemCount: list.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => _getListItem(list[index]),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _getListItem(Movie movie) {
-    return Container(
-      margin: EdgeInsets.only(right: 5),
-      child: SizedBox(
-        width: 120,
-        height: 150,
-        child: MovieGridItem(movie: movie, onClicked: widget.onClicked),
-      ),
+    return OneLineMovieComponent(
+      title: widget.title,
+      list: list,
+      onClicked: widget.onClicked,
     );
   }
 }

@@ -12,6 +12,7 @@ class MovieCastsPage extends StatelessWidget {
       return Center(child: Text('List မရှိပါ!...'));
     }
     return GridView.builder(
+      shrinkWrap: true,
       itemCount: list.length,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 170,

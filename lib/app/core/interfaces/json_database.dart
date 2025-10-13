@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:than_pkg/services/t_map.dart';
 import 'package:than_pkg/t_database/data_io.dart';
 import 'package:than_pkg/t_database/t_database.dart';
 
@@ -10,33 +11,40 @@ abstract class JsonDatabase<T> extends TDatabase<T> {
   T fromMap(Map<String, dynamic> map);
   Map<String, dynamic> toMap(T value);
   String getId(T value);
-  List<T> _list = [];
+  final List<T> _list = [];
 
   @override
-  Future<List<T>> getAll({Map<String, dynamic>? query = const {}}) async {
-    if (_list.isNotEmpty) return _list;
+  Future<List<T>> getAll({Map<String, dynamic>? query}) async {
+    query ??= {};
+    final isUsedCache = query.getBool(['isUsedCache']);
+    if (isUsedCache && _list.isNotEmpty) return _list;
+
     final json = await io.read(root);
     if (json.isEmpty) return [];
     List<dynamic> jsonList = jsonDecode(json);
-    _list = jsonList.map((e) => fromMap(e)).toList();
+    _list.clear();
+    final res = jsonList.map((e) => fromMap(e)).toList();
+    _list.addAll(res);
     return _list;
   }
 
   @override
   Future<void> add(T value) async {
     _list.insert(0, value);
-    notify(TDatabaseListenerTypes.add, null);
-    await save(_list);
+    notify(TDatabaseListenerTypes.add, getId(value));
+    await save(_list, id: getId(value));
   }
 
   @override
   Future<void> delete(String id) async {
     final index = _list.indexWhere((e) => getId(e) == id);
     if (index == -1) {
-      throw Exception('id: $id Not Found!');
+      return;
+      // throw Exception('id: $id Not Found!');
     }
     _list.removeAt(index);
-    await save(_list);
+    notify(TDatabaseListenerTypes.delete, id);
+    await save(_list, id: id);
   }
 
   @override
@@ -46,16 +54,17 @@ abstract class JsonDatabase<T> extends TDatabase<T> {
       throw Exception('id: $id Not Found!');
     }
     _list[index] = value;
-    await save(_list);
+    notify(TDatabaseListenerTypes.update, id);
+    await save(_list, id: id);
   }
 
-  Future<void> save(List<T> list, {bool isPretty = true}) async {
+  Future<void> save(List<T> list, {bool isPretty = true, String? id}) async {
     final jsonList = list.map((e) => toMap(e)).toList();
     if (isPretty) {
       await io.write(root, JsonEncoder.withIndent(' ').convert(jsonList));
     } else {
       await io.write(root, jsonEncode(jsonList));
     }
-    notify(TDatabaseListenerTypes.saved, null);
+    notify(TDatabaseListenerTypes.saved, id);
   }
 }

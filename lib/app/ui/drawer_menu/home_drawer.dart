@@ -1,6 +1,6 @@
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/ui/home/library_page.dart';
-import 'package:cm_app/app/ui/movie_bookmark_screen.dart';
+import 'package:cm_app/app/ui/screens/movie_bookmark_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';

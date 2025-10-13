@@ -4,9 +4,10 @@ import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
+import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
-import 'package:cm_app/app/ui/search_screen.dart';
-import 'package:cm_app/app/ui/see_all_screen.dart';
+import 'package:cm_app/app/ui/screens/search_screen.dart';
+import 'package:cm_app/app/ui/screens/see_all_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
@@ -73,26 +74,24 @@ class _HomePageState extends State<HomePage> {
       _getAppbar(),
       // search
       _getSearchBar(),
+      // recent
+      SliverToBoxAdapter(
+        child: RecentMovieComponent(onClicked: _goMovieDetailScreen),
+      ),
       // trending
       SliverToBoxAdapter(
-        child: SizedBox(
-          height: 200,
-          child: TrendingMovieComponent(
-            title: 'Trending Movies',
-            url: apiMovieTrendingUrl,
-            onClicked: _goMovieDetailScreen,
-          ),
+        child: TrendingMovieComponent(
+          title: 'Trending Movies',
+          url: apiMovieTrendingUrl,
+          onClicked: _goMovieDetailScreen,
         ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       SliverToBoxAdapter(
-        child: SizedBox(
-          height: 200,
-          child: TrendingMovieComponent(
-            title: 'Trending TV Shows',
-            url: apiTvShowTrendingUrl,
-            onClicked: _goMovieDetailScreen,
-          ),
+        child: TrendingMovieComponent(
+          title: 'Trending TV Shows',
+          url: apiTvShowTrendingUrl,
+          onClicked: _goMovieDetailScreen,
         ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),

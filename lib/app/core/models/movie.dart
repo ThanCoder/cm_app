@@ -76,7 +76,7 @@ class Movie {
 
   @override
   String toString() {
-    return title;
+    return 'ID: $id - Title:$title';
   }
 }
 

@@ -1,18 +1,25 @@
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/ui/components/cache_image.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/core/path_util.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 
 class MovieGridItem extends StatelessWidget {
   final Movie movie;
   final void Function(Movie movie)? onClicked;
-  const MovieGridItem({super.key, required this.movie, this.onClicked});
+  final void Function(Movie movie)? onRightClicked;
+  const MovieGridItem({
+    super.key,
+    required this.movie,
+    this.onClicked,
+    this.onRightClicked,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onClicked?.call(movie),
+      onLongPress: () => onRightClicked?.call(movie),
+      onSecondaryTap: () => onRightClicked?.call(movie),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Container(
@@ -29,7 +36,6 @@ class MovieGridItem extends StatelessWidget {
                     Positioned.fill(
                       child: CacheImage(
                         url: Setting.getForwardProxyUrl(movie.poster),
-                        cachePath: PathUtil.getCachePath(),
                       ),
                     ),
                     // imdb
