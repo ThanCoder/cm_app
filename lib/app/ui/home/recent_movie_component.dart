@@ -44,7 +44,7 @@ class _RecentMovieComponentState extends State<RecentMovieComponent>
       setState(() {
         isLoading = true;
       });
-      // await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 500));
 
       list = await MovieRecentServices.getDatabase.getAll();
       if (!mounted) return;

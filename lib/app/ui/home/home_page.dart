@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: HomeDrawer(),
       body: RefreshIndicator.adaptive(
-        onRefresh: init,
+        onRefresh: () => init(isUsedCache: false),
         child: CustomScrollView(slivers: _getViews()),
       ),
       // floatingActionButton: FloatingActionButton(onPressed: init),
