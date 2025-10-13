@@ -40,8 +40,8 @@ class AppConfig {
     bool isUseCustomPath = false,
     bool isUseForwardProxy = true,
     bool isUseProxy = false,
-    bool isDarkTheme = false,
-    ThemeModes themeMode = ThemeModes.light,
+    bool isDarkTheme = true,
+    ThemeModes themeMode = ThemeModes.dark,
   }) {
     return AppConfig(
       customPath: customPath,

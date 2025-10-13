@@ -21,7 +21,7 @@ class MovieGridItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           child: Column(
-            spacing: 3,
+            spacing: 4,
             children: [
               Expanded(
                 child: Stack(
@@ -31,10 +31,6 @@ class MovieGridItem extends StatelessWidget {
                         url: Setting.getForwardProxyUrl(movie.poster),
                         cachePath: PathUtil.getCachePath(),
                       ),
-                      // child: TCacheImage(
-                      //   url: Setting.getForwardProxyUrl(movie.poster),
-                      //   cachePath: PathUtil.getCachePath(),
-                      // ),
                     ),
                     // imdb
                     Positioned(left: 2, top: 2, child: _getImdb(movie)),
@@ -62,7 +58,7 @@ class MovieGridItem extends StatelessWidget {
               ),
               Text(
                 movie.title,
-                style: TextStyle(fontSize: 12, color: Colors.white),
+                style: TextStyle(fontSize: 12),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,

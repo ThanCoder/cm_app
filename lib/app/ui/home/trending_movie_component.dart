@@ -23,10 +23,10 @@ class _TrendingMovieComponentState extends State<TrendingMovieComponent> {
   @override
   void initState() {
     super.initState();
-    init();
+    WidgetsBinding.instance.addPostFrameCallback((_) => init());
   }
 
-  static List<Movie> list = [];
+  List<Movie> list = [];
   bool isLoading = false;
 
   void init() async {

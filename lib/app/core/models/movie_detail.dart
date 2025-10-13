@@ -1,3 +1,4 @@
+import 'package:cm_app/app/core/models/movie_cast.dart';
 import 'package:cm_app/app/core/models/movie_download_link.dart';
 import 'package:than_pkg/services/index.dart';
 
@@ -13,6 +14,7 @@ class MovieDetail {
   final String runtime;
   final bool isAdult;
   final List<MovieDownloadLink> downloadList;
+  final List<MovieCast> castList;
   MovieDetail({
     required this.id,
     required this.title,
@@ -25,10 +27,12 @@ class MovieDetail {
     required this.runtime,
     required this.isAdult,
     required this.downloadList,
+    required this.castList,
   });
 
   factory MovieDetail.fromMap(Map<String, dynamic> map) {
     List<dynamic> dList = map['movie_download_links'] ?? [];
+    List<dynamic> castList = map['casts'] ?? [];
     return MovieDetail(
       id: map.getString(['id']),
       title: map.getString(['title']),
@@ -41,6 +45,7 @@ class MovieDetail {
       runtime: map.getString(['runtime']),
       isAdult: map.getInt(['is_adult']) != 0,
       downloadList: dList.map((map) => MovieDownloadLink.fromMap(map)).toList(),
+      castList: castList.map((map) => MovieCast.fromMap(map)).toList(),
     );
   }
   Map<String, dynamic> toMap() {
@@ -56,6 +61,7 @@ class MovieDetail {
       'runtime': runtime,
       'isAdult': isAdult,
       'movie_download_links': downloadList.map((e) => e.toMap()).toList(),
+      'casts': castList.map((e) => e.toMap()).toList(),
     };
   }
 }

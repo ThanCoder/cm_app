@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/internal.dart';
 import 'package:t_widgets/t_widgets.dart';
@@ -24,11 +25,16 @@ class _CacheImageState extends State<CacheImage> {
 
   Future<void> init() async {
     try {
-      if (widget.cachePath == null) return;
-      final file = File('${widget.cachePath}/${widget.url.getName()}');
+      String defaultCache = PathUtil.getCachePath();
+      if (widget.cachePath != null) {
+        defaultCache = widget.cachePath!;
+      }
+      final file = File('$defaultCache/${widget.url.getName()}');
       // မရှိရင် download
       if (file.existsSync()) {
         cacheImageFile = file;
+        if (!mounted) return;
+        setState(() {});
         return;
       }
       await TWidgets.instance.onDownloadImage?.call(widget.url, file.path);

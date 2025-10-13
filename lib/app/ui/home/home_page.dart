@@ -184,8 +184,8 @@ class _HomePageState extends State<HomePage> {
       SliverGrid.builder(
         itemCount: list.length,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 180,
-          mainAxisExtent: 230,
+          maxCrossAxisExtent: 140,
+          mainAxisExtent: 170,
           mainAxisSpacing: 5,
           crossAxisSpacing: 5,
         ),

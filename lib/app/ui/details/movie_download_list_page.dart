@@ -1,34 +1,28 @@
 import 'package:cm_app/app/core/models/movie_download_link.dart';
-import 'package:cm_app/app/core/models/season.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
-class EpDownloadLinkScreen extends StatefulWidget {
-  final Episode episode;
-  const EpDownloadLinkScreen({super.key, required this.episode});
+class MovieDownloadListPage extends StatefulWidget {
+  final List<MovieDownloadLink> list;
+  const MovieDownloadListPage({super.key, required this.list});
 
   @override
-  State<EpDownloadLinkScreen> createState() => _EpDownloadLinkScreenState();
+  State<MovieDownloadListPage> createState() => _MovieDownloadListPageState();
 }
 
-class _EpDownloadLinkScreenState extends State<EpDownloadLinkScreen> {
+class _MovieDownloadListPageState extends State<MovieDownloadListPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Episode: ${widget.episode.episodeNumber}')),
-      body: _getDownloadWidget(widget.episode.tvshowDownloadLinks),
-    );
-  }
-
-  Widget _getDownloadWidget(List<MovieDownloadLink> list) {
     return ListView.builder(
-      itemCount: list.length,
-      itemBuilder: (context, index) => _getDownloadListItem(list[index]),
+      shrinkWrap: true,
+      // primary: false, // controller reuse မဖြစ်စေဖို့
+      itemCount: widget.list.length,
+      itemBuilder: (context, index) => _getlistItem(widget.list[index]),
     );
   }
 
-  Widget _getDownloadListItem(MovieDownloadLink link) {
+  Widget _getlistItem(MovieDownloadLink link) {
     return GestureDetector(
       onTap: () => _openUrl(link.url),
       child: Card(

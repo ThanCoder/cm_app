@@ -1,9 +1,9 @@
 import 'package:cm_app/app/route_helper.dart';
+import 'package:cm_app/app/ui/home/library_page.dart';
 import 'package:cm_app/app/ui/movie_bookmark_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/widgets/t_image.dart';
-import 'package:t_widgets/widgets/t_scrollable_column.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key});
@@ -11,16 +11,34 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: TScrollableColumn(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          DrawerHeader(child: TImage(source: '')),
-          ListTile(
-            leading: Icon(Icons.bookmark),
-            title: Text('BookMark'),
-            onTap: () {
-              Navigator.pop(context);
-              goRoute(context, builder: (context) => MovieBookmarkScreen());
-            },
+          Expanded(
+            child: TScrollableColumn(
+              children: [
+                DrawerHeader(child: TImage(source: '')),
+                ListTile(
+                  leading: Icon(Icons.bookmark),
+                  title: Text('BookMark'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    goRoute(
+                      context,
+                      builder: (context) => MovieBookmarkScreen(),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.library_books),
+                  title: Text('Library'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    goRoute(context, builder: (context) => LibraryPage());
+                  },
+                ),
+              ],
+            ),
           ),
           Setting.getSettingListTileWidget,
         ],

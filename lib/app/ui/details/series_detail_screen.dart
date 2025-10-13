@@ -7,6 +7,7 @@ import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/cache_services.dart';
 import 'package:cm_app/app/services/client_services.dart';
 import 'package:cm_app/app/ui/components/season_view.dart';
+import 'package:cm_app/app/ui/details/movie_casts_page.dart';
 import 'package:cm_app/app/ui/details/poster_app_bar.dart';
 import 'package:cm_app/app/ui/ep_download_link_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
@@ -71,7 +72,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: RefreshIndicator.adaptive(
           onRefresh: () async {
@@ -111,7 +112,8 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
       ),
       bottom: TabBar(
         tabs: [
-          Tab(text: 'Detail', icon: Icon(Icons.details)),
+          Tab(text: 'Detail', icon: Icon(Icons.description)),
+          Tab(text: 'သရုပ်ဆောင်များ', icon: Icon(Icons.people)),
           Tab(text: 'Episode', icon: Icon(Icons.play_circle)),
         ],
       ),
@@ -128,6 +130,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
     return TabBarView(
       children: [
         _getDetail(),
+        MovieCastsPage(list: detail!.castList),
         SeasonView(detail: detail!, onClicked: _goDownloadLink),
       ],
     );
@@ -142,7 +145,9 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
           spacing: 4,
           children: [
             Text('Original Title: `${detail!.originalTitle}`'),
-            Text('Runtime: ${detail!.runtime}'),
+            detail!.runtime.isEmpty
+                ? SizedBox.shrink()
+                : Text('Runtime: ${detail!.runtime}  Mins'),
             Text('Year: ${widget.movie.year}'),
             Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
             Divider(),
