@@ -78,7 +78,7 @@ class _TrendingMovieComponentState extends State<TrendingMovieComponent> {
       margin: EdgeInsets.only(right: 5),
       child: SizedBox(
         width: 120,
-        height: 130,
+        height: 150,
         child: MovieGridItem(movie: movie, onClicked: widget.onClicked),
       ),
     );

@@ -54,12 +54,9 @@ class _HomePageState extends State<HomePage> {
     // print(movieList);
     return Scaffold(
       drawer: HomeDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: RefreshIndicator.adaptive(
-          onRefresh: init,
-          child: CustomScrollView(slivers: _getViews()),
-        ),
+      body: RefreshIndicator.adaptive(
+        onRefresh: init,
+        child: CustomScrollView(slivers: _getViews()),
       ),
       // floatingActionButton: FloatingActionButton(onPressed: init),
     );
@@ -79,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       // trending
       SliverToBoxAdapter(
         child: SizedBox(
-          height: 180,
+          height: 200,
           child: TrendingMovieComponent(
             title: 'Trending Movies',
             url: apiMovieTrendingUrl,
@@ -90,7 +87,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       SliverToBoxAdapter(
         child: SizedBox(
-          height: 180,
+          height: 200,
           child: TrendingMovieComponent(
             title: 'Trending TV Shows',
             url: apiTvShowTrendingUrl,
@@ -117,7 +114,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getAppbar() {
-    return SliverAppBar(title: Text('CM Movie'));
+    return SliverAppBar(
+      title: Text('CM Movie'),
+      pinned: false,
+      snap: true,
+      floating: true,
+    );
   }
 
   Widget _getSearchBar() {
@@ -183,9 +185,9 @@ class _HomePageState extends State<HomePage> {
         itemCount: list.length,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 180,
-          mainAxisExtent: 220,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
+          mainAxisExtent: 230,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
         ),
         itemBuilder: (context, index) =>
             MovieGridItem(movie: list[index], onClicked: _goMovieDetailScreen),

@@ -14,9 +14,18 @@ class HomeScreen extends StatelessWidget {
         body: TabBarView(children: [HomePage(), LibraryPage(), MoreAppPage()]),
         bottomNavigationBar: TabBar(
           tabs: [
-            Tab(text: 'Home', icon: Icon(Icons.home)),
-            Tab(text: 'Library', icon: Icon(Icons.library_books)),
-            Tab(text: 'More', icon: Icon(Icons.grid_view_rounded)),
+            Tab(
+              // text: 'Home',
+              icon: Icon(Icons.home),
+            ),
+            Tab(
+              // text: 'Library',
+              icon: Icon(Icons.library_books),
+            ),
+            Tab(
+              // text: 'More',
+              icon: Icon(Icons.grid_view_rounded),
+            ),
           ],
         ),
       ),

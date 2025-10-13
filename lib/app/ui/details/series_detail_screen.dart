@@ -6,13 +6,12 @@ import 'package:cm_app/app/core/models/series_detail.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/cache_services.dart';
 import 'package:cm_app/app/services/client_services.dart';
-import 'package:cm_app/app/ui/components/movie_bookmark_button.dart';
 import 'package:cm_app/app/ui/components/season_view.dart';
+import 'package:cm_app/app/ui/details/poster_app_bar.dart';
 import 'package:cm_app/app/ui/ep_download_link_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:than_pkg/than_pkg.dart';
 
 class SeriesDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -80,76 +79,19 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
           },
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [_getAppbar(), _getHeader()];
+              return [
+                PosterAppBar(
+                  movie: widget.movie,
+                  onInit: () => init(isUsedCached: false),
+                ),
+                _getHeader(),
+              ];
             },
             body: _getTabView(),
           ),
         ),
       ),
     );
-  }
-
-  Widget _getAppbar() {
-    final size = MediaQuery.of(context).size;
-    return SliverAppBar(
-      expandedHeight: size.height * 0.6,
-      flexibleSpace: Stack(
-        fit: StackFit.expand,
-        children: [
-          TImage(source: Setting.getForwardProxyUrl(widget.movie.poster)),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  _getAppbarImageGradientColor(),
-                  Colors.transparent,
-                  _getAppbarImageGradientColor(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: Container(
-          padding: EdgeInsets.only(left: 5, bottom: 2, top: 2),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Icon(Icons.arrow_back_ios, color: Colors.white),
-        ),
-      ),
-      actions: [
-        // bookmark
-        MovieBookmarkButton(movie: widget.movie),
-        !TPlatform.isDesktop
-            ? SizedBox.shrink()
-            : IconButton(
-                onPressed: () => init(isUsedCached: false),
-                icon: Container(
-                  padding: EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Icon(Icons.refresh, color: Colors.white),
-                ),
-              ),
-      ],
-    );
-  }
-
-  Color _getAppbarImageGradientColor() {
-    if (Setting.getAppConfig.isDarkTheme) {
-      return Colors.black.withValues(alpha: 0.1);
-    }
-    return Colors.white.withValues(alpha: 0.1);
   }
 
   Widget _getHeader() {
@@ -192,25 +134,20 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
   }
 
   Widget _getDetail() {
-    return RefreshIndicator.adaptive(
-      onRefresh: () async {
-        init(isUsedCached: false);
-      },
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4,
-            children: [
-              Text('Original Title: `${detail!.originalTitle}`'),
-              Text('Runtime: ${detail!.runtime}'),
-              Text('Year: ${widget.movie.year}'),
-              Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
-              Divider(),
-              Text(detail!.overview, style: TextStyle(fontSize: 16)),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 4,
+          children: [
+            Text('Original Title: `${detail!.originalTitle}`'),
+            Text('Runtime: ${detail!.runtime}'),
+            Text('Year: ${widget.movie.year}'),
+            Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
+            Divider(),
+            Text(detail!.overview, style: TextStyle(fontSize: 16)),
+          ],
         ),
       ),
     );
