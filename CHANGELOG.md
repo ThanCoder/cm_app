@@ -1,5 +1,6 @@
 # 2.0.0
 
+- Added `TCacheImage`
 - Movie Site အသစ်ထည့်ခြင်း
 - Core Code တစ်ခုလုံးပြင်ဆင်ခြင်း
 

@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   provider: ^6.1.5+1
   than_pkg: ^4.5.3
-  t_widgets: ^1.5.1
+  t_widgets: ^1.5.2
   flutter_html: ^3.0.0
   t_client: ^0.1.6
   flutter_markdown: ^0.7.7+1

@@ -1,5 +1,6 @@
 import 'package:cm_app/app/my_app.dart';
 import 'package:cm_app/more_libs/desktop_exe_1.0.2/desktop_exe.dart';
+import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
@@ -17,6 +18,7 @@ void main() async {
     getDarkMode: () => Setting.getAppConfig.isDarkTheme,
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
+    getCachePath: () => PathUtil.getCachePath(),
     onDownloadImage: (url, savePath) async {
       await client.download(url, savePath: savePath);
     },
