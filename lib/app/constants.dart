@@ -18,8 +18,6 @@ const String api2HostName = 'ysflix';
 const String apiMovieUrl = '$hostUrl/api/movies';
 const String apiMovieTagsUrl = '$hostUrl/api/movie-tags';
 const String apiMovieGenresUrl = '$hostUrl/api/movie-genres';
-const String apiMovieYearUrl = '$hostUrl/api/movies-by-year';
-
 // tv
 const String apiTvShowUrl = '$hostUrl/api/tv-shows';
 const String apiTvShowGenresUrl = '$hostUrl/api/tv-show-genres';
@@ -30,3 +28,7 @@ const String apiSearchUrl = '$hostUrl/api/search?keyword';
 // trending
 const String apiMovieTrendingUrl = '$hostUrl/api/trending/movies';
 const String apiTvShowTrendingUrl = '$hostUrl/api/trending/tv-shows';
+
+//years
+const String apiMovieYearsUrl = '$hostUrl/api/movie-years';
+const String apiMovieByYearUrl = '$hostUrl/api/movies-by-year';

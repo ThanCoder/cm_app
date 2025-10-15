@@ -42,7 +42,7 @@ class DesktopExe {
       // write content
       final file = File(desktopFilePath);
       // override =false
-      if (isOverrideExe && file.existsSync()) {
+      if (!isOverrideExe && file.existsSync()) {
         return;
       }
       final stringBuff = StringBuffer();

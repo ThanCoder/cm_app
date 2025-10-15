@@ -1,4 +1,8 @@
-# 2.0.0
+# 2.1.0
+
+- Added `Movie Years` -> Library
+
+## 2.0.0
 
 - Added `TCacheImage`
 - Movie Site အသစ်ထည့်ခြင်း
@@ -7,14 +11,12 @@
 ## 1.2.5
 
 - Changed Search UI
-
-* some error fixed
+- some error fixed
 
 ## 1.1.5
 
 - desktop အတွက် ပြင်ဆင်ခြင်း
-
-* some error fixed
+- some error fixed
 
 ## 1.1.4
 
