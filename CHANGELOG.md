@@ -1,5 +1,6 @@
 # 2.1.0
 
+- Fixed `Movie Searching`
 - Added `Movie Years` -> Library
 
 ## 2.0.0

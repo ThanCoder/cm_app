@@ -14,6 +14,7 @@ class CacheServices {
     final path = PathUtil.getCachePath(
       name: 'movie-${title.replaceAll('/', '-')}.cache.json',
     );
+
     final file = File(path);
     final contents = jsonEncode(detail.toMap());
     await file.writeAsString(contents);
@@ -23,6 +24,7 @@ class CacheServices {
     final path = PathUtil.getCachePath(
       name: 'movie-${title.replaceAll('/', '-')}.cache.json',
     );
+    // print('getCache: $path');
     final file = File(path);
     if (!file.existsSync()) return null;
     final source = await file.readAsString();

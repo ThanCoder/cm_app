@@ -9,6 +9,9 @@ enum MovieTypes {
     if (name == 'tv-show') {
       return tvShow;
     }
+    if (name == tvShow.name) {
+      return tvShow;
+    }
     return movie;
   }
 }
@@ -42,6 +45,7 @@ class Movie {
     final movieType = MovieTypes.getName(typeStr);
     final isAdultInt = map.getInt(['is_adult']);
     List<dynamic> cat = map['categories'] ?? [];
+
     String url = '$apiMovieUrl/${map.getString(['slug'])}';
     if (movieType == MovieTypes.tvShow) {
       url = '$apiTvShowUrl/${map.getString(['slug'])}';

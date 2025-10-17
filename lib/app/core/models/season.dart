@@ -1,5 +1,5 @@
-import 'package:than_pkg/services/t_map.dart';
 import 'package:cm_app/app/core/models/movie_download_link.dart';
+import 'package:than_pkg/services/t_map.dart';
 
 class Season {
   final String id;

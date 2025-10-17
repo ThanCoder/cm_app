@@ -21,6 +21,14 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _timer;
 
   @override
+  void dispose() {
+    if (_timer?.isActive ?? false) {
+      _timer?.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Search')),
@@ -44,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
               _timer?.cancel();
             }
 
-            Timer(Duration(milliseconds: 1800), () => _onSearch(text));
+            _timer = Timer(Duration(milliseconds: 1500), () => _onSearch(text));
           },
         ),
       ),
