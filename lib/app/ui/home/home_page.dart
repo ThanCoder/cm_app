@@ -1,7 +1,7 @@
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
-import 'package:cm_app/app/ui/components/grid_movie_component.dart';
+import 'package:cm_app/app/ui/home/grid_movie_component.dart';
 import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
 import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
@@ -22,10 +22,10 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<TrendingMovieComponentState> trendingMovieKey = GlobalKey();
   final GlobalKey<TrendingMovieComponentState> trendingTvShowKey = GlobalKey();
   Future<void> init() async {
-    movieKey.currentState?.init();
-    tvShowKey.currentState?.init();
-    trendingMovieKey.currentState?.init();
-    trendingTvShowKey.currentState?.init();
+    movieKey.currentState?.init(isUsedCached: false);
+    tvShowKey.currentState?.init(isUsedCached: false);
+    trendingMovieKey.currentState?.init(isUsedCached: false);
+    trendingTvShowKey.currentState?.init(isUsedCached: false);
   }
 
   @override

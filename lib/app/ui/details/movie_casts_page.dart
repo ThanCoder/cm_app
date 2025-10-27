@@ -27,6 +27,7 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
       controller: controller,
       shrinkWrap: true,
       itemCount: widget.list.length,
+      physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 170,
         mainAxisExtent: 170,

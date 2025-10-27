@@ -26,15 +26,24 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
     WidgetsBinding.instance.addPostFrameCallback((_) => init());
   }
 
+  static final Map<String, List<Movie>> _cache = {};
   List<Movie> list = [];
   bool isLoading = false;
 
-  void init() async {
+  void init({bool isUsedCached = true}) async {
     try {
+      final key = widget.title;
+      if (isUsedCached && _cache.containsKey(key) && _cache[key]!.isNotEmpty) {
+        list = _cache[key]!;
+        setState(() {});
+        return;
+      }
       setState(() {
         isLoading = true;
       });
       list = await MovieServices.getMovies(widget.url);
+      _cache[key] = list;
+
       if (!mounted) return;
       setState(() {
         isLoading = false;

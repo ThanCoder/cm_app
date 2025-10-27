@@ -24,6 +24,7 @@ class _MovieDownloadListPageState extends State<MovieDownloadListPage> {
     return ListView.builder(
       controller: controller,
       shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       // primary: false, // controller reuse မဖြစ်စေဖို့
       itemCount: widget.list.length,
       itemBuilder: (context, index) => _getlistItem(widget.list[index]),
