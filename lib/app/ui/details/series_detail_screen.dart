@@ -6,8 +6,10 @@ import 'package:cm_app/app/core/models/series_detail.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/cache_services.dart';
 import 'package:cm_app/app/services/client_services.dart';
-import 'package:cm_app/app/ui/components/season_view.dart';
+import 'package:cm_app/app/ui/details/season_view.dart';
+import 'package:cm_app/app/ui/details/detail_app_bar.dart';
 import 'package:cm_app/app/ui/details/movie_casts_page.dart';
+import 'package:cm_app/app/ui/details/overview_viewer.dart';
 import 'package:cm_app/app/ui/details/poster_app_bar.dart';
 import 'package:cm_app/app/ui/screens/ep_download_link_screen.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
@@ -81,10 +83,12 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
-                PosterAppBar(
+                DetailAppBar<SeriesDetail>(
                   movie: widget.movie,
                   onInit: () => init(isUsedCached: false),
+                  detail: detail,
                 ),
+                PosterAppBar(movie: widget.movie),
                 _getHeader(),
               ];
             },
@@ -129,32 +133,10 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
     }
     return TabBarView(
       children: [
-        _getDetail(),
+        OverviewViewer<SeriesDetail>(movie: widget.movie, detail: detail),
         MovieCastsPage(list: detail!.castList),
         SeasonView(detail: detail!, onClicked: _goDownloadLink),
       ],
-    );
-  }
-
-  Widget _getDetail() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 4,
-          children: [
-            Text('Original Title: `${detail!.originalTitle}`'),
-            detail!.runtime.isEmpty
-                ? SizedBox.shrink()
-                : Text('Runtime: ${detail!.runtime}  Mins'),
-            Text('Year: ${widget.movie.year}'),
-            Text('is Adult: ${detail!.isAdult ? 'Yes' : 'No'}'),
-            Divider(),
-            Text(detail!.overview, style: TextStyle(fontSize: 16)),
-          ],
-        ),
-      ),
     );
   }
 

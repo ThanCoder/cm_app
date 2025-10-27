@@ -30,15 +30,8 @@ class _SeasonViewState extends State<SeasonView> {
     return CustomScrollView(
       slivers: [
         _getSeasonWidget(),
+
         // current Season
-        SliverToBoxAdapter(
-          child: season == null
-              ? null
-              : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(season!.name),
-                ),
-        ),
         SliverToBoxAdapter(child: Divider()),
         _getEpisodeList(),
       ],
@@ -48,7 +41,33 @@ class _SeasonViewState extends State<SeasonView> {
   Widget _getSeasonWidget() {
     final seasonTitles = widget.detail.seasons.map((e) => e.name).toList();
     return SliverToBoxAdapter(
-      child: TTagsWrapView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: List.generate(seasonTitles.length, (index) {
+            final item = seasonTitles[index];
+            return TChip(
+              avatar: season != null && season!.name == item
+                  ? Icon(Icons.check)
+                  : null,
+              title: Text(item),
+              onClick: () {
+                final index = widget.detail.seasons.indexWhere(
+                  (e) => e.name == item,
+                );
+                if (index == -1) return;
+                season = widget.detail.seasons[index];
+                list = season!.episodes;
+                setState(() {});
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+    /* TTagsWrapView(
         values: seasonTitles,
         onClicked: (value) {
           final index = widget.detail.seasons.indexWhere(
@@ -59,8 +78,7 @@ class _SeasonViewState extends State<SeasonView> {
           list = season!.episodes;
           setState(() {});
         },
-      ),
-    );
+      )*/
   }
 
   Widget _getEpisodeList() {

@@ -1,23 +1,27 @@
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/ui/components/cache_image.dart';
-import 'package:cm_app/app/ui/components/movie_bookmark_button.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 
-class PosterAppBar extends StatelessWidget {
+class PosterAppBar extends StatefulWidget {
   final Movie movie;
-  final void Function()? onInit;
-  const PosterAppBar({super.key, required this.movie, this.onInit});
+  const PosterAppBar({super.key, required this.movie});
 
+  @override
+  State<PosterAppBar> createState() => _PosterAppBarState();
+}
+
+class _PosterAppBarState extends State<PosterAppBar> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
-      expandedHeight: size.height * 0.5,
+      expandedHeight: size.height * 0.6,
+      automaticallyImplyLeading: false,
       flexibleSpace: Stack(
         fit: StackFit.expand,
         children: [
-          CacheImage(url: Setting.getForwardProxyUrl(movie.poster)),
+          CacheImage(url: Setting.getForwardProxyUrl(widget.movie.poster)),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -33,34 +37,6 @@ class PosterAppBar extends StatelessWidget {
           ),
         ],
       ),
-      leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: Container(
-          padding: EdgeInsets.only(left: 6, bottom: 2, top: 2),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Icon(Icons.arrow_back_ios, color: Colors.white),
-        ),
-      ),
-      actions: [
-        // bookmark
-        MovieBookmarkButton(movie: movie),
-        IconButton(
-          onPressed: () => onInit?.call(),
-          icon: Container(
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: Icon(Icons.refresh, color: Colors.white),
-          ),
-        ),
-      ],
     );
   }
 

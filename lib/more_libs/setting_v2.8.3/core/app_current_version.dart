@@ -18,6 +18,11 @@ class AppCurrentVersion extends StatelessWidget {
               title: Text(
                 'Current Version: ${data.version} ${Setting.appVersionLabel}',
               ),
+              onTap: () {
+                ThanPkg.platform.launch(
+                  'https://github.com/ThanCoder/cm_app/releases',
+                );
+              },
             ),
           );
         }

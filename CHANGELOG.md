@@ -1,4 +1,11 @@
-# 2.1.0
+# 2.2.2
+
+- Fixed `ThemeMode Service`
+- Changed `Movie Detail Screen` -> `Style ပြောင်းလဲထားခြင်း`
+- Addedd `Movie Detail Screen Menu` -> `Refresh,Copy` Function
+- Changed `Movie Detail Screen` -> `Html Viewer` ထည့်ပေးထားခြင်း
+
+## 2.1.0
 
 - Fixed `Movie Searching`
 - Added `Movie Years` -> Library
@@ -37,27 +44,17 @@
 
 ## 1.0.3
 
-## Added
+- Added app version system ထည့်သွင်းခြင်း
 
-- app version system ထည့်သွင်းခြင်း
-
-## Fixed
-
-- movie title `/` error fixed.
+- Fixed movie title `/` error fixed.
 
 ## 1.0.2
 
-## Fixed
-
-- movie list 2 ထပ်ခြင်းကို ဖြေရှင်းပြီး
+-Fixed movie list 2 ထပ်ခြင်းကို ဖြေရှင်းပြီး
 
 ## 1.0.1
 
-## Added
+-Added movie,series trailer link ထည့်သွင်းခြင်း
 
-- movie,series trailer link ထည့်သွင်းခြင်း
-
-## Fixed
-
-- movie ထပ်နေခြင်းကို ပြင်ဆင်ခြင်း
-- random,related list တွေကို listview.builder ပြောင်းလဲခြင်း
+- Changed movie ထပ်နေခြင်းကို ပြင်ဆင်ခြင်း
+- Fixed random,related list တွေကို listview.builder ပြောင်းလဲခြင်း

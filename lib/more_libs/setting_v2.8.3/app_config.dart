@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:t_widgets/theme/t_theme_services.dart';
 import 'package:than_pkg/than_pkg.dart';
 
-import 'core/theme_services.dart';
 import 'setting.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
@@ -17,7 +17,7 @@ class AppConfig {
   bool isUseForwardProxy;
   bool isUseProxy;
   bool isDarkTheme;
-  ThemeModes themeMode;
+  TThemeModes themeMode;
   AppConfig({
     required this.customPath,
     required this.forwardProxyUrl,
@@ -41,7 +41,7 @@ class AppConfig {
     bool isUseForwardProxy = true,
     bool isUseProxy = false,
     bool isDarkTheme = true,
-    ThemeModes themeMode = ThemeModes.dark,
+    TThemeModes themeMode = TThemeModes.dark,
   }) {
     return AppConfig(
       customPath: customPath,
@@ -67,7 +67,7 @@ class AppConfig {
     bool? isUseForwardProxy,
     bool? isUseProxy,
     bool? isDarkTheme,
-    ThemeModes? themeMode,
+    TThemeModes? themeMode,
   }) {
     return AppConfig(
       customPath: customPath ?? this.customPath,
@@ -112,7 +112,7 @@ class AppConfig {
       isUseForwardProxy: map.getBool(['isUseForwardProxy']),
       isUseProxy: map.getBool(['isUseProxy']),
       isDarkTheme: map.getBool(['isDarkTheme']),
-      themeMode: ThemeModes.getName(themeModeStr),
+      themeMode: TThemeModes.getName(themeModeStr),
     );
   }
 

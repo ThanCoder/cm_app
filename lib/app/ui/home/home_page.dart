@@ -1,15 +1,13 @@
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
-import 'package:cm_app/app/services/movie_services.dart';
-import 'package:cm_app/app/ui/components/movie_grid_item.dart';
+import 'package:cm_app/app/ui/components/grid_movie_component.dart';
 import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
 import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/screens/search_screen.dart';
-import 'package:cm_app/app/ui/screens/see_all_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:than_pkg/than_pkg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,35 +17,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    init();
-  }
-
-  static List<Movie> movieList = [];
-  static List<Movie> tvList = [];
-  bool isLoading = false;
-
-  Future<void> init({bool isUsedCache = true}) async {
-    try {
-      if (isUsedCache && movieList.isNotEmpty) return;
-      setState(() {
-        isLoading = true;
-      });
-      movieList = await MovieServices.getMovies(apiMovieUrl);
-      tvList = await MovieServices.getMovies(apiTvShowUrl);
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-      showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
-    }
+  final GlobalKey<GridMovieComponentState> movieKey = GlobalKey();
+  final GlobalKey<GridMovieComponentState> tvShowKey = GlobalKey();
+  final GlobalKey<TrendingMovieComponentState> trendingMovieKey = GlobalKey();
+  final GlobalKey<TrendingMovieComponentState> trendingTvShowKey = GlobalKey();
+  Future<void> init() async {
+    movieKey.currentState?.init();
+    tvShowKey.currentState?.init();
+    trendingMovieKey.currentState?.init();
+    trendingTvShowKey.currentState?.init();
   }
 
   @override
@@ -56,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: HomeDrawer(),
       body: RefreshIndicator.adaptive(
-        onRefresh: () => init(isUsedCache: false),
+        onRefresh: init,
         child: CustomScrollView(slivers: _getViews()),
       ),
       // floatingActionButton: FloatingActionButton(onPressed: init),
@@ -64,12 +42,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _getViews() {
-    if (isLoading) {
-      return [
-        _getAppbar(),
-        SliverFillRemaining(child: Center(child: TLoader.random())),
-      ];
-    }
     return [
       _getAppbar(),
       // search
@@ -81,6 +53,7 @@ class _HomePageState extends State<HomePage> {
       // trending
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
+          key: trendingMovieKey,
           title: 'Trending Movies',
           url: apiMovieTrendingUrl,
           onClicked: _goMovieDetailScreen,
@@ -89,25 +62,30 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
+          key: trendingTvShowKey,
           title: 'Trending TV Shows',
           url: apiTvShowTrendingUrl,
           onClicked: _goMovieDetailScreen,
         ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
-      // movie grid
-      ..._getMovieGrid(
-        list: movieList,
-        title: 'Movies',
-        type: MovieTypes.movie,
-        onSeeAllPage: _goSeeAllScreen,
+      // grid
+      SliverToBoxAdapter(
+        child: GridMovieComponent(
+          key: movieKey,
+          url: apiMovieUrl,
+          title: 'Movies',
+          type: MovieTypes.movie,
+        ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 15)),
-      ..._getMovieGrid(
-        list: tvList,
-        title: 'TV Shows',
-        type: MovieTypes.tvShow,
-        onSeeAllPage: _goSeeAllScreen,
+      SliverToBoxAdapter(
+        child: GridMovieComponent(
+          key: tvShowKey,
+          url: apiTvShowUrl,
+          title: 'TV Shows',
+          type: MovieTypes.tvShow,
+        ),
       ),
     ];
   }
@@ -118,6 +96,11 @@ class _HomePageState extends State<HomePage> {
       pinned: false,
       snap: true,
       floating: true,
+      actions: [
+        !TPlatform.isDesktop
+            ? SizedBox.shrink()
+            : IconButton(onPressed: init, icon: Icon(Icons.refresh)),
+      ],
     );
   }
 
@@ -142,74 +125,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Widget> _getMovieGrid({
-    required List<Movie> list,
-    required String title,
-    required MovieTypes type,
-    void Function(MovieTypes type)? onSeeAllPage,
-  }) {
-    if (list.isEmpty) return [];
-    return [
-      // movie grid
-      SliverToBoxAdapter(
-        child: Container(
-          margin: EdgeInsets.only(bottom: 6),
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              ),
-              GestureDetector(
-                onTap: () => onSeeAllPage?.call(type),
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Text(
-                    'More >',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      SliverGrid.builder(
-        itemCount: list.length,
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 140,
-          mainAxisExtent: 170,
-          mainAxisSpacing: 5,
-          crossAxisSpacing: 5,
-        ),
-        itemBuilder: (context, index) =>
-            MovieGridItem(movie: list[index], onClicked: _goMovieDetailScreen),
-      ),
-      SliverToBoxAdapter(
-        child: Container(
-          margin: EdgeInsets.only(top: 10),
-          child: TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.blue),
-            onPressed: () => onSeeAllPage?.call(type),
-            child: Text('See More', style: TextStyle(color: Colors.white)),
-          ),
-        ),
-      ),
-    ];
-  }
-
   void _goMovieDetailScreen(Movie movie) {
     goMovieDetailScreen(context, movie: movie);
-  }
-
-  void _goSeeAllScreen(MovieTypes type) {
-    goRoute(context, builder: (context) => SeeAllScreen(type: type));
   }
 
   void _goSearchScreen() {

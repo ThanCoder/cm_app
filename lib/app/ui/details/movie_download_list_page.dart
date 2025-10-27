@@ -12,9 +12,17 @@ class MovieDownloadListPage extends StatefulWidget {
 }
 
 class _MovieDownloadListPageState extends State<MovieDownloadListPage> {
+  final controller = ScrollController();
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      controller: controller,
       shrinkWrap: true,
       // primary: false, // controller reuse မဖြစ်စေဖို့
       itemCount: widget.list.length,

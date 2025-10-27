@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:t_widgets/theme/t_theme_services.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 import '../setting.dart';
-import 'theme_services.dart';
 
 class ThemeModesChooser extends StatefulWidget {
   const ThemeModesChooser({super.key});
@@ -28,13 +28,13 @@ class _ThemeModesChooserState extends State<ThemeModesChooser> {
             ValueListenableBuilder(
               valueListenable: Setting.getAppConfigNotifier,
               builder: (context, config, child) {
-                return DropdownButton<ThemeModes>(
+                return DropdownButton<TThemeModes>(
                   padding: EdgeInsets.all(5),
                   borderRadius: BorderRadius.circular(4),
                   value: config.themeMode,
-                  items: ThemeModes.values
+                  items: TThemeModes.values
                       .map(
-                        (e) => DropdownMenuItem<ThemeModes>(
+                        (e) => DropdownMenuItem<TThemeModes>(
                           value: e,
                           child: Text(e.name.toCaptalize()),
                         ),

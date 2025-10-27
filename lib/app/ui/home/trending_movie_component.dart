@@ -16,10 +16,10 @@ class TrendingMovieComponent extends StatefulWidget {
   });
 
   @override
-  State<TrendingMovieComponent> createState() => _TrendingMovieComponentState();
+  State<TrendingMovieComponent> createState() => TrendingMovieComponentState();
 }
 
-class _TrendingMovieComponentState extends State<TrendingMovieComponent> {
+class TrendingMovieComponentState extends State<TrendingMovieComponent> {
   @override
   void initState() {
     super.initState();
