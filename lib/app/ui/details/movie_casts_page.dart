@@ -23,19 +23,36 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
     if (widget.list.isEmpty) {
       return Center(child: Text('List မရှိပါ!...'));
     }
-    return GridView.builder(
-      controller: controller,
-      shrinkWrap: true,
-      itemCount: widget.list.length,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 170,
-        mainAxisExtent: 170,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-      ),
-      itemBuilder: (context, index) => _getGridItem(widget.list[index]),
+    return CustomScrollView(
+      slivers: [
+        SliverGrid.builder(
+          // controller: controller,
+          // shrinkWrap: true,
+          itemCount: widget.list.length,
+          // physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 170,
+            mainAxisExtent: 170,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+          ),
+          itemBuilder: (context, index) => _getGridItem(widget.list[index]),
+        ),
+      ],
     );
+    // return GridView.builder(
+    //   controller: controller,
+    //   shrinkWrap: true,
+    //   itemCount: widget.list.length,
+    //   physics: NeverScrollableScrollPhysics(),
+    //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+    //     maxCrossAxisExtent: 170,
+    //     mainAxisExtent: 170,
+    //     mainAxisSpacing: 4,
+    //     crossAxisSpacing: 4,
+    //   ),
+    //   itemBuilder: (context, index) => _getGridItem(widget.list[index]),
+    // );
   }
 
   Widget _getGridItem(MovieCast item) {

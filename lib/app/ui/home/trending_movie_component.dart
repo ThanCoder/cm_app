@@ -3,6 +3,7 @@ import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/one_line_movie_component.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_pkg/than_pkg.dart';
 
 class TrendingMovieComponent extends StatefulWidget {
   final String title;
@@ -29,6 +30,7 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
   static final Map<String, List<Movie>> _cache = {};
   List<Movie> list = [];
   bool isLoading = false;
+  bool isInternetConnected = false;
 
   void init({bool isUsedCached = true}) async {
     try {
@@ -41,6 +43,14 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
       setState(() {
         isLoading = true;
       });
+      isInternetConnected = await ThanPkg.platform.isInternetConnected();
+      if (!isInternetConnected) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
       list = await MovieServices.getMovies(widget.url);
       _cache[key] = list;
 
@@ -61,6 +71,19 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Center(child: TLoader.random());
+    }
+    if (list.isEmpty && !isInternetConnected) {
+      return Column(
+        children: [
+          Center(
+            child: Text(
+              'Your Are Offline',
+              style: TextStyle(fontSize: 18, color: Colors.red),
+            ),
+          ),
+          IconButton(onPressed: init, icon: Icon(Icons.refresh)),
+        ],
+      );
     }
     return OneLineMovieComponent(
       title: widget.title,

@@ -58,6 +58,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
               _getCustomPath(),
               //proxy server
               _getForwardProxy(),
+              _getCacheImageForm(),
             ],
           ),
         ),
@@ -78,7 +79,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
       children: [
         SwitchListTile.adaptive(
           title: Text("Config Custom Path"),
-          subtitle: Text("သင်ကြိုက်နှစ်သက်တဲ့ path ကို ထည့်ပေးပါ"),
+          subtitle: _getSubTitle("သင်ကြိုက်နှစ်သက်တဲ့ path ကို ထည့်ပေးပါ"),
           value: config.isUseCustomPath,
           onChanged: (value) {
             setState(() {
@@ -118,6 +119,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
       children: [
         SwitchListTile.adaptive(
           title: Text('Forward Proxy Server'),
+          subtitle: _getSubTitle('VPN လိုမျိုး အလုပ်လုပ်ပါတယ်။'),
           value: config.isUseForwardProxy,
           onChanged: (value) {
             setState(() {
@@ -146,6 +148,26 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
                 ),
               ),
       ],
+    );
+  }
+
+  Widget _getCacheImageForm() {
+    return SwitchListTile.adaptive(
+      title: Text('Use Cache Image'),
+      subtitle: _getSubTitle('Image တွေကို Cache အနေနဲ့ သိမ်းဆည်းထား'),
+      value: config.isUseCacheImageWidget,
+      onChanged: (value) {
+        config.isUseCacheImageWidget = value;
+        isChanged = true;
+        setState(() {});
+      },
+    );
+  }
+
+  Widget _getSubTitle(String text) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
     );
   }
 

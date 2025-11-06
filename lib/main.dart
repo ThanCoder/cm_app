@@ -22,7 +22,8 @@ void main() async {
     getDarkMode: () => Setting.getAppConfig.isDarkTheme,
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
-    getCachePath: (url) => '${PathUtil.getCachePath()}/${url.getName()}.png',
+    getCachePath: (url) =>
+        '${PathUtil.getCachePath()}/${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
     onDownloadImage: (url, savePath) async {
       await client.download(url, savePath: savePath);
     },

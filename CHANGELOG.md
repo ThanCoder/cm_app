@@ -1,4 +1,15 @@
-# 2.2.2
+# 2.3.4
+
+- Added `Package:[pubspec.yaml]` ထည့်ပေးထားခြင်း။
+- Fixed `Use Cache Image` အတွက် Setting မှာထည့်ပေးထားပါတယ်။
+- Fixed အချို့ Image မပေါ်လာတာကို ပြင်ဆင်ပေးထားပါတယ်။
+
+## 2.2.3
+
+- Fixed `Movie Detail Screen`
+- Fixed `TCacheImage` -> Image Cover ပြသနာဖြေရှင်းထား။
+
+## 2.2.2
 
 - Fixed `ThemeMode Service`
 - Changed `Movie Detail Screen` -> `Style ပြောင်းလဲထားခြင်း`

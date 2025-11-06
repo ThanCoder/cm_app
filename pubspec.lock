@@ -553,10 +553,10 @@ packages:
     dependency: "direct main"
     description:
       name: t_widgets
-      sha256: "988fa35c9248ba7ff0d1c5ba9f58796dea55c3389a14a277c3707b5f98238901"
+      sha256: "83c8ea0579b1a82f4c2aff9ba7e0f16be8549231f9b24da99b6a2439ec71c990"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.4"
+    version: "1.7.4"
   term_glyph:
     dependency: transitive
     description:
@@ -646,7 +646,7 @@ packages:
     source: hosted
     version: "6.6.1"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce

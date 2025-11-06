@@ -5,6 +5,7 @@ import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:cm_app/app/ui/screens/see_all_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets_dev.dart';
+import 'package:than_pkg/than_pkg.dart';
 
 class GridMovieComponent extends StatefulWidget {
   final String url;
@@ -25,6 +26,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
   static final Map<String, List<Movie>> _cache = {};
   List<Movie> list = [];
   bool isLoading = false;
+  bool isInternetConnected = false;
 
   @override
   void initState() {
@@ -44,6 +46,14 @@ class GridMovieComponentState extends State<GridMovieComponent> {
       setState(() {
         isLoading = true;
       });
+      isInternetConnected = await ThanPkg.platform.isInternetConnected();
+      if (!isInternetConnected) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
       list = await MovieServices.getMovies(widget.url);
       _cache[key] = list;
       if (!mounted) return;
@@ -55,7 +65,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
       setState(() {
         isLoading = false;
       });
-      showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
+      // showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
     }
   }
 
@@ -63,6 +73,19 @@ class GridMovieComponentState extends State<GridMovieComponent> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Center(child: TLoader.random());
+    }
+    if (list.isEmpty && !isInternetConnected) {
+      return Column(
+        children: [
+          Center(
+            child: Text(
+              'Your Are Offline',
+              style: TextStyle(fontSize: 18, color: Colors.red),
+            ),
+          ),
+          IconButton(onPressed: init, icon: Icon(Icons.refresh)),
+        ],
+      );
     }
     if (list.isEmpty) {
       return Center(
@@ -127,6 +150,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
           children: [
             Container(
               margin: EdgeInsets.only(top: 10),
+              padding: EdgeInsets.all(5),
               child: TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 5, 65, 114),

@@ -6,7 +6,6 @@ import 'package:than_pkg/than_pkg.dart';
 
 import 'setting.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class AppConfig {
   String customPath;
   String forwardProxyUrl;
@@ -18,6 +17,7 @@ class AppConfig {
   bool isUseProxy;
   bool isDarkTheme;
   TThemeModes themeMode;
+  bool isUseCacheImageWidget;
   AppConfig({
     required this.customPath,
     required this.forwardProxyUrl,
@@ -29,6 +29,7 @@ class AppConfig {
     required this.isUseProxy,
     required this.isDarkTheme,
     required this.themeMode,
+    required this.isUseCacheImageWidget,
   });
 
   factory AppConfig.create({
@@ -42,6 +43,7 @@ class AppConfig {
     bool isUseProxy = false,
     bool isDarkTheme = true,
     TThemeModes themeMode = TThemeModes.dark,
+    bool isUseCacheImageWidget = true,
   }) {
     return AppConfig(
       customPath: customPath,
@@ -54,6 +56,7 @@ class AppConfig {
       isUseProxy: isUseProxy,
       isDarkTheme: isDarkTheme,
       themeMode: themeMode,
+      isUseCacheImageWidget: isUseCacheImageWidget,
     );
   }
 
@@ -68,6 +71,7 @@ class AppConfig {
     bool? isUseProxy,
     bool? isDarkTheme,
     TThemeModes? themeMode,
+    bool? isUseCacheImageWidget,
   }) {
     return AppConfig(
       customPath: customPath ?? this.customPath,
@@ -81,6 +85,8 @@ class AppConfig {
       isUseProxy: isUseProxy ?? this.isUseProxy,
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
       themeMode: themeMode ?? this.themeMode,
+      isUseCacheImageWidget:
+          isUseCacheImageWidget ?? this.isUseCacheImageWidget,
     );
   }
 
@@ -97,6 +103,7 @@ class AppConfig {
       'isUseProxy': isUseProxy,
       'isDarkTheme': isDarkTheme,
       'themeMode': themeMode.name,
+      'isUseCacheImageWidget': isUseCacheImageWidget,
     };
   }
 
@@ -113,6 +120,7 @@ class AppConfig {
       isUseProxy: map.getBool(['isUseProxy']),
       isDarkTheme: map.getBool(['isDarkTheme']),
       themeMode: TThemeModes.getName(themeModeStr),
+      isUseCacheImageWidget: map.getBool(['isUseCacheImageWidget'], def: true),
     );
   }
 
