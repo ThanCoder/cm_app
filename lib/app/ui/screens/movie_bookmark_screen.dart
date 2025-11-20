@@ -34,11 +34,11 @@ class _MovieBookmarkScreenState extends State<MovieBookmarkScreen>
 
     if (type == TDatabaseListenerTypes.delete) {
       if (!mounted) return;
-      init();
+      setState(() {});
     }
     if (type == TDatabaseListenerTypes.update) {
       if (!mounted) return;
-      init();
+      setState(() {});
     }
   }
 

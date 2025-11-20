@@ -18,24 +18,27 @@ class _PosterAppBarState extends State<PosterAppBar> {
     return SliverAppBar(
       expandedHeight: size.height * 0.6,
       automaticallyImplyLeading: false,
-      flexibleSpace: Stack(
-        fit: StackFit.expand,
-        children: [
-          CacheImage(url: Setting.getForwardProxyUrl(widget.movie.poster)),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  _getAppbarImageGradientColor(),
-                  Colors.transparent,
-                  _getAppbarImageGradientColor(),
-                ],
+      flexibleSpace: GestureDetector(
+        onTap: _onShowImage,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CacheImage(url: Setting.getForwardProxyUrl(widget.movie.poster)),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    _getAppbarImageGradientColor(),
+                    Colors.transparent,
+                    _getAppbarImageGradientColor(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -45,5 +48,19 @@ class _PosterAppBarState extends State<PosterAppBar> {
       return Colors.black.withValues(alpha: 0.1);
     }
     return Colors.white.withValues(alpha: 0.1);
+  }
+
+  void _onShowImage() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(
+        contentPadding: EdgeInsets.all(8),
+        actionsPadding: EdgeInsets.all(4),
+        content: CacheImage(
+          url: Setting.getForwardProxyUrl(widget.movie.poster),
+        ),
+        actions: [CloseButton()],
+      ),
+    );
   }
 }

@@ -71,6 +71,13 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _getResultList() {
+    if (list.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(isSearching ? 'Searching...' : 'Not Found!...'),
+        ),
+      );
+    }
     return SliverGrid.builder(
       itemCount: list.length,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

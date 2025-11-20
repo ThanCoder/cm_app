@@ -106,6 +106,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _getSearchBar() {
     return SliverAppBar(
+      snap: true,
+      floating: true,
+      pinned: false,
       title: GestureDetector(
         onTap: _goSearchScreen,
         child: Card(

@@ -1,4 +1,10 @@
-# 2.3.4
+# 2.4.5
+
+- Added `MovieDetailScreen` add `cover dialog`
+- Fixed `BookMark`
+- Fixed `Search Screen`
+
+## 2.3.4
 
 - Added `Package:[pubspec.yaml]` ထည့်ပေးထားခြင်း။
 - Fixed `Use Cache Image` အတွက် Setting မှာထည့်ပေးထားပါတယ်။

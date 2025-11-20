@@ -18,7 +18,7 @@ void main() async {
   final client = TClient();
 
   await TWidgets.instance.init(
-    defaultImageAssetsPath: 'assets/logo.png',
+    defaultImageAssetsPath: 'assets/logo_2.jpg',
     getDarkMode: () => Setting.getAppConfig.isDarkTheme,
     // isDebugPrint: kDebugMode,
     isDebugPrint: false,
@@ -35,7 +35,7 @@ void main() async {
   // gen desktop icon
   await DesktopExe.instance.exportNotExists(
     name: 'CM App',
-    assetsIconPath: 'assets/logo.png',
+    assetsIconPath: 'assets/logo_2.jpg',
   );
   GeneralServer.instance.init(
     getApiServerUrl: () => apiServerUrl,
@@ -59,7 +59,7 @@ void main() async {
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
-      await windowManager.focus();
+      // await windowManager.focus();
     });
   }
 
