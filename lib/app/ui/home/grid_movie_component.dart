@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:cm_app/app/ui/screens/see_all_screen.dart';
+import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets_dev.dart';
 import 'package:than_pkg/than_pkg.dart';
@@ -143,6 +146,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
           itemBuilder: (context, index) => MovieGridItem(
             movie: list[index],
             onClicked: (movie) => goMovieDetailScreen(context, movie: movie),
+            onRightClicked: _showMenu,
           ),
         ),
         Row(
@@ -163,6 +167,30 @@ class GridMovieComponentState extends State<GridMovieComponent> {
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  void _showMenu(Movie movie) {
+    showTMenuBottomSheet(
+      context,
+      children: [
+        ListTile(
+          title: Text('Delete Cache'),
+          onTap: () {
+            final cachePath = PathUtil.getCachePath(
+              name:
+                  '${movie.url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
+            );
+            final file = File(cachePath);
+            print(file);
+            if (file.existsSync()) {
+              print('deleted');
+              file.deleteSync();
+            }
+            Navigator.pop(context);
+          },
         ),
       ],
     );

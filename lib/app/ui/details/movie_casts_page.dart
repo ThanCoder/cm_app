@@ -1,6 +1,7 @@
 import 'package:cm_app/app/core/models/movie_cast.dart';
 import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/widgets/index.dart';
 
 class MovieCastsPage extends StatefulWidget {
   final List<MovieCast> list;
@@ -24,9 +25,9 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
       return Center(child: Text('List မရှိပါ!...'));
     }
     return CustomScrollView(
+      controller: controller,
       slivers: [
         SliverGrid.builder(
-          // controller: controller,
           // shrinkWrap: true,
           itemCount: widget.list.length,
           // physics: NeverScrollableScrollPhysics(),
@@ -40,42 +41,44 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
         ),
       ],
     );
-    // return GridView.builder(
-    //   controller: controller,
-    //   shrinkWrap: true,
-    //   itemCount: widget.list.length,
-    //   physics: NeverScrollableScrollPhysics(),
-    //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-    //     maxCrossAxisExtent: 170,
-    //     mainAxisExtent: 170,
-    //     mainAxisSpacing: 4,
-    //     crossAxisSpacing: 4,
-    //   ),
-    //   itemBuilder: (context, index) => _getGridItem(widget.list[index]),
-    // );
   }
 
   Widget _getGridItem(MovieCast item) {
-    return Column(
-      children: [
-        Expanded(
-          child: CircleAvatar(
-            radius: 150 / 2,
-            // foregroundImage: AssetImage(
-            //   TWidgets.instance.defaultImageAssetsPath!,
-            // ),
-            backgroundImage: NetworkImage(
-              Setting.getForwardProxyUrl(item.profilePath),
+    return GestureDetector(
+      onTap: () => _showImage(item.profilePath),
+      child: Column(
+        children: [
+          Expanded(
+            child: CircleAvatar(
+              radius: 150 / 2,
+              // foregroundImage: AssetImage(
+              //   TWidgets.instance.defaultImageAssetsPath!,
+              // ),
+              backgroundImage: NetworkImage(
+                Setting.getForwardProxyUrl(item.profilePath),
+              ),
             ),
           ),
-        ),
-        Text(
-          item.name,
-          style: TextStyle(fontSize: 11),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+          Text(
+            item.name,
+            style: TextStyle(fontSize: 11),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showImage(String url) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(
+        contentPadding: EdgeInsets.all(8),
+        actionsPadding: EdgeInsets.all(4),
+        content: TImageUrl(url: Setting.getForwardProxyUrl(url)),
+        actions: [CloseButton()],
+      ),
     );
   }
 }

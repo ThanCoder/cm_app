@@ -15,21 +15,23 @@ class ThemeSwitcher extends StatefulWidget {
 }
 
 class _ThemeSwitcherState extends State<ThemeSwitcher> {
-  late StreamSubscription<TThemeModes> _themeSub;
+  late StreamSubscription<Brightness> _themeSub;
 
   @override
   void initState() {
-    _themeSub = TThemeServices.instance.onBrightnessChanged.listen((data) {
+    _themeSub = TThemeServices.instance.onBrightnessChanged.listen((
+      brightness,
+    ) {
       final oldConfig = Setting.getAppConfigNotifier.value;
       if (oldConfig.themeMode == TThemeModes.system &&
-          oldConfig.isDarkTheme != data.isDarkMode) {
+          oldConfig.isDarkTheme != (brightness == Brightness.dark)) {
         final newConfig = Setting.getAppConfigNotifier.value.copyWith(
-          isDarkTheme: data.isDarkMode,
+          isDarkTheme: brightness == Brightness.dark,
         );
         Setting.getAppConfigNotifier.value = newConfig;
       }
     });
-    TThemeServices.instance.checkThemeEvent();
+    // TThemeServices.instance.checkThemeEvent();
     super.initState();
   }
 

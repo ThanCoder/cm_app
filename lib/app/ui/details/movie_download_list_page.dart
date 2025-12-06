@@ -22,9 +22,9 @@ class _MovieDownloadListPageState extends State<MovieDownloadListPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: controller,
       slivers: [
         SliverList.builder(
-          // controller: controller,
           // shrinkWrap: true,
           // physics: NeverScrollableScrollPhysics(),
           // primary: false, // controller reuse မဖြစ်စေဖို့
@@ -33,14 +33,6 @@ class _MovieDownloadListPageState extends State<MovieDownloadListPage> {
         ),
       ],
     );
-    // return ListView.builder(
-    //   controller: controller,
-    //   shrinkWrap: true,
-    //   physics: NeverScrollableScrollPhysics(),
-    //   // primary: false, // controller reuse မဖြစ်စေဖို့
-    //   itemCount: widget.list.length,
-    //   itemBuilder: (context, index) => _getlistItem(widget.list[index]),
-    // );
   }
 
   Widget _getlistItem(MovieDownloadLink link) {

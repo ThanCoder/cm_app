@@ -7,7 +7,6 @@ import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:t_widgets/theme/t_theme_services.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 void main() async {
@@ -19,11 +18,12 @@ void main() async {
 
   await TWidgets.instance.init(
     defaultImageAssetsPath: 'assets/logo_2.jpg',
+    initialThemeServices: true,
     getDarkMode: () => Setting.getAppConfig.isDarkTheme,
-    // isDebugPrint: kDebugMode,
     isDebugPrint: false,
-    getCachePath: (url) =>
-        '${PathUtil.getCachePath()}/${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
+    getCachePath: (url) => PathUtil.getCachePath(
+      name: '${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
+    ),
     onDownloadImage: (url, savePath) async {
       await client.download(url, savePath: savePath);
     },

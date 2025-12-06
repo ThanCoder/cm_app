@@ -1,6 +1,8 @@
 # 2.4.5
 
+- Added `Movie Cast Image Dialog` add `Movie သရုပ်ဆောင် image dialog` ထည့်ထားပေးခြင်း
 - Added `MovieDetailScreen` add `cover dialog`
+- Fixed `Movie Image Cover`
 - Fixed `BookMark`
 - Fixed `Search Screen`
 
