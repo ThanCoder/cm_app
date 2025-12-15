@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/core/models/movie_detail.dart';
-import 'package:cm_app/app/services/cache_services.dart';
-import 'package:cm_app/app/services/client_services.dart';
+import 'package:cm_app/app/core/services/cache_services.dart';
+import 'package:cm_app/app/core/services/client_services.dart';
 import 'package:cm_app/app/ui/details/detail_app_bar.dart';
 import 'package:cm_app/app/ui/details/movie_casts_page.dart';
 import 'package:cm_app/app/ui/details/movie_download_list_page.dart';
 import 'package:cm_app/app/ui/details/overview_viewer.dart';
 import 'package:cm_app/app/ui/details/poster_app_bar.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets_dev.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;

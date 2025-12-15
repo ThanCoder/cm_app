@@ -1,6 +1,7 @@
 import 'package:cm_app/app/core/interfaces/json_database.dart';
 import 'package:cm_app/app/core/models/movie.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/core/path_util.dart';
+import 'package:cm_app/more_libs/setting/core/path_util.dart';
+
 
 class MovieRecentDatabase extends JsonDatabase<Movie> {
   MovieRecentDatabase()

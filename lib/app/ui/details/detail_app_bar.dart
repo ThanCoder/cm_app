@@ -4,7 +4,7 @@ import 'package:cm_app/app/core/models/series_detail.dart';
 import 'package:cm_app/app/ui/components/movie_bookmark_button.dart';
 import 'package:cm_app/app/ui/details/overview_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets_dev.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class DetailAppBar<T> extends StatefulWidget {

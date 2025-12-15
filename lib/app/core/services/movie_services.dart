@@ -4,8 +4,8 @@ import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/core/models/movie_year.dart';
 import 'package:cm_app/app/core/models/tag_and_genres.dart';
-import 'package:cm_app/app/services/client_services.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/app/core/services/client_services.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 
 class MovieServices {
   static Future<List<Movie>> getMovies(String url) async {

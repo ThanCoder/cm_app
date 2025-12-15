@@ -4,15 +4,15 @@ import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/core/models/season.dart';
 import 'package:cm_app/app/core/models/series_detail.dart';
 import 'package:cm_app/app/route_helper.dart';
-import 'package:cm_app/app/services/cache_services.dart';
-import 'package:cm_app/app/services/client_services.dart';
+import 'package:cm_app/app/core/services/cache_services.dart';
+import 'package:cm_app/app/core/services/client_services.dart';
 import 'package:cm_app/app/ui/details/season_view.dart';
 import 'package:cm_app/app/ui/details/detail_app_bar.dart';
 import 'package:cm_app/app/ui/details/movie_casts_page.dart';
 import 'package:cm_app/app/ui/details/overview_viewer.dart';
 import 'package:cm_app/app/ui/details/poster_app_bar.dart';
 import 'package:cm_app/app/ui/screens/ep_download_link_screen.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 

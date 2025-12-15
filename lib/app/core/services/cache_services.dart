@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cm_app/app/core/models/movie_detail.dart';
 import 'package:cm_app/app/core/models/series_detail.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
+import 'package:cm_app/more_libs/setting/core/path_util.dart';
 
 class CacheServices {
   // movies

@@ -1,6 +1,6 @@
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/ui/components/cache_image.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 
 class MovieGridItem extends StatelessWidget {

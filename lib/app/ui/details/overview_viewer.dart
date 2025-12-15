@@ -3,7 +3,8 @@ import 'package:cm_app/app/core/models/movie_detail.dart';
 import 'package:cm_app/app/core/models/series_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:t_widgets/t_widgets_dev.dart';
+import 'package:t_widgets/t_widgets.dart';
+
 import 'package:than_pkg/than_pkg.dart';
 
 class OverviewViewer<T> extends StatefulWidget {

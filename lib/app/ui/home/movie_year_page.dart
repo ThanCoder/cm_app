@@ -1,5 +1,5 @@
 import 'package:cm_app/app/core/models/movie_year.dart';
-import 'package:cm_app/app/services/movie_services.dart';
+import 'package:cm_app/app/core/services/movie_services.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 

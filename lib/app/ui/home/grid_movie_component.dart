@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
-import 'package:cm_app/app/services/movie_services.dart';
+import 'package:cm_app/app/core/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:cm_app/app/ui/screens/see_all_screen.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
+import 'package:cm_app/more_libs/setting/core/path_util.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets_dev.dart';
+import 'package:t_widgets/t_widgets.dart';
+
 import 'package:than_pkg/than_pkg.dart';
 
 class GridMovieComponent extends StatefulWidget {
@@ -184,9 +185,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
                   '${movie.url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
             );
             final file = File(cachePath);
-            print(file);
             if (file.existsSync()) {
-              print('deleted');
               file.deleteSync();
             }
             Navigator.pop(context);

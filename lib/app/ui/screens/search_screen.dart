@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cm_app/app/constants.dart';
 import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
-import 'package:cm_app/app/services/movie_services.dart';
+import 'package:cm_app/app/core/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';

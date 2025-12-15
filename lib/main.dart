@@ -2,24 +2,25 @@ import 'package:cm_app/app/my_app.dart';
 import 'package:cm_app/more_libs/desktop_exe_1.0.2/desktop_exe.dart';
 import 'package:cm_app/more_libs/general_static_server/constants.dart';
 import 'package:cm_app/more_libs/general_static_server/general_server.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/core/index.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/more_libs/setting/core/path_util.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await ThanPkg.instance.init();
-  TThemeServices.instance.init();
 
   final client = TClient();
+
+  //init config
+  await Setting.instance.init(appName: 'cm_app');
 
   await TWidgets.instance.init(
     defaultImageAssetsPath: 'assets/logo_2.jpg',
     initialThemeServices: true,
-    getDarkMode: () => Setting.getAppConfig.isDarkTheme,
+    isDarkTheme: () => Setting.getAppConfig.isDarkTheme,
     isDebugPrint: false,
     getCachePath: (url) => PathUtil.getCachePath(
       name: '${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
@@ -29,8 +30,9 @@ void main() async {
     },
   );
 
-  //init config
-  await Setting.instance.initSetting(appName: 'cm_app');
+  await TRecentDB.getInstance.init(
+    rootPath: PathUtil.getConfigPath(name: 'config.db.json'),
+  );
 
   // gen desktop icon
   await DesktopExe.instance.exportNotExists(

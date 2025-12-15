@@ -15,14 +15,15 @@ class AppCurrentVersion extends StatelessWidget {
         if (snapshot.hasData && data != null) {
           return Card(
             child: ListTile(
+              leading: Icon(Icons.new_releases),
               title: Text(
                 'Current Version: ${data.version} ${Setting.appVersionLabel}',
               ),
-              onTap: () {
-                ThanPkg.platform.launch(
-                  'https://github.com/ThanCoder/cm_app/releases',
-                );
-              },
+              onTap: Setting.instance.releaseUrl == null
+                  ? null
+                  : () {
+                      ThanPkg.platform.launch(Setting.instance.releaseUrl!);
+                    },
             ),
           );
         }

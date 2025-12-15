@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:t_widgets/theme/t_theme_services.dart';
+import 'package:flutter/material.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 import 'setting.dart';
@@ -16,8 +16,7 @@ class AppConfig {
   bool isUseForwardProxy;
   bool isUseProxy;
   bool isDarkTheme;
-  TThemeModes themeMode;
-  bool isUseCacheImageWidget;
+  ThemeMode themeMode;
   AppConfig({
     required this.customPath,
     required this.forwardProxyUrl,
@@ -29,21 +28,19 @@ class AppConfig {
     required this.isUseProxy,
     required this.isDarkTheme,
     required this.themeMode,
-    required this.isUseCacheImageWidget,
   });
 
   factory AppConfig.create({
     String customPath = '',
-    String forwardProxyUrl = 'https://express-forward-proxy.vercel.app',
+    String forwardProxyUrl = '',
     String browserForwardProxyUrl = '',
     String proxyUrl = '',
     String hostUrl = '',
     bool isUseCustomPath = false,
-    bool isUseForwardProxy = true,
+    bool isUseForwardProxy = false,
     bool isUseProxy = false,
-    bool isDarkTheme = true,
-    TThemeModes themeMode = TThemeModes.dark,
-    bool isUseCacheImageWidget = true,
+    bool isDarkTheme = false,
+    ThemeMode themeMode = ThemeMode.system,
   }) {
     return AppConfig(
       customPath: customPath,
@@ -56,7 +53,6 @@ class AppConfig {
       isUseProxy: isUseProxy,
       isDarkTheme: isDarkTheme,
       themeMode: themeMode,
-      isUseCacheImageWidget: isUseCacheImageWidget,
     );
   }
 
@@ -70,8 +66,7 @@ class AppConfig {
     bool? isUseForwardProxy,
     bool? isUseProxy,
     bool? isDarkTheme,
-    TThemeModes? themeMode,
-    bool? isUseCacheImageWidget,
+    ThemeMode? themeMode,
   }) {
     return AppConfig(
       customPath: customPath ?? this.customPath,
@@ -85,8 +80,6 @@ class AppConfig {
       isUseProxy: isUseProxy ?? this.isUseProxy,
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
       themeMode: themeMode ?? this.themeMode,
-      isUseCacheImageWidget:
-          isUseCacheImageWidget ?? this.isUseCacheImageWidget,
     );
   }
 
@@ -103,12 +96,10 @@ class AppConfig {
       'isUseProxy': isUseProxy,
       'isDarkTheme': isDarkTheme,
       'themeMode': themeMode.name,
-      'isUseCacheImageWidget': isUseCacheImageWidget,
     };
   }
 
   factory AppConfig.fromMap(Map<String, dynamic> map) {
-    final themeModeStr = map.getString(['themeMode']);
     return AppConfig(
       customPath: map.getString(['customPath']),
       forwardProxyUrl: map.getString(['forwardProxyUrl']),
@@ -119,19 +110,17 @@ class AppConfig {
       isUseForwardProxy: map.getBool(['isUseForwardProxy']),
       isUseProxy: map.getBool(['isUseProxy']),
       isDarkTheme: map.getBool(['isDarkTheme']),
-      themeMode: TThemeModes.getName(themeModeStr),
-      isUseCacheImageWidget: map.getBool(['isUseCacheImageWidget'], def: true),
+      themeMode: ThemeModeExtension.getName(map.getString(['themeMode'])),
     );
   }
 
   // void
   Future<void> save() async {
     try {
-      final file = File('${Setting.appConfigPath}/$configName');
+      final file = File('${Setting.appConfigPath}/${Setting.configFileName}');
       final contents = JsonEncoder.withIndent(' ').convert(toMap());
       await file.writeAsString(contents);
-      // appConfigNotifier.value = this;
-      Setting.instance.initSetConfigFile();
+      await Setting.instance.reSetConfig();
     } catch (e) {
       Setting.showDebugLog(e.toString(), tag: 'AppConfig:save');
     }
@@ -139,13 +128,25 @@ class AppConfig {
 
   // get config
   static Future<AppConfig> getConfig() async {
-    final file = File('${Setting.appConfigPath}/$configName');
+    final file = File('${Setting.appConfigPath}/${Setting.configFileName}');
     if (file.existsSync()) {
       final source = await file.readAsString();
       return AppConfig.fromMap(jsonDecode(source));
     }
     return AppConfig.create();
   }
+}
 
-  static String configName = 'main.config.json';
+extension ThemeModeExtension on ThemeMode {
+  static ThemeMode getName(String name) {
+    if (name == ThemeMode.dark.name) {
+      return ThemeMode.dark;
+    }
+    if (name == ThemeMode.light.name) {
+      return ThemeMode.light;
+    }
+    return ThemeMode.system;
+  }
+
+  bool get isDarkTheme => this == ThemeMode.dark;
 }

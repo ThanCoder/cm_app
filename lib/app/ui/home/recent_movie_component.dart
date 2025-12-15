@@ -1,5 +1,5 @@
 import 'package:cm_app/app/core/models/movie.dart';
-import 'package:cm_app/app/services/movie_recent_services.dart';
+import 'package:cm_app/app/core/services/movie_recent_services.dart';
 import 'package:cm_app/app/ui/components/one_line_movie_component.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';

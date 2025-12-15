@@ -1,6 +1,6 @@
 import 'package:cm_app/app/core/models/season.dart';
 import 'package:cm_app/app/core/models/series_detail.dart';
-import 'package:cm_app/more_libs/setting_v2.8.3/setting.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
