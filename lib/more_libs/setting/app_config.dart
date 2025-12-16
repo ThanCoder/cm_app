@@ -32,12 +32,12 @@ class AppConfig {
 
   factory AppConfig.create({
     String customPath = '',
-    String forwardProxyUrl = '',
+    String forwardProxyUrl = 'https://than-forward-proxy.vercel.app',
     String browserForwardProxyUrl = '',
     String proxyUrl = '',
     String hostUrl = '',
     bool isUseCustomPath = false,
-    bool isUseForwardProxy = false,
+    bool isUseForwardProxy = true,
     bool isUseProxy = false,
     bool isDarkTheme = false,
     ThemeMode themeMode = ThemeMode.system,
@@ -102,12 +102,14 @@ class AppConfig {
   factory AppConfig.fromMap(Map<String, dynamic> map) {
     return AppConfig(
       customPath: map.getString(['customPath']),
-      forwardProxyUrl: map.getString(['forwardProxyUrl']),
+      forwardProxyUrl: map.getString([
+        'forwardProxyUrl',
+      ], def: 'https://than-forward-proxy.vercel.app'),
+      isUseForwardProxy: map.getBool(['isUseForwardProxy'], def: true),
       browserForwardProxyUrl: map.getString(['browserForwardProxyUrl']),
       proxyUrl: map.getString(['proxyUrl']),
       hostUrl: map.getString(['hostUrl']),
       isUseCustomPath: map.getBool(['isUseCustomPath']),
-      isUseForwardProxy: map.getBool(['isUseForwardProxy']),
       isUseProxy: map.getBool(['isUseProxy']),
       isDarkTheme: map.getBool(['isDarkTheme']),
       themeMode: ThemeModeExtension.getName(map.getString(['themeMode'])),

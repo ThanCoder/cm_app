@@ -1,4 +1,5 @@
 import 'package:cm_app/app/my_app.dart';
+import 'package:cm_app/app/ui/components/cache_image.dart';
 import 'package:cm_app/more_libs/desktop_exe_1.0.2/desktop_exe.dart';
 import 'package:cm_app/more_libs/general_static_server/constants.dart';
 import 'package:cm_app/more_libs/general_static_server/general_server.dart';
@@ -22,9 +23,7 @@ void main() async {
     initialThemeServices: true,
     isDarkTheme: () => Setting.getAppConfig.isDarkTheme,
     isDebugPrint: false,
-    getCachePath: (url) => PathUtil.getCachePath(
-      name: '${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
-    ),
+    getCachePath: (url) => CacheImage.getCachePath(url),
     onDownloadImage: (url, savePath) async {
       await client.download(url, savePath: savePath);
     },

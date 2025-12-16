@@ -9,7 +9,8 @@ class CacheImageSettingListTile extends StatefulWidget {
   State<CacheImageSettingListTile> createState() =>
       _CacheImageSettingListTileState();
 
-  static bool get isUseCacheImage => TRecentDB.getInstance.getBool('use_cache_image');
+  static bool get isUseCacheImage =>
+      TRecentDB.getInstance.getBool('use_cache_image', def: true);
 }
 
 class _CacheImageSettingListTileState extends State<CacheImageSettingListTile> {
@@ -17,7 +18,7 @@ class _CacheImageSettingListTileState extends State<CacheImageSettingListTile> {
   Widget build(BuildContext context) {
     return Card(
       child: SwitchListTile.adaptive(
-        value: TRecentDB.getInstance.getBool('use_cache_image'),
+        value: CacheImageSettingListTile.isUseCacheImage,
         onChanged: (value) async {
           await TRecentDB.getInstance.put('use_cache_image', value);
           setState(() {});

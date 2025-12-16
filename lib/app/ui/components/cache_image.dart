@@ -1,21 +1,47 @@
 import 'dart:io';
 import 'package:cm_app/app/core/app_setting/cache_image_setting_list_tile.dart';
+import 'package:cm_app/more_libs/setting/core/path_util.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_pkg/than_pkg.dart';
 
-class CacheImage extends StatelessWidget {
+class CacheImage extends StatefulWidget {
   final String url;
-  const CacheImage({super.key, required this.url});
+  final VoidCallback? onTap;
+  const CacheImage({super.key, required this.url, this.onTap});
+
+  static String getCachePath(String url) => PathUtil.getCachePath(
+    name: '${url.getName().replaceAll('/', '-').replaceAll(':', '-')}.png',
+  );
+
+  @override
+  State<CacheImage> createState() => _CacheImageState();
+}
+
+class _CacheImageState extends State<CacheImage> {
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onSecondaryTap: _deleteCache,
+      onLongPress: _deleteCache,
+      onTap: widget.onTap,
+      child: _getWidget(),
+    );
+  }
+
+  Widget _getWidget() {
     if (CacheImageSettingListTile.isUseCacheImage) {
-      final cacheFile = File(TWidgets.instance.getCachePath?.call(url) ?? '');
+      final cacheFile = File(
+        TWidgets.instance.getCachePath?.call(widget.url) ?? '',
+      );
       if (cacheFile.existsSync()) {
-        // return TImage(source: url);
         return TImageFile(path: cacheFile.path, errorBuilder: _errorBuilder);
       }
       return FutureBuilder(
-        future: TWidgets.instance.onDownloadImage?.call(url, cacheFile.path),
+        future: TWidgets.instance.onDownloadImage?.call(
+          widget.url,
+          cacheFile.path,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return TLoader.random();
@@ -24,7 +50,24 @@ class CacheImage extends StatelessWidget {
         },
       );
     }
-    return TImage(source: url);
+    return TImage(source: widget.url);
+  }
+
+  void _deleteCache() {
+    final file = File(CacheImage.getCachePath(widget.url));
+    if (!file.existsSync()) return;
+
+    showTConfirmDialog(
+      context,
+      contentText: 'Image Cache ကိုဖျက်ချင်တာ သေချာပြီလား?',
+      submitText: 'Delete Cache',
+      onSubmit: () async {
+        await file.delete();
+        await ThanPkg.appUtil.clearImageCache();
+        if (!mounted) return;
+        setState(() {});
+      },
+    );
   }
 
   Widget _errorBuilder(
@@ -32,7 +75,6 @@ class CacheImage extends StatelessWidget {
     Object error,
     StackTrace? stackTrace,
   ) {
-    print('error');
-    return TImage(source: url);
+    return TImage(source: widget.url);
   }
 }

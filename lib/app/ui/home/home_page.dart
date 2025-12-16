@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // print(movieList);
     return Scaffold(
       drawer: HomeDrawer(),
       body: RefreshIndicator.adaptive(
