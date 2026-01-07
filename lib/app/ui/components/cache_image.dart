@@ -19,7 +19,7 @@ class CacheImage extends StatelessWidget {
       imageUrl: url,
       fit: BoxFit.cover,
       // placeholder: (context, url) => Text('placeholder'),
-      errorWidget: (context, url, error) => Text('error'),
+      errorWidget: (context, url, error) => Icon(Icons.broken_image_rounded),
       progressIndicatorBuilder: (context, url, progress) => TLoader.random(),
     );
   }

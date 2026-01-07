@@ -1,7 +1,7 @@
 import 'package:cm_app/app/core/models/movie_cast.dart';
+import 'package:cm_app/app/ui/components/cache_image.dart';
 import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/widgets/index.dart';
 
 class MovieCastsPage extends StatefulWidget {
   final List<MovieCast> list;
@@ -32,10 +32,10 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
           itemCount: widget.list.length,
           // physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 170,
-            mainAxisExtent: 170,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
+            maxCrossAxisExtent: 150,
+            mainAxisExtent: 150,
+            mainAxisSpacing: 2,
+            crossAxisSpacing: 2,
           ),
           itemBuilder: (context, index) => _getGridItem(widget.list[index]),
         ),
@@ -49,13 +49,14 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
       child: Column(
         children: [
           Expanded(
-            child: CircleAvatar(
-              radius: 150 / 2,
-              // foregroundImage: AssetImage(
-              //   TWidgets.instance.defaultImageAssetsPath!,
-              // ),
-              backgroundImage: NetworkImage(
-                Setting.getForwardProxyUrl(item.profilePath),
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(shape: BoxShape.circle),
+              child: ClipOval(
+                child: CacheImage(
+                  url: Setting.getForwardProxyUrl(item.profilePath),
+                ),
               ),
             ),
           ),
@@ -74,9 +75,10 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog.adaptive(
+        scrollable: true,
         contentPadding: EdgeInsets.all(8),
         actionsPadding: EdgeInsets.all(4),
-        content: TImageUrl(url: Setting.getForwardProxyUrl(url)),
+        content: CacheImage(url: Setting.getForwardProxyUrl(url)),
         actions: [CloseButton()],
       ),
     );
