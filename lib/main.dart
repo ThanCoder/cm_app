@@ -3,12 +3,16 @@ import 'package:cm_app/app/ui/components/cache_image.dart';
 import 'package:cm_app/more_libs/desktop_exe_1.0.2/desktop_exe.dart';
 import 'package:cm_app/more_libs/general_static_server/constants.dart';
 import 'package:cm_app/more_libs/general_static_server/general_server.dart';
+import 'package:cm_app/more_libs/language/language.dart';
+import 'package:cm_app/more_libs/language/language_controller.dart';
+import 'package:cm_app/more_libs/language/language_repo.dart';
 import 'package:cm_app/more_libs/setting/core/path_util.dart';
 import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
+
 //test
 void main() async {
   await ThanPkg.instance.init();
@@ -63,6 +67,11 @@ void main() async {
       // await windowManager.focus();
     });
   }
+
+  final langs = await LanguageRepo.instance.getAllLanguages();
+  await LanguageController.instance.changeLanguage(
+    Language(model: langs[0], langMap: await langs[0].load()),
+  );
 
   runApp(const MyApp());
 }

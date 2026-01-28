@@ -6,6 +6,7 @@ import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
 import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/screens/search_screen.dart';
+import 'package:cm_app/more_libs/language/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:than_pkg/than_pkg.dart';
 
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
           key: trendingMovieKey,
-          title: 'Trending Movies',
+          title: LanguageController.instance.getLan('trending_movies'),
           url: apiMovieTrendingUrl,
           onClicked: _goMovieDetailScreen,
         ),
@@ -62,7 +63,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
           key: trendingTvShowKey,
-          title: 'Trending TV Shows',
+          title: LanguageController.instance.getLan('trending_tv_show'),
           url: apiTvShowTrendingUrl,
           onClicked: _goMovieDetailScreen,
         ),
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         child: GridMovieComponent(
           key: movieKey,
           url: apiMovieUrl,
-          title: 'Movies',
+          title: LanguageController.instance.getLan('movies'),
           type: MovieTypes.movie,
         ),
       ),
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
         child: GridMovieComponent(
           key: tvShowKey,
           url: apiTvShowUrl,
-          title: 'TV Shows',
+          title: LanguageController.instance.getLan('tv_shows'),
           type: MovieTypes.tvShow,
         ),
       ),
@@ -115,7 +116,10 @@ class _HomePageState extends State<HomePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Search...'),
+                child: LanguageController.instance.didLanguageChanged(
+                  'search',
+                  builder: (langValue) => Text('$langValue...'),
+                ),
               ),
               Spacer(),
               IconButton(onPressed: _goSearchScreen, icon: Icon(Icons.search)),

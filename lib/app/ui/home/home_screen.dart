@@ -4,6 +4,7 @@ import 'package:cm_app/app/ui/home/home_page.dart';
 import 'package:cm_app/app/ui/home/library_page.dart';
 import 'package:cm_app/app/ui/home/more_app_page.dart';
 import 'package:cm_app/app/ui/screens/movie_bookmark_screen.dart';
+import 'package:cm_app/more_libs/language/language_controller.dart';
 import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.bookmark_added),
           ),
           BottomNavigationBarItem(
-            label: 'More',
+            label: LanguageController.instance.getLan('more'),
             icon: Icon(Icons.grid_view_rounded),
           ),
         ],
