@@ -38,7 +38,8 @@ class _MovieYearPageState extends State<MovieYearPage> {
       setState(() {
         isLoading = false;
       });
-      showTMessageDialogError(context, e.toString());
+      // showTMessageDialogError(context, e.toString());
+      debugPrint('[MovieYearPage:init]: $e');
     }
   }
 

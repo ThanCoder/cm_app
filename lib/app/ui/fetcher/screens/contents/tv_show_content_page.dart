@@ -1,23 +1,21 @@
 import 'package:cm_app/app/ui/components/cache_image.dart';
 import 'package:cm_app/app/ui/fetcher/services/fetcher_services.dart';
 import 'package:cm_app/app/ui/fetcher/types/content_responses.dart';
+import 'package:cm_app/app/ui/fetcher/types/movie_pagi_response.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/functions/message_func.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:t_widgets/widgets/refresh_button.dart';
-import 'package:t_widgets/widgets/t_cache_image.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class TvShowContentPage extends StatefulWidget {
-  final WebsitePageResult result;
+  final MovieItem item;
   final Website website;
   final String html;
   const TvShowContentPage({
     super.key,
     required this.html,
     required this.website,
-    required this.result,
+    required this.item,
   });
 
   @override
@@ -60,17 +58,17 @@ class _TvShowContentPageState extends State<TvShowContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _resultWidget;
+    return _itemWidget;
   }
 
   int pageIndex = 0;
 
-  Widget get _resultWidget {
+  Widget get _itemWidget {
     if (response == null) {
       return Text('Response is Null');
     }
     final pages = [
-      _HomePage(result: widget.result, response: response!),
+      _HomePage(item: widget.item, response: response!),
       _CharacterList(list: response!.castList),
       _SeasonList(list: response!.seasons),
     ];
@@ -100,9 +98,9 @@ class _TvShowContentPageState extends State<TvShowContentPage> {
 }
 
 class _HomePage extends StatelessWidget {
-  final WebsitePageResult result;
+  final MovieItem item;
   final TvShowContentResponse response;
-  const _HomePage({required this.result, required this.response});
+  const _HomePage({required this.item, required this.response});
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +113,13 @@ class _HomePage extends StatelessWidget {
               SizedBox(
                 width: 140,
                 height: 180,
-                child: TCacheImage(url: result.coverUrl),
+                child: TCacheImage(url: item.coverUrl),
               ),
-              Text(result.title),
+              Text(item.title),
             ],
           ),
         ),
-        Text(response.descText),
+        Text(response.descText, style: TextStyle(fontSize: 16)),
       ],
     );
   }
@@ -155,9 +153,25 @@ class _CharacterList extends StatelessWidget {
               child: Column(
                 spacing: 2,
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('T: ${cast.name}'),
-                  Row(children: [Icon(Icons.person), Text(cast.characterName)]),
+                  Text(
+                    'T: ${cast.name}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.person),
+                      Expanded(
+                        child: Text(
+                          cast.characterName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -194,6 +208,7 @@ class _SeasonListState extends State<_SeasonList> {
   }
 
   Widget _episodeItem(TvShowEpisode episode) {
+    // print(episode.coverUrl);
     return InkWell(
       mouseCursor: SystemMouseCursors.click,
       onTap: () {
@@ -209,7 +224,11 @@ class _SeasonListState extends State<_SeasonList> {
             SizedBox(
               width: 100,
               height: 100,
-              child: CacheImage(url: episode.coverUrl),
+              child: CacheImage(
+                url: episode.coverUrl,
+                placeholder: (message) =>
+                    Icon(Icons.image_not_supported_outlined),
+              ),
             ),
 
             Expanded(

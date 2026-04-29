@@ -1,21 +1,23 @@
 import 'package:cm_app/app/ui/fetcher/services/fetcher_services.dart';
 import 'package:cm_app/app/ui/fetcher/types/content_responses.dart';
+import 'package:cm_app/app/ui/fetcher/types/movie_pagi_response.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:t_widgets/functions/message_func.dart';
 import 'package:t_widgets/widgets/refresh_button.dart';
 import 'package:t_widgets/widgets/t_cache_image.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class MovieContentPage extends StatefulWidget {
-  final WebsitePageResult result;
+  final MovieItem item;
   final Website website;
   final String html;
   const MovieContentPage({
     super.key,
     required this.html,
     required this.website,
-    required this.result,
+    required this.item,
   });
 
   @override
@@ -71,10 +73,12 @@ class _MovieContentPageState extends State<MovieContentPage> {
               ),
             )
           else
-            _resultWidget,
+            _itemWidget,
           SliverToBoxAdapter(child: Divider()),
           if (response != null && response!.downloadItems.isNotEmpty)
             _downloadListWidget,
+          if (response != null && response!.downloadHtml != null)
+            _downloadHtmlWidget,
         ],
       ),
       // floatingActionButton: FloatingActionButton(onPressed: init),
@@ -90,17 +94,22 @@ class _MovieContentPageState extends State<MovieContentPage> {
             SizedBox(
               width: 140,
               height: 180,
-              child: TCacheImage(url: widget.result.coverUrl),
+              child: TCacheImage(url: widget.item.coverUrl),
             ),
-            Text(widget.result.title),
+            Text(widget.item.title),
           ],
         ),
       ),
     );
   }
 
-  Widget get _resultWidget {
-    return SliverToBoxAdapter(child: Text(response!.descText));
+  Widget get _itemWidget {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(response!.descText, style: TextStyle(fontSize: 16)),
+      ),
+    );
   }
 
   Widget get _downloadListWidget {
@@ -143,5 +152,10 @@ class _MovieContentPageState extends State<MovieContentPage> {
         ),
       ),
     );
+  }
+
+  Widget get _downloadHtmlWidget {
+    return SliverToBoxAdapter(child: Html(data: response!.downloadHtml));
+    // return SliverToBoxAdapter(child: Text('html: ${response!.downloadHtml}'));
   }
 }

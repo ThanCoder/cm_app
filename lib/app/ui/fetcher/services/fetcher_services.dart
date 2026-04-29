@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cm_app/app/ui/fetcher/screens/contents/website_content_page.dart';
 import 'package:cm_app/app/ui/fetcher/types/content_responses.dart';
+import 'package:cm_app/app/ui/fetcher/types/movie_pagi_response.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:cm_app/more_libs/setting/core/path_util.dart';
 import 'package:crypto/crypto.dart';
 import 'package:t_client/t_client.dart';
-import 'package:t_html_parser/core/types/attributes.dart';
 import 'package:t_html_parser/t_html_parser.dart';
 
 class FetcherServices {
@@ -15,6 +16,43 @@ class FetcherServices {
   factory FetcherServices() => instace;
   final client = TClient();
 
+  Future<MoviePagiResponse> fetchPagiPageList(
+    String url, {
+    bool useCache = true,
+    bool cacheCleanUp = false,
+    String firstKeyName = 'cache-pagi-page-',
+    required WebsiteContentPageType type,
+    required Website website,
+  }) async {
+    final html = await _getCacheHtml(
+      url,
+      cacheCleanUp: cacheCleanUp,
+      useCache: useCache,
+      firstKeyName: firstKeyName,
+    );
+
+    var movies = <MovieItem>[];
+
+    if (type == WebsiteContentPageType.movie) {
+      movies = website.moviePage.getResultFromHtml(html);
+    }
+    if (type == WebsiteContentPageType.tvShow) {
+      movies = website.tvShowPage.getResultFromHtml(html);
+    }
+    // pagi
+    var pagiList = <Pagination>[];
+    if (website.moviePage.paginationQuery != null &&
+        type == WebsiteContentPageType.movie) {
+      pagiList = website.moviePage.paginationQuery!.getResultFromHtml(html);
+    }
+    if (website.tvShowPage.paginationQuery != null &&
+        type == WebsiteContentPageType.tvShow) {
+      pagiList = website.tvShowPage.paginationQuery!.getResultFromHtml(html);
+    }
+
+    return MoviePagiResponse(movies: movies, pagiList: pagiList);
+  }
+
   // movie content
   Future<MovieContentResponse?> fetchMoviePageContent(
     String html, {
@@ -22,34 +60,14 @@ class FetcherServices {
   }) async {
     if (website.pageContentQuery == null) return null;
 
-    final dom = html.toHtmlDocument;
+    String descText = website.pageContentQuery!.contentQuery.getResultHtml(
+      html,
+    );
 
-    String descText = '';
-    final desc = dom.querySelector('.wp-content');
-    if (desc != null) {
-      descText = desc.getQuerySelectorText(selector: '');
-    }
+    final list = website.pageContentQuery!.downloadQuery.getResultFromHtml(
+      html,
+    );
 
-    final list = <MovieContentDownloadItem>[];
-    for (var ele in dom.querySelectorAll(
-      website.pageContentQuery!.downloadQuery.selectorAll,
-    )) {
-      final url = website.pageContentQuery!.downloadQuery.urlQuery
-          .getResultFromElement(ele);
-      final quality = website.pageContentQuery!.downloadQuery.qualityQuery
-          .getResultFromElement(ele);
-      final size = '-1';
-      // print('quality: $quality - url: $url');
-      // break;
-      list.add(
-        MovieContentDownloadItem(
-          title: 'Download',
-          quality: quality,
-          url: url,
-          size: size,
-        ),
-      );
-    }
     return MovieContentResponse(descText: descText, downloadItems: list);
   }
 
@@ -60,65 +78,23 @@ class FetcherServices {
   }) async {
     if (website.pageContentQuery == null) return null;
 
-    final dom = html.toHtmlDocument;
     // desc
-    String descText = '';
+    String descText = website.pageContentQuery!.contentQuery.getResultHtml(
+      html,
+    );
 
-    final desc = dom.querySelector('.wp-content');
-    if (desc != null) {
-      descText = desc.getQuerySelectorText(selector: '');
-    }
     // cast
-    final castList = <TvShowCast>[];
-    for (var castEle in dom.querySelectorAll('.persons .person')) {
-      final name = castEle.getQuerySelectorText(selector: '.name a');
-      final character = castEle.getQuerySelectorText(selector: '.caracter');
-      final profileUrl = castEle.getQuerySelectorAttr(
-        selector: 'img',
-        attr: Attribute('src'),
-      );
-      // print('name: $name - character: $character - url: $profileUrl');
-      // break;
-      castList.add(
-        TvShowCast(
-          name: name,
-          profileUrl: profileUrl,
-          characterName: character,
-        ),
-      );
+    var castList = <TvShowCast>[];
+    if (website.castQuery != null) {
+      castList = website.castQuery!.getResultFromHtml(html);
     }
 
     // seasons
-    final seasons = <TvShowSeason>[];
-
-    for (var season in dom.querySelectorAll('#seasons .se-c')) {
-      final title = season.getQuerySelectorText(selector: '.title');
-      final episodios = <TvShowEpisode>[];
-
-      for (var epEle in season.querySelectorAll('.se-a .episodios li')) {
-        final coverUrl = epEle.getQuerySelectorAttr(
-          selector: '.imagen img',
-          attr: Attribute('src'),
-        );
-        final number = epEle.getQuerySelectorText(selector: '.numerando');
-        final title = epEle.getQuerySelectorText(selector: '.episodiotitle a');
-        final url = epEle.getQuerySelectorAttr(
-          selector: '.episodiotitle a',
-          attr: Attribute('href'),
-        );
-        episodios.add(
-          TvShowEpisode(
-            title: title,
-            number: number,
-            url: url,
-            coverUrl: coverUrl,
-          ),
-        );
-        // print('title: $title - number: $number - url: $url');
-        // break;
-      }
-      seasons.add(TvShowSeason(title: title, episodios: episodios));
+    var seasons = <TvShowSeason>[];
+    if (website.seasonQuery != null) {
+      seasons = website.seasonQuery!.getResultFromHtml(html);
     }
+
     return TvShowContentResponse(
       descText: descText,
       seasons: seasons,
@@ -142,19 +118,18 @@ class FetcherServices {
   }
 
   ///Return (movies,tvshows)
-  Future<(List<WebsitePageResult>, List<WebsitePageResult>)> fetchPage(
+  Future<(List<MovieItem>, List<MovieItem>)> fetchPage(
     String url, {
     required Website website,
   }) async {
-    final movieList = <WebsitePageResult>[];
-    final tvShowList = <WebsitePageResult>[];
+    final movieList = <MovieItem>[];
+    final tvShowList = <MovieItem>[];
     final html = await _getCacheHtml(url);
     final dom = html.toHtmlDocument;
 
     for (var ele in dom.querySelectorAll(website.moviePage.selectorAll)) {
       movieList.add(
-        WebsitePageResult(
-          key: website.moviePage.title,
+        MovieItem(
           title: website.moviePage.titleQuery.getResultFromElement(ele),
           url: website.moviePage.urlQuery.getResultFromElement(ele),
           coverUrl: website.moviePage.coverUrlQuery.getResultFromElement(ele),
@@ -163,8 +138,7 @@ class FetcherServices {
     }
     for (var ele in dom.querySelectorAll(website.tvShowPage.selectorAll)) {
       tvShowList.add(
-        WebsitePageResult(
-          key: website.tvShowPage.title,
+        MovieItem(
           title: website.tvShowPage.titleQuery.getResultFromElement(ele),
           url: website.tvShowPage.urlQuery.getResultFromElement(ele),
           coverUrl: website.tvShowPage.coverUrlQuery.getResultFromElement(ele),

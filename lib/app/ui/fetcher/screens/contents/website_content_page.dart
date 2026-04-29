@@ -1,6 +1,7 @@
 import 'package:cm_app/app/ui/fetcher/screens/contents/movie_content_page.dart';
 import 'package:cm_app/app/ui/fetcher/screens/contents/tv_show_content_page.dart';
 import 'package:cm_app/app/ui/fetcher/services/fetcher_services.dart';
+import 'package:cm_app/app/ui/fetcher/types/movie_pagi_response.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
@@ -9,12 +10,12 @@ import 'package:than_pkg/than_pkg.dart';
 enum WebsiteContentPageType { movie, tvShow }
 
 class WebsiteContentPage extends StatefulWidget {
-  final WebsitePageResult result;
+  final MovieItem item;
   final Website website;
   final WebsiteContentPageType type;
   const WebsiteContentPage({
     super.key,
-    required this.result,
+    required this.item,
     required this.website,
     required this.type,
   });
@@ -40,10 +41,10 @@ class _WebsiteContentPageState extends State<WebsiteContentPage> {
         isLoading = true;
       });
       final cacheName =
-          'cache-content-page-${widget.result.url.contains('tvshows') ? 'tvshows' : 'movie'}-';
+          'cache-content-page-${widget.item.url.contains('tvshows') ? 'tvshows' : 'movie'}-';
       // print(cacheName);
       html = await FetcherServices.instace.fetchPageHtml(
-        widget.result.url,
+        widget.item.url,
         firstKeyName: cacheName,
         useCache: useCache,
         cacheCleanUp: cacheCleanUp,
@@ -65,7 +66,7 @@ class _WebsiteContentPageState extends State<WebsiteContentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.result.title), actions: _actions),
+      appBar: AppBar(title: Text(widget.item.title), actions: _actions),
       body: _body,
     );
   }
@@ -77,7 +78,7 @@ class _WebsiteContentPageState extends State<WebsiteContentPage> {
     IconButton(
       onPressed: () {
         try {
-          ThanPkg.platform.launch(widget.result.url);
+          ThanPkg.platform.launch(widget.item.url);
         } catch (e) {
           showTMessageDialogError(context, e.toString());
         }
@@ -104,14 +105,14 @@ class _WebsiteContentPageState extends State<WebsiteContentPage> {
     if (widget.type == WebsiteContentPageType.tvShow) {
       return TvShowContentPage(
         html: html,
-        result: widget.result,
+        item: widget.item,
         website: widget.website,
       );
     }
 
     return MovieContentPage(
       html: html,
-      result: widget.result,
+      item: widget.item,
       website: widget.website,
     );
   }

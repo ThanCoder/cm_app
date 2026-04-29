@@ -11,7 +11,7 @@ class WebsiteServices {
     final list = <Website>[];
     list.add(
       Website(
-        title: 'mmsubmovie',
+        title: 'MM SubMovie',
         url: 'https://mmsubmovie.com',
         hostUrl: 'https://mmsubmovie.com',
         moviePage: WebsitePage(
@@ -21,6 +21,11 @@ class WebsiteServices {
           titleQuery: Query(attribute: 'text', selector: '.data a'),
           urlQuery: Query(attribute: 'href', selector: '.data a'),
           coverUrlQuery: Query(attribute: 'src', selector: '.poster img'),
+          paginationQuery: PagePaginationQuery(
+            selectorAll: '.pagination a',
+            titleQuery: Query(selector: '', attribute: 'text'),
+            urlQuery: Query(selector: '', attribute: 'href'),
+          ),
         ),
         tvShowPage: WebsitePage(
           title: 'TV Shows',
@@ -29,6 +34,28 @@ class WebsiteServices {
           titleQuery: Query(attribute: 'text', selector: '.data a'),
           urlQuery: Query(attribute: 'href', selector: '.data a'),
           coverUrlQuery: Query(attribute: 'src', selector: '.poster img'),
+          paginationQuery: PagePaginationQuery(
+            selectorAll: '.pagination a',
+            titleQuery: Query(selector: '', attribute: 'text'),
+            urlQuery: Query(selector: '', attribute: 'href'),
+          ),
+        ),
+        seasonQuery: TvShowSeasonQuery(
+          selectorAll: '#seasons .se-c',
+          seasonTitleQuery: Query(selector: '.title', attribute: 'text'),
+          episodeQuery: TvShowEpisodeQuery(
+            selectorAll: '.se-a .episodios li',
+            titleQuery: Query(selector: '.episodiotitle a', attribute: 'text'),
+            numberQuery: Query(selector: '.numerando', attribute: 'text'),
+            coverUrlQuery: Query(selector: '.imagen img', attribute: 'src'),
+            urlQuery: Query(selector: '.episodiotitle a', attribute: 'href'),
+          ),
+        ),
+        castQuery: TvShowCastQuery(
+          selectorAll: '.persons .person',
+          nameQuery: Query(selector: '.name a', attribute: 'text'),
+          characterQuery: Query(selector: '.caracter', attribute: 'text'),
+          profileUrlQuery: Query(selector: 'img', attribute: 'src'),
         ),
         pageContentQuery: PageContentQuery(
           contentQuery: Query(attribute: 'text', selector: '.wp-content'),

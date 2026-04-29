@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<GridMovieComponentState> tvShowKey = GlobalKey();
   final GlobalKey<TrendingMovieComponentState> trendingMovieKey = GlobalKey();
   final GlobalKey<TrendingMovieComponentState> trendingTvShowKey = GlobalKey();
+
   Future<void> init() async {
     movieKey.currentState?.init(isUsedCached: false);
     tvShowKey.currentState?.init(isUsedCached: false);
@@ -36,7 +37,6 @@ class _HomePageState extends State<HomePage> {
         onRefresh: init,
         child: CustomScrollView(slivers: _getViews),
       ),
-      // floatingActionButton: FloatingActionButton(onPressed: init),
     );
   }
 

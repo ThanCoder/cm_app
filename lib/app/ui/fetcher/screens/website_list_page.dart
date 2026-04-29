@@ -82,7 +82,7 @@ class _WebsiteListPageState extends State<WebsiteListPage> {
 
   Widget _listItem(Website site) {
     return ListTile(
-      title: Text(site.title),
+      title: Text(site.title.toCaptalize()),
       onTap: () {
         context.goRoute(builder: (context) => FetcherHomePage(website: site));
       },

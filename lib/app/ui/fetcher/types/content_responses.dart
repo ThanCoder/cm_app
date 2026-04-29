@@ -1,8 +1,10 @@
 class MovieContentResponse {
   final String descText;
+  final String? downloadHtml;
   final List<MovieContentDownloadItem> downloadItems;
   const MovieContentResponse({
     required this.descText,
+    this.downloadHtml,
     required this.downloadItems,
   });
 }
@@ -50,7 +52,7 @@ class TvShowEpisode {
     required this.title,
     required this.number,
     required this.url,
-    required this.coverUrl
+    required this.coverUrl,
   });
 }
 

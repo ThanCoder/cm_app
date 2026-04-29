@@ -10,9 +10,13 @@ class Query {
 
   const Query({
     this.index = -1,
-    required this.attribute,
     required this.selector,
+    required this.attribute,
   });
+
+  String getResultHtml(String html) {
+    return getResultFromElement(html.toHtmlElement!);
+  }
 
   String getResultFromElement(Element ele) {
     if (attribute == 'html') {
