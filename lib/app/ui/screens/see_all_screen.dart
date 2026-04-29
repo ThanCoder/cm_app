@@ -3,8 +3,8 @@ import 'package:cm_app/app/core/models/movie.dart';
 import 'package:cm_app/app/route_helper.dart';
 import 'package:cm_app/app/core/services/movie_services.dart';
 import 'package:cm_app/app/ui/components/movie_grid_item.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/internal.dart';
 import 'package:t_widgets/t_widgets.dart';
 
 class SeeAllScreen extends StatefulWidget {
@@ -92,7 +92,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   Widget _getAppbar() {
     return SliverAppBar(
-      title: Text(widget.type.name.toCaptalize()),
+      title: Text(widget.type.name.toCaptalize),
       floating: true,
       // pinned: true,
       snap: true,

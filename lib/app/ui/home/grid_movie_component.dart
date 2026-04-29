@@ -31,7 +31,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
   List<Movie> list = [];
   bool isLoading = false;
   bool isInternetConnected = false;
-
+  String errorMessage = '';
   @override
   void initState() {
     super.initState();
@@ -48,6 +48,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
       }
 
       setState(() {
+        errorMessage = '';
         isLoading = true;
       });
       isInternetConnected = await ThanPkg.platform.isInternetConnected();
@@ -67,6 +68,7 @@ class GridMovieComponentState extends State<GridMovieComponent> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
+        errorMessage = e.toString();
         isLoading = false;
       });
       // showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
@@ -78,27 +80,26 @@ class GridMovieComponentState extends State<GridMovieComponent> {
     if (isLoading) {
       return Center(child: TLoader.random());
     }
+    if (errorMessage.isNotEmpty) {
+      return RefreshButton(
+        text: Text('Error ရှိနေပါတယ်။', style: TextStyle(color: Colors.red)),
+        onClicked: init,
+      );
+    }
     if (list.isEmpty && !isInternetConnected) {
-      return Column(
-        children: [
-          Center(
-            child: Text(
-              'Your Are Offline',
-              style: TextStyle(fontSize: 18, color: Colors.red),
-            ),
-          ),
-          IconButton(onPressed: init, icon: Icon(Icons.refresh)),
-        ],
+      return RefreshButton(
+        text: Text(
+          'Your Are Offline',
+          style: TextStyle(fontSize: 18, color: Colors.red),
+        ),
+        onClicked: init,
       );
     }
     if (list.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('${widget.title} မရှိပါ...'),
-            IconButton(onPressed: init, icon: Icon(Icons.refresh)),
-          ],
+        child: RefreshButton(
+          text: Text('${widget.title} မရှိပါ...'),
+          onClicked: init,
         ),
       );
     }

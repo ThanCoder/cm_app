@@ -1,5 +1,7 @@
 import 'package:cm_app/app/core/models/movie_download_link.dart';
 import 'package:cm_app/app/core/models/season.dart';
+import 'package:cm_app/app/ui/components/cache_image.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
@@ -17,12 +19,21 @@ class _EpDownloadLinkScreenState extends State<EpDownloadLinkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Episode: ${widget.episode.episodeNumber}')),
-      body: _getDownloadWidget(widget.episode.tvshowDownloadLinks),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: CacheImage(
+              url: Setting.getForwardProxyUrl(widget.episode.poster),
+            ),
+          ),
+          _getDownloadWidget(widget.episode.tvshowDownloadLinks),
+        ],
+      ),
     );
   }
 
   Widget _getDownloadWidget(List<MovieDownloadLink> list) {
-    return ListView.builder(
+    return SliverList.builder(
       itemCount: list.length,
       itemBuilder: (context, index) => _getDownloadListItem(list[index]),
     );

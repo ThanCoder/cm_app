@@ -56,6 +56,7 @@ class _MovieCastsPageState extends State<MovieCastsPage> {
               child: ClipOval(
                 child: CacheImage(
                   url: Setting.getForwardProxyUrl(item.profilePath),
+                  placeholder: (message) => Icon(Icons.person_off_sharp),
                 ),
               ),
             ),

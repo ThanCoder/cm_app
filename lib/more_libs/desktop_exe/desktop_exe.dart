@@ -15,11 +15,7 @@ import 'package:flutter/widgets.dart';
   */
 
 class DesktopExe {
-  static final DesktopExe instance = DesktopExe._();
-  DesktopExe._();
-  factory DesktopExe() => instance;
-
-  Future<void> exportNotExists({
+  static Future<void> exportDesktopIcon({
     required String name,
     required String assetsIconPath,
     String? customDesktopFilePath,
@@ -28,7 +24,6 @@ class DesktopExe {
     String path = '',
     bool terminal = false,
     bool startupNotify = false,
-    bool isOverrideExe = false,
   }) async {
     try {
       if (!Platform.isLinux) return;
@@ -41,10 +36,9 @@ class DesktopExe {
 
       // write content
       final file = File(desktopFilePath);
-      // override =false
-      if (!isOverrideExe && file.existsSync()) {
-        return;
-      }
+      // file ရှိနေရင် မထုတ်တော့ဘူး
+      if (file.existsSync()) return;
+
       final stringBuff = StringBuffer();
       stringBuff.writeln('[Desktop Entry]');
       stringBuff.writeln('Version=1.0');
@@ -52,22 +46,18 @@ class DesktopExe {
       stringBuff.writeln('Name=$name');
       stringBuff.writeln('Comment=');
       stringBuff.writeln(
-        'Exec=${getSpaceEscape(customExePath ?? Platform.resolvedExecutable)}',
+        'Exec=${customExePath ?? Platform.resolvedExecutable}',
       );
       stringBuff.writeln('Icon=${customIconPath ?? assetsRealIconPath}');
       stringBuff.writeln(
-        'Path=${getSpaceEscape(File(customExePath ?? Platform.resolvedExecutable).parent.path)}',
+        'Path=${File(customExePath ?? Platform.resolvedExecutable).parent.path}',
       );
       stringBuff.writeln('Terminal=$terminal');
       stringBuff.writeln('StartupNotify=$startupNotify');
 
       await file.writeAsString(stringBuff.toString());
     } catch (e) {
-      debugPrint('[DesktopExe:exportNotExists]: ${e.toString()}');
+      debugPrint('[DesktopExe:exportDesktopIcon]: ${e.toString()}');
     }
-  }
-
-  String getSpaceEscape(String path) {
-    return path.replaceAll(' ', r'\ ');
   }
 }

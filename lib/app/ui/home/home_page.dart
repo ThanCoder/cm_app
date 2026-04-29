@@ -6,7 +6,6 @@ import 'package:cm_app/app/ui/drawer_menu/home_drawer.dart';
 import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/screens/search_screen.dart';
-import 'package:cm_app/more_libs/language/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:than_pkg/than_pkg.dart';
 
@@ -54,7 +53,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
           key: trendingMovieKey,
-          title: LanguageController.instance.getLan('trending_movies'),
+          title: 'Trending Movies',
           url: apiMovieTrendingUrl,
           onClicked: _goMovieDetailScreen,
         ),
@@ -63,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: TrendingMovieComponent(
           key: trendingTvShowKey,
-          title: LanguageController.instance.getLan('trending_tv_show'),
+          title: 'Trending TV Show',
           url: apiTvShowTrendingUrl,
           onClicked: _goMovieDetailScreen,
         ),
@@ -74,7 +73,7 @@ class _HomePageState extends State<HomePage> {
         child: GridMovieComponent(
           key: movieKey,
           url: apiMovieUrl,
-          title: LanguageController.instance.getLan('movies'),
+          title: 'Movies',
           type: MovieTypes.movie,
         ),
       ),
@@ -83,7 +82,7 @@ class _HomePageState extends State<HomePage> {
         child: GridMovieComponent(
           key: tvShowKey,
           url: apiTvShowUrl,
-          title: LanguageController.instance.getLan('tv_shows'),
+          title: 'TV Shows',
           type: MovieTypes.tvShow,
         ),
       ),
@@ -116,10 +115,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LanguageController.instance.didLanguageChanged(
-                  'search',
-                  builder: (langValue) => Text('$langValue...'),
-                ),
+                child: Text('Search'),
               ),
               Spacer(),
               IconButton(onPressed: _goSearchScreen, icon: Icon(Icons.search)),

@@ -31,6 +31,7 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
   List<Movie> list = [];
   bool isLoading = false;
   bool isInternetConnected = false;
+  String errorMessage = '';
 
   void init({bool isUsedCached = true}) async {
     try {
@@ -41,6 +42,7 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
         return;
       }
       setState(() {
+        errorMessage = '';
         isLoading = true;
       });
       isInternetConnected = await ThanPkg.platform.isInternetConnected();
@@ -61,9 +63,11 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
+        errorMessage = e.toString();
         isLoading = false;
       });
-      showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
+      debugPrint('[TrendingMovieComponent:${widget.title}]: $e');
+      // showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
     }
   }
 
@@ -72,21 +76,23 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
     if (isLoading) {
       return Center(child: TLoader.random());
     }
+    if (errorMessage.isNotEmpty) {
+      return RefreshButton(
+        text: Text('Error ရှိနေပါတယ်။', style: TextStyle(color: Colors.red)),
+        onClicked: init,
+      );
+    }
     if (list.isEmpty && !isInternetConnected) {
-      return Column(
-        children: [
-          Center(
-            child: Text(
-              'Your Are Offline',
-              style: TextStyle(fontSize: 18, color: Colors.red),
-            ),
-          ),
-          IconButton(onPressed: init, icon: Icon(Icons.refresh)),
-        ],
+      return RefreshButton(
+        text: Text(
+          'Your Are Offline',
+          style: TextStyle(fontSize: 18, color: Colors.red),
+        ),
+        onClicked: init,
       );
     }
     return OneLineMovieComponent(
-      title: widget.title,
+      title: widget.title.toCaptalize(),
       list: list,
       onClicked: widget.onClicked,
     );

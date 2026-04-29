@@ -1,65 +1,42 @@
-import 'package:cm_app/app/my_app.dart';
-import 'package:cm_app/app/ui/components/cache_image.dart';
-import 'package:cm_app/more_libs/desktop_exe_1.0.2/desktop_exe.dart';
-import 'package:cm_app/more_libs/general_static_server/constants.dart';
-import 'package:cm_app/more_libs/general_static_server/general_server.dart';
-import 'package:cm_app/more_libs/language/language.dart';
-import 'package:cm_app/more_libs/language/language_controller.dart';
-import 'package:cm_app/more_libs/language/language_repo.dart';
+import 'package:cf_lite/cf_lite.dart';
 import 'package:cm_app/more_libs/setting/core/path_util.dart';
-import 'package:cm_app/more_libs/setting/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
+import 'package:cm_app/app/my_app.dart';
+import 'package:cm_app/more_libs/desktop_exe/desktop_exe.dart';
+import 'package:cm_app/more_libs/setting/setting.dart';
 
-//test
 void main() async {
   await ThanPkg.instance.init();
 
-  final client = TClient();
-
-  //init config
-  await Setting.instance.init(appName: 'cm_app');
+  await Setting.instance.init(
+    appName: 'CM Movies',
+    releaseUrl: 'https://github.com/ThanCoder/cm_app/releases',
+    onSettingSaved: (context, message) {
+      showTSnackBar(context, message);
+    },
+  );
 
   await TWidgets.instance.init(
-    defaultImageAssetsPath: 'assets/logo_2.jpg',
     initialThemeServices: true,
-    isDarkTheme: () => Setting.getAppConfig.isDarkTheme,
-    isDebugPrint: false,
-    getCachePath: (url) => CacheImage.getCachePath(url),
-    onDownloadImage: (url, savePath) async {
-      await client.download(url, savePath: savePath);
-    },
-  );
-
-  await TRecentDB.getInstance.init(
-    rootPath: PathUtil.getConfigPath(name: 'config.db.json'),
-  );
-
-  // gen desktop icon
-  await DesktopExe.instance.exportNotExists(
-    name: 'CM App',
-    assetsIconPath: 'assets/logo_2.jpg',
-  );
-  GeneralServer.instance.init(
-    getApiServerUrl: () => apiServerUrl,
-    getLocalServerPath: () => localServerPath,
-    getContentFromUrl: (url) async {
-      final res = await client.get(url);
-      return res.data.toString();
-    },
-    packageName: 'cm_app',
+    defaultImageAssetsPath: 'assets/logo_2.jpg',
+    getCachePath: (url, cacheName) => PathUtil.getCachePath(name: cacheName),
   );
 
   if (TPlatform.isDesktop) {
-    WindowOptions windowOptions = const WindowOptions(
+    await DesktopExe.exportDesktopIcon(
+      name: Setting.instance.appName,
+      assetsIconPath: 'assets/logo_2.jpg',
+    );
+
+    WindowOptions windowOptions = WindowOptions(
       size: Size(602, 568), // စတင်ဖွင့်တဲ့အချိန် window size
 
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       center: false,
-      title: "CM App",
+      title: Setting.instance.appName,
     );
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -67,10 +44,9 @@ void main() async {
       // await windowManager.focus();
     });
   }
-
-  final langs = await LanguageRepo.instance.getAllLanguages();
-  await LanguageController.instance.changeLanguage(
-    Language(model: langs[0], langMap: await langs[0].load()),
+  // config
+  await CFLite.getInstance().init(
+    dbPath: PathUtil.getConfigPath(name: 'config.db.json'),
   );
 
   runApp(const MyApp());

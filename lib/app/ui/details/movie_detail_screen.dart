@@ -30,10 +30,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   MovieDetail? detail;
   bool isLoading = false;
+  String errorMessage = '';
 
   Future<void> init({bool isUsedCached = true}) async {
     try {
       setState(() {
+        errorMessage = '';
         isLoading = true;
       });
       if (isUsedCached) {
@@ -61,11 +63,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
       setState(() {});
     } catch (e) {
+      errorMessage = e.toString();
       if (!mounted) return;
       setState(() {
         isLoading = false;
       });
-      showTMessageDialog(context, e.toString());
+      // showTMessageDialogError(context, e.toString());
     }
   }
 
@@ -129,8 +132,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     if (isLoading) {
       return Center(child: TLoader.random());
     }
-    if (detail == null) {
-      return Center(child: Text('Movie Detail မရှိပါ!...'));
+    if (detail == null || errorMessage.isNotEmpty) {
+      return Center(
+        child: RefreshButton(
+          text: Text(errorMessage, style: TextStyle(color: Colors.red)),
+          onClicked: init,
+        ),
+      );
     }
     return TabBarView(
       children: [

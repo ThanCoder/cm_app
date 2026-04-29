@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cm_app/app/core/app_setting/cache_image_setting_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
@@ -60,11 +59,6 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
               _getProxy(),
               //proxy server
               _getForwardProxy(),
-              CacheImageSettingListTile(
-                onChanged: () => setState(() {
-                  isChanged = true;
-                }),
-              ),
             ],
           ),
         ),
