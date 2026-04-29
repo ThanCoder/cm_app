@@ -67,7 +67,6 @@ class TrendingMovieComponentState extends State<TrendingMovieComponent> {
         isLoading = false;
       });
       debugPrint('[TrendingMovieComponent:${widget.title}]: $e');
-      // showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
     }
   }
 

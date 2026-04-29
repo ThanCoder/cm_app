@@ -34,13 +34,13 @@ class _HomePageState extends State<HomePage> {
       drawer: HomeDrawer(),
       body: RefreshIndicator.adaptive(
         onRefresh: init,
-        child: CustomScrollView(slivers: _getViews()),
+        child: CustomScrollView(slivers: _getViews),
       ),
       // floatingActionButton: FloatingActionButton(onPressed: init),
     );
   }
 
-  List<Widget> _getViews() {
+  List<Widget> get _getViews {
     return [
       _getAppbar(),
       // search
@@ -96,9 +96,8 @@ class _HomePageState extends State<HomePage> {
       snap: true,
       floating: true,
       actions: [
-        !TPlatform.isDesktop
-            ? SizedBox.shrink()
-            : IconButton(onPressed: init, icon: Icon(Icons.refresh)),
+        if (TPlatform.isDesktop)
+          IconButton(onPressed: init, icon: Icon(Icons.refresh)),
       ],
     );
   }

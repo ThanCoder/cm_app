@@ -1,5 +1,6 @@
 import 'package:cm_app/app/core/extensions/build_context_extensions.dart';
-import 'package:cm_app/app/ui/fetcher/screens/website_content_page.dart';
+import 'package:cm_app/app/ui/components/cache_image.dart';
+import 'package:cm_app/app/ui/fetcher/screens/contents/website_content_page.dart';
 import 'package:cm_app/app/ui/fetcher/services/fetcher_services.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:flutter/material.dart';
@@ -65,10 +66,10 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
               SliverFillRemaining(child: Center(child: TLoaderRandom())),
             //  movies
             _header(widget.website.moviePage),
-            _gridList(movieList),
+            _gridList(movieList, WebsiteContentPageType.movie),
             // tv show
             _header(widget.website.tvShowPage),
-            _gridList(tvShowList),
+            _gridList(tvShowList, WebsiteContentPageType.tvShow),
           ],
         ),
       ),
@@ -79,6 +80,7 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
     if (TPlatform.isDesktop)
       IconButton(onPressed: init, icon: Icon(Icons.refresh)),
   ];
+
   Widget _header(WebsitePage page) {
     return SliverToBoxAdapter(
       child: Container(
@@ -87,12 +89,14 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
           child: Padding(
             padding: const EdgeInsets.all(2.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 3,
               children: [
+                SizedBox(width: 5),
                 Text(
                   page.title,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                Spacer(),
                 TextButton(onPressed: () {}, child: Text('See All')),
               ],
             ),
@@ -102,31 +106,32 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
     );
   }
 
-  Widget _gridList(List<WebsitePageResult> list) => SliverGrid.builder(
-    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-      maxCrossAxisExtent: 200,
-      mainAxisExtent: 220,
-      mainAxisSpacing: 2,
-      crossAxisSpacing: 2,
-    ),
-    itemCount: movieList.length,
-    itemBuilder: (context, index) => _gridItem(list[index]),
-  );
+  Widget _gridList(List<WebsitePageResult> list, WebsiteContentPageType type) =>
+      SliverGrid.builder(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 140,
+          mainAxisExtent: 170,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
+        ),
+        itemCount: movieList.length,
+        itemBuilder: (context, index) => _gridItem(list[index], type),
+      );
 
-  Widget _gridItem(WebsitePageResult result) {
+  Widget _gridItem(WebsitePageResult result, WebsiteContentPageType type) {
     return InkWell(
       mouseCursor: SystemMouseCursors.click,
-      onTap: () => _goPage(result),
+      onTap: () => _goPage(result, type),
       child: Stack(
         children: [
-          Positioned.fill(child: TCacheImage(url: result.coverUrl)),
+          Positioned.fill(child: CacheImage(url: result.coverUrl)),
           Container(color: Colors.black.withValues(alpha: 0.2)),
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: Colors.black.withValues(alpha: 0.6),
               child: Text(
                 result.title,
                 maxLines: 2,
@@ -134,7 +139,7 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 13,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -145,10 +150,13 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
     );
   }
 
-  void _goPage(WebsitePageResult result) {
+  void _goPage(WebsitePageResult result, WebsiteContentPageType type) {
     context.goRoute(
-      builder: (context) =>
-          WebsiteContentPage(result: result, website: widget.website),
+      builder: (context) => WebsiteContentPage(
+        result: result,
+        website: widget.website,
+        type: type,
+      ),
     );
   }
 }

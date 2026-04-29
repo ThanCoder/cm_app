@@ -6,12 +6,14 @@ import 'package:than_pkg/than_pkg.dart';
 class CacheImage extends StatelessWidget {
   final String url;
   final VoidCallback? onTap;
+  final BoxFit fit;
   final Widget Function(String message)? placeholder;
   const CacheImage({
     super.key,
     required this.url,
     this.onTap,
     this.placeholder,
+    this.fit = BoxFit.cover,
   });
 
   static String getCachePath(String url) => PathUtil.getCachePath(
@@ -22,6 +24,7 @@ class CacheImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return TCacheImage(
       url: url,
+      fit: fit,
       placeholder: (message) =>
           placeholder != null ? placeholder!(message) : TImageFile(path: ''),
     );

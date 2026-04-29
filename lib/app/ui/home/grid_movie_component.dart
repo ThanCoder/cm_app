@@ -71,7 +71,6 @@ class GridMovieComponentState extends State<GridMovieComponent> {
         errorMessage = e.toString();
         isLoading = false;
       });
-      // showTMessageDialogError(context, 'Error ရှိနေပါတယ်။\n${e.toString()}');
     }
   }
 

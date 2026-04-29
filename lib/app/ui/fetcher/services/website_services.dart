@@ -33,7 +33,7 @@ class WebsiteServices {
         pageContentQuery: PageContentQuery(
           contentQuery: Query(attribute: 'text', selector: '.wp-content'),
           downloadQuery: DownloadQuery(
-            selectorAll: '#download tr',
+            selectorAll: '#download tbody tr',
             urlQuery: Query(attribute: 'href', selector: 'a'),
             qualityQuery: Query(attribute: 'text', selector: '.quality'),
             sizeQuery: Query(attribute: 'text', selector: 'td', index: 3),

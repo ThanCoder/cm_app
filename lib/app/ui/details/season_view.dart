@@ -102,7 +102,9 @@ class _SeasonViewState extends State<SeasonView> {
                 SizedBox(
                   width: 80,
                   height: 80,
-                  child: TImage(source: Setting.getForwardProxyUrl(ep.poster)),
+                  child: TCacheImage(
+                    url: Setting.getForwardProxyUrl(ep.poster),
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
