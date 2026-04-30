@@ -7,6 +7,7 @@ import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/screens/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,6 +46,11 @@ class _HomePageState extends State<HomePage> {
       _getAppbar(),
       // search
       _getSearchBar(),
+      // SliverToBoxAdapter(
+      //   child: Image.network(
+      //     'https://mmsubmovie.kesug.com/wp-content/uploads/2025/01/ejaHQQKp5J2tD6ubprDMmIRGKnE-185x278.avif',
+      //   ),
+      // ),
       // recent
       SliverToBoxAdapter(
         child: RecentMovieComponent(onClicked: _goMovieDetailScreen),

@@ -136,7 +136,7 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
           mainAxisSpacing: 2,
           crossAxisSpacing: 2,
         ),
-        itemCount: movieList.length,
+        itemCount: list.length,
         itemBuilder: (context, index) => _gridItem(list[index], type),
       );
 
@@ -144,6 +144,9 @@ class _FetcherHomePageState extends State<FetcherHomePage> {
     return InkWell(
       mouseCursor: SystemMouseCursors.click,
       onTap: () => _goPage(item, type),
+      onSecondaryTap: () {
+        showTMessageDialog(context, item.toString());
+      },
       child: Stack(
         children: [
           Positioned.fill(child: CacheImage(url: item.coverUrl)),

@@ -15,6 +15,10 @@ class MovieItem {
     required this.url,
     required this.coverUrl,
   });
+  @override
+  String toString() {
+    return 'Title: $title - Url: $url - CoverUrl: $coverUrl\n';
+  }
 }
 
 class Pagination {
