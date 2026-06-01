@@ -96,7 +96,7 @@ class _AppSettingScreenState extends State<AppSettingScreen> {
                     controller: customPathTextController,
                     onTap: () {
                       if (!isCustomPathTextControllerTextSelected) {
-                        customPathTextController.selectAll();
+                        TTextEditingControllerExtension(customPathTextController).selectAll();
                         isCustomPathTextControllerTextSelected = true;
                       }
                     },

@@ -33,15 +33,18 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   bool isLoading = false;
   bool nextPageFetching = false;
-  bool isNextPageFetchingError = false;
+  String? nextPageFetchingError;
+  String? errorText;
   List<Movie> list = [];
   late String hostUrl;
   int page = 1;
+  double lastScrollPos = -1;
 
   Future<void> init() async {
     try {
       setState(() {
         isLoading = true;
+        errorText = null;
       });
       String url = apiMovieUrl;
       if (widget.type == MovieTypes.tvShow) {
@@ -52,13 +55,15 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
       if (!mounted) return;
       isLoading = false;
+      errorText = null;
       setState(() {});
     } catch (e) {
       if (!mounted) return;
+      errorText = e.toString();
       setState(() {
         isLoading = false;
       });
-      showTMessageDialog(context, e.toString());
+      // showTMessageDialog(context, e.toString());
     }
   }
 
@@ -72,22 +77,49 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
           slivers: [
             _getAppbar(),
             _getListWidget(),
-            _getNextPageFetchingLoader(),
+            if (errorText != null) _errorWidget,
+            SliverToBoxAdapter(child: _getNextPageFetchingLoader()),
           ],
         ),
       ),
     );
   }
 
-  Widget _getNextPageFetchingLoader() {
-    return SliverToBoxAdapter(
-      child: nextPageFetching
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TLoader(size: 30),
-            )
-          : null,
+  Widget get _errorWidget {
+    return SliverFillRemaining(
+      child: Center(
+        child: RefreshButton(
+          text: Text(errorText!, style: TextStyle(color: Colors.red)),
+          onClicked: init,
+        ),
+      ),
     );
+  }
+
+  Widget? _getNextPageFetchingLoader() {
+    if (nextPageFetching) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TLoader(size: 30),
+      );
+    }
+
+    if (nextPageFetchingError != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RefreshButton(
+            text: Text(
+              nextPageFetchingError!,
+              style: TextStyle(color: Colors.red),
+            ),
+            onClicked: () => fetchNextUrl(incrementPage: false),
+          ),
+        ),
+      );
+    }
+
+    return null;
   }
 
   Widget _getAppbar() {
@@ -121,19 +153,28 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
   // scroll
   void _onScroll() {
     if (list.isEmpty) return;
-    if (isNextPageFetchingError) return;
     if (nextPageFetching) return;
+
     final pos = scrollController.position;
     // print('pos: ${pos.pixels} - max:${pos.maxScrollExtent}');
     if (pos.pixels == pos.maxScrollExtent) {
-      fetchNextUrl();
+      if (lastScrollPos != pos.maxScrollExtent) {
+        lastScrollPos = pos.maxScrollExtent;
+        fetchNextUrl();
+        return;
+      }
+      // if (nextPageFetchingError != null &&
+      //     lastScrollPos == pos.maxScrollExtent) {
+      //   fetchNextUrl(incrementPage: false);
+      // }
     }
   }
 
-  Future<void> fetchNextUrl() async {
+  Future<void> fetchNextUrl({bool incrementPage = true}) async {
     try {
       setState(() {
         nextPageFetching = true;
+        nextPageFetchingError = null;
       });
       page++;
       final url = '$hostUrl?page=$page';
@@ -144,14 +185,14 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
       await Future.delayed(Duration(seconds: 3));
       if (!mounted) return;
-      isNextPageFetchingError = false;
+      nextPageFetchingError = null;
     } catch (e) {
       if (!mounted) return;
       setState(() {
         nextPageFetching = false;
-        isNextPageFetchingError = true;
+        nextPageFetchingError = e.toString();
       });
-      showTMessageDialog(context, e.toString());
+      // showTMessageDialog(context, e.toString());
     }
   }
 }

@@ -4,9 +4,7 @@ import 'package:cm_app/app/ui/fetcher/types/movie_pagi_response.dart';
 import 'package:cm_app/app/ui/fetcher/types/website.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:t_widgets/functions/message_func.dart';
-import 'package:t_widgets/widgets/refresh_button.dart';
-import 'package:t_widgets/widgets/t_cache_image.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class MovieContentPage extends StatefulWidget {

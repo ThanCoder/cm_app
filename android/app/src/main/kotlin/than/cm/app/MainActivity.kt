@@ -1,4 +1,4 @@
-package than.pre.cm
+package than.cm.app
 
 import io.flutter.embedding.android.FlutterActivity
 

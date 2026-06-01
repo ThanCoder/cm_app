@@ -32,12 +32,12 @@ class AppConfig {
 
   factory AppConfig.create({
     String customPath = '',
-    String forwardProxyUrl = '',
+    String forwardProxyUrl = 'https://express-forward-proxy.vercel.app',
     String browserForwardProxyUrl = '',
     String proxyUrl = '',
     String hostUrl = '',
     bool isUseCustomPath = false,
-    bool isUseForwardProxy = false,
+    bool isUseForwardProxy = true,
     bool isUseProxy = false,
     bool isDarkTheme = false,
     ThemeMode themeMode = ThemeMode.system,

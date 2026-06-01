@@ -1,3 +1,8 @@
+# 2.5.0
+- Changed `App Package Name` -> app package name ပြောင်းလဲထားပါတယ်။
+- Added `See All Screen` -> Error,Refersh Button ထည့်သွင်းထားပါတယ်။
+- UpGrade `Android Gradle Version`
+
 # 2.4.5
 
 - Added `Movie Cast Image Dialog` add `Movie သရုပ်ဆောင် image dialog` ထည့်ထားပေးခြင်း

@@ -7,7 +7,6 @@ import 'package:cm_app/app/ui/home/recent_movie_component.dart';
 import 'package:cm_app/app/ui/home/trending_movie_component.dart';
 import 'package:cm_app/app/ui/screens/search_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg/than_pkg.dart';
 
 class HomePage extends StatefulWidget {
