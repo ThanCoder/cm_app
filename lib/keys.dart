@@ -1,3 +1,5 @@
+const String appThemKey = 'appThemKey';
+
 /*
 api/search?keyword=viciou&page=1
 api/tv-show-genres

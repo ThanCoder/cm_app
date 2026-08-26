@@ -1,0 +1,353 @@
+[
+  {
+    "id": "5f35a20c-8241-43cb-a24c-5ca20157076c",
+    "timestamp": 1787765439939,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtad9eg10gn1q"
+    },
+    "request": {
+      "name": "show detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/tv-shows/moonshadow-ojtemx50",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 1090
+    }
+  },
+  {
+    "id": "0bf4ed2b-6da3-4fc1-9e19-608ee3b2cdf7",
+    "timestamp": 1787765394587,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtad9zntcfj3v"
+    },
+    "request": {
+      "name": "show",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/tv-shows",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 1083
+    }
+  },
+  {
+    "id": "7e1c8634-6c95-4245-8f4e-b39b2c0c1fd9",
+    "timestamp": 1787765362986,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtad9zntcfj3v"
+    },
+    "request": {
+      "name": "show",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/green-lantern-qvdp77og",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "500 Internal Server Error",
+      "durationMs": 935
+    }
+  },
+  {
+    "id": "173815ad-0684-4d27-b419-371ef3dac718",
+    "timestamp": 1787765313972,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtad9zntcfj3v"
+    },
+    "request": {
+      "name": "show",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 1066
+    }
+  },
+  {
+    "id": "72964877-5d32-4a3f-91c0-b54c77174be8",
+    "timestamp": 1787764854674,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies/na-willa-dbjr8qcw",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 891
+    }
+  },
+  {
+    "id": "b602b082-2b9c-45db-849a-5ad35f03a784",
+    "timestamp": 1787764765645,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 538
+    }
+  },
+  {
+    "id": "adb418aa-475c-47a7-9700-eb764176c9b8",
+    "timestamp": 1787764761297,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "500 Internal Server Error",
+      "durationMs": 948
+    }
+  },
+  {
+    "id": "d7ba05ae-ff01-4cc6-bd30-cceec47d8e08",
+    "timestamp": 1787764753226,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/25756",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "500 Internal Server Error",
+      "durationMs": 762
+    }
+  },
+  {
+    "id": "2e8ed6bb-3d45-425b-b223-cd6957c58138",
+    "timestamp": 1787764728341,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movie/25756",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "500 Internal Server Error",
+      "durationMs": 1000
+    }
+  },
+  {
+    "id": "2d5f2f00-a381-464d-8b98-e158d8291175",
+    "timestamp": 1787764609776,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacuhwihxa0a"
+    },
+    "request": {
+      "name": "movie detail",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies/25756",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "500 Internal Server Error",
+      "durationMs": 888
+    }
+  },
+  {
+    "id": "d0de030f-2a06-47e2-b0f6-62be1e5b0136",
+    "timestamp": 1787764586683,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacsnfiqhzk9"
+    },
+    "request": {
+      "name": "movies",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 1161
+    }
+  },
+  {
+    "id": "ddb90f36-dd53-482a-8ba8-9d6f7d4eb435",
+    "timestamp": 1787764518052,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacsnfiqhzk9"
+    },
+    "request": {
+      "name": "express-forward-proxy.vercel.app",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "200 OK",
+      "durationMs": 1158
+    }
+  },
+  {
+    "id": "7494adf7-d074-4575-a744-62b52e3a5bf6",
+    "timestamp": 1787764491450,
+    "source": {
+      "type": "collection",
+      "collectionId": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+      "requestId": "mtacsnfiqhzk9"
+    },
+    "request": {
+      "name": "express-forward-proxy.vercel.app",
+      "method": "GET",
+      "url": "https://express-forward-proxy.vercel.app",
+      "headers": {},
+      "body": {
+        "mode": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "postResponseScript": ""
+    },
+    "result": {
+      "status": "400 Bad Request",
+      "durationMs": 1501
+    }
+  }
+]

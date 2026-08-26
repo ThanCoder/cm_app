@@ -1,0 +1,73 @@
+[
+  {
+    "id": "0f86e588-219d-4444-ac4d-943ad0eda4d1",
+    "name": "cm",
+    "variables": [],
+    "items": [
+      {
+        "method": "GET",
+        "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+        "headers": {},
+        "body": {
+          "mode": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "preRequestScript": "",
+        "postResponseScript": "",
+        "type": "request",
+        "id": "mtacsnfiqhzk9",
+        "name": "movies"
+      },
+      {
+        "method": "GET",
+        "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies/na-willa-dbjr8qcw",
+        "headers": {},
+        "body": {
+          "mode": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "preRequestScript": "",
+        "postResponseScript": "",
+        "type": "request",
+        "id": "mtacuhwihxa0a",
+        "name": "movie detail"
+      },
+      {
+        "method": "GET",
+        "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/tv-shows/moonshadow-ojtemx50",
+        "headers": {},
+        "body": {
+          "mode": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "preRequestScript": "",
+        "postResponseScript": "",
+        "type": "request",
+        "id": "mtad9eg10gn1q",
+        "name": "show detail"
+      },
+      {
+        "method": "GET",
+        "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/tv-shows",
+        "headers": {},
+        "body": {
+          "mode": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "preRequestScript": "",
+        "postResponseScript": "",
+        "type": "request",
+        "id": "mtad9zntcfj3v",
+        "name": "show"
+      }
+    ]
+  }
+]

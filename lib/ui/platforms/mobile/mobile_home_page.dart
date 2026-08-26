@@ -1,4 +1,11 @@
+import 'package:cm_app/core/models/movie.dart';
+import 'package:cm_app/core/models/show.dart';
+import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/ui/api.dart';
+import 'package:cm_app/ui/pages/movie_detail_page.dart';
+import 'package:cm_app/ui/pages/show_detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 class MobileHomePage extends StatefulWidget {
   const MobileHomePage({super.key});
@@ -9,125 +16,6 @@ class MobileHomePage extends StatefulWidget {
 
 class _MobileHomePageState extends State<MobileHomePage> {
   int selectedIndex = 0;
-
-  final movies = const [
-    Movie(
-      id: 25748,
-      title: 'The Trepidation: Deadest Night',
-      year: '2026',
-      rating: '3.9',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-26/mUAwbdfbXxjTw1S3diSEYpRrd3F.jpg',
-      genres: ['Horror'],
-    ),
-    Movie(
-      id: 25749,
-      title: 'Patton',
-      year: '1970',
-      rating: '7.4',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-26/rLM7jIEPTjj4CF7F1IrzzNjLUCu.jpg',
-      genres: ['Drama', 'History', 'War'],
-    ),
-    Movie(
-      id: 25747,
-      title: 'Pluto',
-      year: '2026',
-      rating: '0.0',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-26/pPxsw4KnZbsklyHUCTKSCHKaC8F.jpg',
-      genres: ['Comedy', 'Science Fiction'],
-    ),
-    Movie(
-      id: 25746,
-      title: 'The Sheriff',
-      year: '2026',
-      rating: '6.2',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-26/pba15JjYAoyuFIM6kkZ7qE6oqG2.jpg',
-      genres: ['Action', 'Crime'],
-    ),
-    Movie(
-      id: 25745,
-      title: 'Dil To Pagal Hai',
-      year: '1997',
-      rating: '6.9',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-25/HKUrZZbXnwCM4129fPlgHEg0eG.jpg',
-      genres: ['Comedy', 'Drama', 'Romance'],
-    ),
-    Movie(
-      id: 25744,
-      title: 'Pinocchio: Unstrung',
-      year: '2026',
-      rating: '7.0',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-25/eUJXk3bTvLBi5Zcb0BCedZU7lVL.jpg',
-      genres: ['Fantasy', 'Horror', 'Mystery'],
-    ),
-    Movie(
-      id: 25733,
-      title: 'Batman: Knightfall Part 1',
-      year: '2026',
-      rating: '7.2',
-      resolution: '4K',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-25/g19IoButQepcHPShmzfPGYOWfTq.jpg',
-      genres: ['Action', 'Adventure', 'Animation'],
-    ),
-    Movie(
-      id: 25743,
-      title: 'I Am a Hero',
-      year: '2016',
-      rating: '7.4',
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/movies/2026-08-25/4RnmHtCLtbBHD9jagVlcSzJTWX6.jpg',
-      genres: ['Action', 'Drama', 'Horror'],
-    ),
-  ];
-
-  final shows = const [
-    Show(
-      title: 'Reacher',
-      year: '2022',
-      rating: '8.1',
-      seasons: 1,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/tv-shows/2026-08-12/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg',
-      genres: ['Action & Adventure', 'Crime', 'Drama'],
-    ),
-    Show(
-      title: 'Pull Strings',
-      year: '2026',
-      rating: '0.0',
-      seasons: 1,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/tv-shows/2026-08-19/87irKQfNYW0HlOFXemvSMygDkvD.jpg',
-      genres: ['Action & Adventure', 'Comedy'],
-    ),
-    Show(
-      title: 'Our Happy Days',
-      year: '2026',
-      rating: '9.0',
-      seasons: 4,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/posters/2026-03-30/21-17-21-1.jpg',
-      genres: ['Drama', 'Family'],
-    ),
-    Show(
-      title: 'Family Register',
-      year: '2026',
-      rating: '8.9',
-      seasons: 2,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/tv-shows/2026-07-07/l1EoUpPABU7aqr6K2vt40ac0v7B.jpg',
-      genres: ['Drama', 'Family'],
-    ),
-    Show(
-      title: 'A Trap Called Desire',
-      year: '2026',
-      rating: '8.5',
-      seasons: 1,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/tv-shows/2026-08-11/repjdxPyA19x0ghyJFmECTDwGvj.jpg',
-      genres: ['Crime', 'Drama', 'Mystery'],
-    ),
-    Show(
-      title: 'My Bias, My Boss',
-      year: '2026',
-      rating: '8.9',
-      seasons: 1,
-      poster: 'https://media.homietv.com/file/all-asset-uploads/cm-app-media-two/tv-shows/2026-08-03/A4Y4xlDHS4xi2WI9265vRyIYLoo.jpg',
-      genres: ['Comedy', 'Drama'],
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +113,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    separatorBuilder: (_, _) => const SizedBox(width: 12),
                     itemBuilder: (_, index) {
                       return _ContinueCard(
                         movie: movies[index],
@@ -250,7 +138,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     scrollDirection: Axis.horizontal,
                     itemCount: movies.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 14),
+                    separatorBuilder: (_, _) => const SizedBox(width: 14),
                     itemBuilder: (_, index) {
                       return SizedBox(
                         width: 145,
@@ -275,7 +163,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     scrollDirection: Axis.horizontal,
                     itemCount: shows.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 14),
+                    separatorBuilder: (_, _) => const SizedBox(width: 14),
                     itemBuilder: (_, index) {
                       return SizedBox(
                         width: 145,
@@ -322,34 +210,6 @@ class _MobileHomePageState extends State<MobileHomePage> {
       // ---------------------------------------------------------------------
       // BOTTOM NAV
       // ---------------------------------------------------------------------
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) {
-          setState(() => selectedIndex = value);
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.movie_outlined),
-            selectedIcon: Icon(Icons.movie_rounded),
-            label: 'Movies',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.tv_outlined),
-            selectedIcon: Icon(Icons.tv_rounded),
-            label: 'Series',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_outline_rounded),
-            selectedIcon: Icon(Icons.bookmark_rounded),
-            label: 'My List',
-          ),
-        ],
-      ),
     );
   }
 }
@@ -373,7 +233,7 @@ class _MobileHero extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.network(
-              movie.poster,
+              ApiUtils.getProxyUrl(movie.poster),
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) {
                 return const ColoredBox(
@@ -530,7 +390,10 @@ class _ContinueCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(movie.poster, fit: BoxFit.cover),
+            Image.network(
+              ApiUtils.getProxyUrl(movie.poster),
+              fit: BoxFit.cover,
+            ),
 
             const DecoratedBox(
               decoration: BoxDecoration(
@@ -587,92 +450,97 @@ class _MobileMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13),
-                  child: Image.network(
-                    movie.poster,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) {
-                      return const ColoredBox(
-                        color: Colors.black12,
-                        child: Icon(Icons.broken_image_outlined),
-                      );
-                    },
+    return GestureDetector(
+      onTap: () {
+        context.pushMaterialPageRoute(builder: (mainCtx) => MovieDetailsPage());
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(13),
+                    child: Image.network(
+                      ApiUtils.getProxyUrl(movie.poster),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) {
+                        return const ColoredBox(
+                          color: Colors.black12,
+                          child: Icon(Icons.broken_image_outlined),
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
 
-              if (movie.resolution != null)
-                Positioned(
-                  top: 7,
-                  left: 7,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      movie.resolution!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                if (movie.resolution != null)
+                  Positioned(
+                    top: 7,
+                    left: 7,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        movie.resolution!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-              Positioned(
-                top: 5,
-                right: 5,
-                child: IconButton.filledTonal(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_rounded, size: 18),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: IconButton.filledTonal(
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () {},
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            movie.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+
+          const SizedBox(height: 4),
+
+          Row(
+            children: [
+              const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+              const SizedBox(width: 3),
+              Text(movie.rating, style: const TextStyle(fontSize: 11)),
+              const SizedBox(width: 8),
+              Text(
+                movie.year,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
-        ),
-
-        const SizedBox(height: 8),
-
-        Text(
-          movie.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-        ),
-
-        const SizedBox(height: 4),
-
-        Row(
-          children: [
-            const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
-            const SizedBox(width: 3),
-            Text(movie.rating, style: const TextStyle(fontSize: 11)),
-            const SizedBox(width: 8),
-            Text(
-              movie.year,
-              style: TextStyle(
-                fontSize: 11,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -688,70 +556,78 @@ class _MobileShowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(13),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(show.poster, fit: BoxFit.cover),
-                Positioned(
-                  left: 7,
-                  bottom: 7,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      '${show.seasons} ${show.seasons == 1 ? 'Season' : 'Seasons'}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
+    return GestureDetector(
+      onTap: () {
+        context.pushMaterialPageRoute(builder: (mainCtx) => ShowDetailPage());
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    ApiUtils.getProxyUrl(show.poster),
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    left: 7,
+                    bottom: 7,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        '${show.seasons} ${show.seasons == 1 ? 'Season' : 'Seasons'}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 8),
-
-        Text(
-          show.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-        ),
-
-        const SizedBox(height: 4),
-
-        Row(
-          children: [
-            const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
-            const SizedBox(width: 3),
-            Text(show.rating, style: const TextStyle(fontSize: 11)),
-            const SizedBox(width: 8),
-            Text(
-              show.year,
-              style: TextStyle(
-                fontSize: 11,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ],
               ),
             ),
-          ],
-        ),
-      ],
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            show.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+
+          const SizedBox(height: 4),
+
+          Row(
+            children: [
+              const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+              const SizedBox(width: 3),
+              Text(show.rating, style: const TextStyle(fontSize: 11)),
+              const SizedBox(width: 8),
+              Text(
+                show.year,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -784,40 +660,40 @@ class _GenreChip extends StatelessWidget {
 // MODELS
 // =============================================================================
 
-class Movie {
-  final int id;
-  final String title;
-  final String year;
-  final String rating;
-  final String poster;
-  final String? resolution;
-  final List<String> genres;
+// class Movie {
+//   final int id;
+//   final String title;
+//   final String year;
+//   final String rating;
+//   final String poster;
+//   final String? resolution;
+//   final List<String> genres;
 
-  const Movie({
-    required this.id,
-    required this.title,
-    required this.year,
-    required this.rating,
-    required this.poster,
-    required this.genres,
-    this.resolution,
-  });
-}
+//   const Movie({
+//     required this.id,
+//     required this.title,
+//     required this.year,
+//     required this.rating,
+//     required this.poster,
+//     required this.genres,
+//     this.resolution,
+//   });
+// }
 
-class Show {
-  final String title;
-  final String year;
-  final String rating;
-  final int seasons;
-  final String poster;
-  final List<String> genres;
+// class Show {
+//   final String title;
+//   final String year;
+//   final String rating;
+//   final int seasons;
+//   final String poster;
+//   final List<String> genres;
 
-  const Show({
-    required this.title,
-    required this.year,
-    required this.rating,
-    required this.seasons,
-    required this.poster,
-    required this.genres,
-  });
-}
+//   const Show({
+//     required this.title,
+//     required this.year,
+//     required this.rating,
+//     required this.seasons,
+//     required this.poster,
+//     required this.genres,
+//   });
+// }

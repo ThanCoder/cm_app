@@ -34,4 +34,6 @@ class AppUtils {
 
     return configDir.path;
   }
+
+  
 }
