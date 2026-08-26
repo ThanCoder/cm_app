@@ -235,7 +235,7 @@ class _MobileHero extends StatelessWidget {
             Image.network(
               ApiUtils.getProxyUrl(movie.poster),
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) {
+              errorBuilder: (_,_, _) {
                 return const ColoredBox(
                   color: Colors.black12,
                   child: Icon(Icons.broken_image_outlined),

@@ -109,10 +109,10 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
                       final isDesktop = constraints.maxWidth > 700;
 
                       if (isDesktop) {
-                        return _DesktopLayout();
+                        return _desktopLayout();
                       }
 
-                      return _MobileLayout();
+                      return _mobileLayout();
                     },
                   ),
                 ),
@@ -128,15 +128,15 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// DESKTOP
   /// =========================================================
 
-  Widget _DesktopLayout() {
+  Widget _desktopLayout() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(width: 220, child: _Poster()),
+        SizedBox(width: 220, child: _poster()),
 
         const SizedBox(width: 28),
 
-        Expanded(child: _Details()),
+        Expanded(child: _details()),
       ],
     );
   }
@@ -145,15 +145,15 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// MOBILE
   /// =========================================================
 
-  Widget _MobileLayout() {
+  Widget _mobileLayout() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(child: SizedBox(width: 180, child: _Poster())),
+        Center(child: SizedBox(width: 180, child: _poster())),
 
         const SizedBox(height: 24),
 
-        _Details(),
+        _details(),
       ],
     );
   }
@@ -162,7 +162,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// POSTER
   /// =========================================================
 
-  Widget _Poster() {
+  Widget _poster() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: AspectRatio(
@@ -181,7 +181,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// DETAILS
   /// =========================================================
 
-  Widget _Details() {
+  Widget _details() {
     final theme = Theme.of(context);
 
     return Column(
@@ -257,7 +257,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
         const SizedBox(height: 32),
 
         /// CAST
-        _CastSection(),
+        _castSection(),
 
         const SizedBox(height: 32),
 
@@ -271,11 +271,11 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
 
         const SizedBox(height: 16),
 
-        _SeasonSelector(),
+        _seasonSelector(),
 
         const SizedBox(height: 16),
 
-        _EpisodeList(),
+        _episodeList(),
       ],
     );
   }
@@ -284,7 +284,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// CAST
   /// =========================================================
 
-  Widget _CastSection() {
+  Widget _castSection() {
     final casts = [
       {
         'name': 'Thasorn Klinnium',
@@ -324,7 +324,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: casts.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (_,_) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final cast = casts[index];
 
@@ -360,13 +360,13 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// SEASON SELECTOR
   /// =========================================================
 
-  Widget _SeasonSelector() {
+  Widget _seasonSelector() {
     return SizedBox(
       height: 42,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: seasons.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_,_) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final season = seasons[index];
           final selected = selectedSeason == index;
@@ -389,7 +389,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
   /// EPISODES
   /// =========================================================
 
-  Widget _EpisodeList() {
+  Widget _episodeList() {
     final season = seasons[selectedSeason];
     final episodes = season.getMapList(['episodes']);
 
@@ -414,7 +414,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: episodes.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_,_) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final episode = episodes[index];
 
@@ -435,7 +435,7 @@ class _EpisodeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
     final downloads = episode['downloads'] as List<Map<String, String>>;
 

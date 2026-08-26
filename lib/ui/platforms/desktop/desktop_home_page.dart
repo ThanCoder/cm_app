@@ -368,7 +368,7 @@ class _ContinueWatching extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: movies.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        separatorBuilder: (_, _) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
           final movie = movies[index];
 
@@ -445,7 +445,7 @@ class _MovieHorizontalList extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: movies.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 18),
+        separatorBuilder: (_,_) => const SizedBox(width: 18),
         itemBuilder: (_, index) {
           return SizedBox(width: 180, child: _MovieCard(movie: movies[index]));
         },
@@ -479,7 +479,7 @@ class _MovieCard extends StatelessWidget {
                       child: Image.network(
                         ApiUtils.getProxyUrl(movie.poster),
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
+                        errorBuilder: (_, _, _) {
                           return const ColoredBox(
                             color: Colors.black12,
                             child: Icon(Icons.broken_image_outlined),
@@ -575,7 +575,7 @@ class _ShowHorizontalList extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: shows.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 18),
+        separatorBuilder: (_,_) => const SizedBox(width: 18),
         itemBuilder: (_, index) {
           return SizedBox(width: 180, child: _ShowCard(show: shows[index]));
         },
