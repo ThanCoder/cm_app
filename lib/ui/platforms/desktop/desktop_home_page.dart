@@ -1,13 +1,9 @@
 import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/core/models/show.dart';
-import 'package:cm_app/core/utils/api_utils.dart';
-import 'package:cm_app/ui/api.dart';
-import 'package:cm_app/ui/pages/movie_detail_page.dart';
-import 'package:cm_app/ui/pages/show_detail_page.dart';
+import 'package:cm_app/ui/movie_data.dart';
+import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart';
 
-class DesktopHomePage extends StatefulWidget {
+final class DesktopHomePage extends StatefulWidget {
   const DesktopHomePage({super.key});
 
   @override
@@ -15,82 +11,227 @@ class DesktopHomePage extends StatefulWidget {
 }
 
 class _DesktopHomePageState extends State<DesktopHomePage> {
-  String selectedType = 'Movies';
-  final searchController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            surfaceTintColor: Colors.transparent,
-            toolbarHeight: 72,
-            titleSpacing: 28,
-            title: _TopBar(
-              controller: searchController,
-              selectedType: selectedType,
-              onTypeChanged: (value) {
-                setState(() => selectedType = value);
-              },
-            ),
+          const SliverToBoxAdapter(child: _TopBar()),
+
+          SliverToBoxAdapter(child: _HeroSection(movie: trendingMovies[4])),
+
+          const SliverToBoxAdapter(
+            child: _Section(title: 'Trending Movies', items: trendingMovies),
           ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(32, 12, 32, 0),
-              child: _HeroSection(movie: movies[7]),
-            ),
+          const SliverToBoxAdapter(
+            child: _Section(title: 'Trending TV Shows', items: trendingTvShows),
           ),
 
-          SliverToBoxAdapter(
-            child: _Section(
-              title: 'Continue Watching',
-              trailing: 'View all',
-              child: _ContinueWatching(movies: movies.take(5).toList()),
-            ),
-          ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 50)),
+        ],
+      ),
+    );
+  }
+}
 
-          SliverToBoxAdapter(
-            child: _Section(
-              title: 'Popular Movies',
-              trailing: 'See all',
-              child: _MovieHorizontalList(movies: movies),
-            ),
-          ),
+// ============================================================
+// TOP BAR
+// ============================================================
 
-          SliverToBoxAdapter(
-            child: _Section(
-              title: 'Popular Series',
-              trailing: 'See all',
-              child: _ShowHorizontalList(shows: shows),
-            ),
-          ),
+final class _TopBar extends StatelessWidget {
+  const _TopBar();
 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(32, 10, 32, 60),
-            sliver: SliverToBoxAdapter(
-              child: Text(
-                'Latest Movies',
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 22, 32, 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 650),
+              child: SizedBox(
+                height: 48,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search movies and TV shows...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    filled: true,
+                    fillColor: scheme.surfaceContainerHighest,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(32, 0, 32, 60),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _MovieCard(movie: movies[index]);
-              }, childCount: movies.length),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 190,
-                mainAxisExtent: 315,
-                crossAxisSpacing: 18,
-                mainAxisSpacing: 28,
+          const Spacer(),
+
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_none_rounded),
+          ),
+
+          const SizedBox(width: 8),
+
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: scheme.primaryContainer,
+            child: Icon(Icons.person_rounded, color: scheme.onPrimaryContainer),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// HERO
+// ============================================================
+
+final class _HeroSection extends StatelessWidget {
+  const _HeroSection({required this.movie});
+
+  final MediaItem movie;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Container(
+      height: 390,
+      margin: const EdgeInsets.fromLTRB(32, 10, 32, 30),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Image.network(movie.poster, fit: BoxFit.cover),
+          MImage(source: movie.poster, fit: BoxFit.cover),
+
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.black.withValues(alpha: .92),
+                  Colors.black.withValues(alpha: .62),
+                  Colors.transparent,
+                ],
+                stops: const [0, .48, 1],
+              ),
+            ),
+          ),
+
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withValues(alpha: .45),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(40),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: 470,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TRENDING NOW',
+                      style: TextStyle(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Text(
+                      movie.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 19,
+                          color: Colors.amber,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          movie.rating,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 18),
+                        Text(
+                          movie.year,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                        if (movie.resolution != null) ...[
+                          const SizedBox(width: 14),
+                          _Badge(text: movie.resolution!),
+                        ],
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    Text(
+                      movie.categories
+                          .map((category) => category.name)
+                          .join('  •  '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+
+                    const SizedBox(height: 26),
+
+                    Row(
+                      children: [
+                        FilledButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          label: const Text('Watch Now'),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton.filledTonal(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add_rounded),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -100,236 +241,20 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
   }
 }
 
-// -----------------------------------------------------------------------------
-// SIDEBAR
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// TOP BAR
-// -----------------------------------------------------------------------------
-
-class _TopBar extends StatelessWidget {
-  final TextEditingController controller;
-  final String selectedType;
-  final ValueChanged<String> onTypeChanged;
-
-  const _TopBar({
-    required this.controller,
-    required this.selectedType,
-    required this.onTypeChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 220,
-          child: SearchBar(
-            controller: controller,
-            hintText: 'Search movies, series...',
-            leading: const Icon(Icons.search_rounded),
-            trailing: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.tune_rounded),
-              ),
-            ],
-          ),
-        ),
-    
-        const SizedBox(width: 24),
-    
-        SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(
-              value: 'Movies',
-              label: Text('Movies'),
-              icon: Icon(Icons.movie_outlined),
-            ),
-            ButtonSegment(
-              value: 'Series',
-              label: Text('Series'),
-              icon: Icon(Icons.tv_outlined),
-            ),
-          ],
-          selected: {selectedType},
-          onSelectionChanged: (value) {
-            onTypeChanged(value.first);
-          },
-        ),
-    
-        const Spacer(),
-    
-        IconButton(
-          tooltip: 'Notifications',
-          onPressed: () {},
-          icon: const Icon(Icons.notifications_none_rounded),
-        ),
-    
-        const SizedBox(width: 8),
-    
-        const CircleAvatar(radius: 18, child: Icon(Icons.person_outline)),
-    
-        const SizedBox(width: 20),
-      ],
-    );
-  }
-}
-
-// -----------------------------------------------------------------------------
-// HERO
-// -----------------------------------------------------------------------------
-
-class _HeroSection extends StatelessWidget {
-  final Movie movie;
-
-  const _HeroSection({required this.movie});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 390,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(
-              ApiUtils.getProxyUrl(movie.poster),
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-              errorBuilder: (_, _, _) {
-                return const ColoredBox(
-                  color: Colors.black26,
-                  child: Icon(Icons.broken_image_outlined, size: 50),
-                );
-              },
-            ),
-
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.black.withValues(alpha: .95),
-                    Colors.black.withValues(alpha: .65),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-
-            Positioned(
-              left: 36,
-              top: 40,
-              bottom: 36,
-              width: 470,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text(
-                    'FEATURED MOVIE',
-                    style: TextStyle(
-                      letterSpacing: 2,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    movie.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 38,
-                      height: 1.05,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        color: Colors.amber,
-                        size: 19,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        movie.rating,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(width: 18),
-                      Text(
-                        movie.year,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                      const SizedBox(width: 18),
-                      ...movie.genres
-                          .take(2)
-                          .map(
-                            (e) => Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Text(
-                                e,
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                            ),
-                          ),
-                    ],
-                  ),
-                  const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      FilledButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.play_arrow_rounded),
-                        label: const Text('Watch now'),
-                      ),
-                      const SizedBox(width: 10),
-                      IconButton.filledTonal(
-                        onPressed: () {},
-                        icon: const Icon(Icons.add_rounded),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// -----------------------------------------------------------------------------
+// ============================================================
 // SECTION
-// -----------------------------------------------------------------------------
+// ============================================================
 
-class _Section extends StatelessWidget {
+final class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.items});
+
   final String title;
-  final String trailing;
-  final Widget child;
-
-  const _Section({
-    required this.title,
-    required this.trailing,
-    required this.child,
-  });
+  final List<MediaItem> items;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 34, 32, 0),
+      padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -338,216 +263,175 @@ class _Section extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              TextButton(onPressed: () {}, child: Text(trailing)),
+              TextButton(onPressed: () {}, child: const Text('View all')),
             ],
           ),
-          const SizedBox(height: 12),
-          child,
+
+          const SizedBox(height: 14),
+
+          SizedBox(
+            height: 335,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 18),
+              itemBuilder: (context, index) {
+                return _MediaCard(item: items[index]);
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-// -----------------------------------------------------------------------------
-// CONTINUE WATCHING
-// -----------------------------------------------------------------------------
+// ============================================================
+// MEDIA CARD
+// ============================================================
 
-class _ContinueWatching extends StatelessWidget {
-  final List<Movie> movies;
+final class _MediaCard extends StatefulWidget {
+  const _MediaCard({required this.item});
 
-  const _ContinueWatching({required this.movies});
+  final MediaItem item;
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 155,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: movies.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final movie = movies[index];
-
-          return SizedBox(
-            width: 270,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    ApiUtils.getProxyUrl(movie.poster),
-                    fit: BoxFit.cover,
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Colors.black87, Colors.transparent],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 14,
-                    right: 14,
-                    bottom: 13,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movie.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 7),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: const LinearProgressIndicator(
-                            value: .42,
-                            minHeight: 4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  State<_MediaCard> createState() => _MediaCardState();
 }
 
-// -----------------------------------------------------------------------------
-// MOVIE LIST
-// -----------------------------------------------------------------------------
-
-class _MovieHorizontalList extends StatelessWidget {
-  final List<Movie> movies;
-
-  const _MovieHorizontalList({required this.movies});
+class _MediaCardState extends State<_MediaCard> {
+  bool hovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 315,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: movies.length,
-        separatorBuilder: (_,_) => const SizedBox(width: 18),
-        itemBuilder: (_, index) {
-          return SizedBox(width: 180, child: _MovieCard(movie: movies[index]));
-        },
-      ),
-    );
-  }
-}
+    final scheme = Theme.of(context).colorScheme;
+    final item = widget.item;
 
-class _MovieCard extends StatelessWidget {
-  final Movie movie;
-
-  const _MovieCard({required this.movie});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.pushMaterialPageRoute(builder: (mainCtx) => MovieDetailsPage());
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) {
+        setState(() {
+          hovered = true;
+        });
       },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
+      onExit: (_) {
+        setState(() {
+          hovered = false;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 190,
+        transform: hovered
+            ? (Matrix4.identity()..translateByVector3(.new(0.0, -7.0, 0)))
+            : Matrix4.identity(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.network(
-                        ApiUtils.getProxyUrl(movie.poster),
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) {
-                          return const ColoredBox(
-                            color: Colors.black12,
-                            child: Icon(Icons.broken_image_outlined),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    MImage(source: item.poster),
 
-                  if (movie.resolution != null)
+                    if (item.resolution != null)
+                      Positioned(
+                        left: 9,
+                        top: 9,
+                        child: _Badge(text: item.resolution!),
+                      ),
+
                     Positioned(
+                      right: 9,
                       top: 9,
-                      left: 9,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 7,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.black.withValues(alpha: .75),
+                          borderRadius: BorderRadius.circular(7),
                         ),
-                        child: Text(
-                          movie.resolution!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              item.rating,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
 
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: IconButton.filledTonal(
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {},
-                      icon: const Icon(Icons.add_rounded, size: 18),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 160),
+                      opacity: hovered ? 1 : 0,
+                      child: Container(
+                        color: Colors.black.withValues(alpha: .48),
+                        child: Center(
+                          child: CircleAvatar(
+                            radius: 27,
+                            backgroundColor: scheme.primary,
+                            child: Icon(
+                              Icons.play_arrow_rounded,
+                              size: 32,
+                              color: scheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
             const SizedBox(height: 10),
 
             Text(
-              movie.title,
+              item.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w700),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 5),
 
             Row(
               children: [
-                const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
-                const SizedBox(width: 3),
-                Text(movie.rating, style: const TextStyle(fontSize: 12)),
-                const SizedBox(width: 10),
                 Text(
-                  movie.year,
+                  item.year,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    item.categories.map((category) => category.name).join(', '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ],
@@ -559,110 +443,31 @@ class _MovieCard extends StatelessWidget {
   }
 }
 
-// -----------------------------------------------------------------------------
-// SERIES
-// -----------------------------------------------------------------------------
+// ============================================================
+// BADGE
+// ============================================================
 
-class _ShowHorizontalList extends StatelessWidget {
-  final List<Show> shows;
+final class _Badge extends StatelessWidget {
+  const _Badge({required this.text});
 
-  const _ShowHorizontalList({required this.shows});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 315,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: shows.length,
-        separatorBuilder: (_,_) => const SizedBox(width: 18),
-        itemBuilder: (_, index) {
-          return SizedBox(width: 180, child: _ShowCard(show: shows[index]));
-        },
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .9),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 }
-
-class _ShowCard extends StatelessWidget {
-  final Show show;
-
-  const _ShowCard({required this.show});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.pushMaterialPageRoute(builder: (mainCtx) => ShowDetailPage());
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    ApiUtils.getProxyUrl(show.poster),
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    left: 9,
-                    bottom: 9,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '${show.seasons} ${show.seasons == 1 ? 'Season' : 'Seasons'}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            show.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
-              const SizedBox(width: 3),
-              Text(show.rating, style: const TextStyle(fontSize: 12)),
-              const SizedBox(width: 10),
-              Text(
-                show.year,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// -----------------------------------------------------------------------------
-// MODELS
-// -----------------------------------------------------------------------------

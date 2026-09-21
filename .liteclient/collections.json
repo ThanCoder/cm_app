@@ -6,7 +6,7 @@
     "items": [
       {
         "method": "GET",
-        "url": "https://express-forward-proxy.vercel.app?url=https://www.homietv.com/api/movies",
+        "url": "https://ex-for-proxy.vercel.app?url=https://www.homietv.com/api/movies",
         "headers": {},
         "body": {
           "mode": "none"

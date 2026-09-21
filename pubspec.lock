@@ -226,6 +226,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+5"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -627,7 +635,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: bd45db18cb9bc2b18d69a02594186a84227a3159
+      resolved-ref: "6c144036a8abc514520e16f3c7caafe51a5b5ba3"
       url: "https://github.com/ThanCoder/t_client"
     source: git
     version: "0.3.0"
@@ -664,6 +672,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.12"
+  than_pkg_android:
+    dependency: "direct main"
+    description:
+      name: than_pkg_android
+      sha256: e1ab282bb559c9182d5f719827ec8c07852c2d2170a1b48a25f85d6f890d9be0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
+  than_pkg_linux:
+    dependency: "direct main"
+    description:
+      name: than_pkg_linux
+      sha256: "5a15480402979d199d311f8c117dc06bb63b14dd9a674188c405818f126c4bb4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   typed_data:
     dependency: transitive
     description:
@@ -672,6 +696,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      sha256: "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
   vector_math:
     dependency: transitive
     description:

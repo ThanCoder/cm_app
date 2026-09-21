@@ -1,20 +1,75 @@
-import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/ui/movie_data.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
+
+
+// ============================================================
+// MODEL
+// ============================================================
+
+enum MediaType {
+  movie,
+  tvShow,
+}
+
+final class MediaCategory {
+  const MediaCategory({
+    required this.id,
+    required this.tmdbGenreId,
+    required this.name,
+  });
+
+  final int id;
+  final String tmdbGenreId;
+  final String name;
+}
+
+final class MediaItem {
+  const MediaItem({
+    required this.id,
+    required this.title,
+    required this.slug,
+    required this.year,
+    required this.poster,
+    required this.rating,
+    required this.resolution,
+    required this.isAdult,
+    required this.categories,
+    required this.type,
+    required this.homietv,
+    required this.ysflix,
+  });
+
+  final int id;
+  final String title;
+  final String slug;
+  final String year;
+  final String poster;
+  final String rating;
+  final String? resolution;
+  final String isAdult;
+  final List<MediaCategory> categories;
+  final MediaType type;
+  final int homietv;
+  final int ysflix;
+}
 
 // ============================================================
 // HOME
 // ============================================================
 
-class MobileHomePage extends StatefulWidget {
-  const MobileHomePage({super.key});
+class MobileMovieHomePage extends StatefulWidget {
+  const MobileMovieHomePage({
+    super.key,
+  });
 
   @override
-  State<MobileHomePage> createState() => _MobileHomePageState();
+  State<MobileMovieHomePage> createState() =>
+      _MobileMovieHomePageState();
 }
 
-class _MobileHomePageState extends State<MobileHomePage> {
+class _MobileMovieHomePageState
+    extends State<MobileMovieHomePage> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -28,66 +83,174 @@ class _MobileHomePageState extends State<MobileHomePage> {
         titleSpacing: 18,
         title: Row(
           children: [
-            Icon(Icons.movie_creation_rounded, color: scheme.primary),
+            Icon(
+              Icons.movie_creation_rounded,
+              color: scheme.primary,
+            ),
             const SizedBox(width: 8),
-            const Text('TVP', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'TVP',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none_rounded),
+            icon: const Icon(
+              Icons.search_rounded,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+            ),
           ),
           const SizedBox(width: 6),
         ],
       ),
 
-      body: CustomScrollView(
-        slivers: [
-          const SliverToBoxAdapter(child: _MobileSearch()),
-
-          SliverToBoxAdapter(child: _FeaturedMovie(movie: trendingMovies[4])),
-
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Trending Movies'),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: const [
+          _HomeContent(),
+          _SimplePage(
+            icon: Icons.movie_rounded,
+            title: 'Movies',
           ),
-
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _MovieCard(movie: trendingMovies[index]);
-              }, childCount: trendingMovies.length),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 22,
-                childAspectRatio: .61,
-              ),
-            ),
+          _SimplePage(
+            icon: Icons.tv_rounded,
+            title: 'TV Shows',
           ),
-
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Trending TV Shows'),
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _MovieCard(movie: trendingTvShows[index]);
-              }, childCount: trendingTvShows.length),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 22,
-                childAspectRatio: .61,
-              ),
-            ),
+          _SimplePage(
+            icon: Icons.favorite_rounded,
+            title: 'Favorites',
           ),
         ],
       ),
+
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home_rounded),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.movie_outlined),
+            selectedIcon: Icon(Icons.movie_rounded),
+            label: 'Movies',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.tv_outlined),
+            selectedIcon: Icon(Icons.tv_rounded),
+            label: 'Shows',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline_rounded),
+            selectedIcon: Icon(Icons.favorite_rounded),
+            label: 'Favorites',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// HOME CONTENT
+// ============================================================
+
+final class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(
+          child: _MobileSearch(),
+        ),
+
+        SliverToBoxAdapter(
+          child: _FeaturedMovie(
+            movie: trendingMovies[4],
+          ),
+        ),
+
+        const SliverToBoxAdapter(
+          child: _SectionTitle(
+            title: 'Trending Movies',
+          ),
+        ),
+
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            28,
+          ),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return _MovieCard(
+                  movie: trendingMovies[index],
+                );
+              },
+              childCount: trendingMovies.length,
+            ),
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 22,
+              childAspectRatio: .61,
+            ),
+          ),
+        ),
+
+        const SliverToBoxAdapter(
+          child: _SectionTitle(
+            title: 'Trending TV Shows',
+          ),
+        ),
+
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            40,
+          ),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return _MovieCard(
+                  movie: trendingTvShows[index],
+                );
+              },
+              childCount: trendingTvShows.length,
+            ),
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 22,
+              childAspectRatio: .61,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -104,13 +267,20 @@ final class _MobileSearch extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        18,
+      ),
       child: SizedBox(
         height: 48,
         child: TextField(
           decoration: InputDecoration(
             hintText: 'Search movies and TV shows...',
-            prefixIcon: const Icon(Icons.search_rounded),
+            prefixIcon: const Icon(
+              Icons.search_rounded,
+            ),
             filled: true,
             fillColor: scheme.surfaceContainerHighest,
             border: OutlineInputBorder(
@@ -129,16 +299,23 @@ final class _MobileSearch extends StatelessWidget {
 // ============================================================
 
 final class _FeaturedMovie extends StatelessWidget {
-  const _FeaturedMovie({required this.movie});
+  const _FeaturedMovie({
+    required this.movie,
+  });
 
   final MediaItem movie;
 
   @override
   Widget build(BuildContext context) {
-    // final scheme = Theme.of(context).colorScheme;
+    final scheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        0,
+        16,
+        28,
+      ),
       child: AspectRatio(
         aspectRatio: 1.55,
         child: ClipRRect(
@@ -146,7 +323,10 @@ final class _FeaturedMovie extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              MImage(source: movie.poster, fit: BoxFit.cover),
+              MImage(
+                source: movie.poster,
+                fit: BoxFit.cover,
+              ),
 
               DecoratedBox(
                 decoration: BoxDecoration(
@@ -168,12 +348,15 @@ final class _FeaturedMovie extends StatelessWidget {
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           if (movie.resolution != null)
-                            _Badge(text: movie.resolution!),
+                            _Badge(
+                              text: movie.resolution!,
+                            ),
 
                           const SizedBox(width: 7),
 
@@ -227,7 +410,10 @@ final class _FeaturedMovie extends StatelessWidget {
                         style: FilledButton.styleFrom(
                           minimumSize: const Size(0, 38),
                         ),
-                        icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                        icon: const Icon(
+                          Icons.play_arrow_rounded,
+                          size: 20,
+                        ),
                         label: const Text('Watch Now'),
                       ),
                     ],
@@ -247,23 +433,37 @@ final class _FeaturedMovie extends StatelessWidget {
 // ============================================================
 
 final class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+  const _SectionTitle({
+    required this.title,
+  });
 
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        0,
+        16,
+        14,
+      ),
       child: Row(
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const Spacer(),
-          TextButton(onPressed: () {}, child: const Text('See all')),
+          TextButton(
+            onPressed: () {},
+            child: const Text('See all'),
+          ),
         ],
       ),
     );
@@ -275,7 +475,9 @@ final class _SectionTitle extends StatelessWidget {
 // ============================================================
 
 final class _MovieCard extends StatelessWidget {
-  const _MovieCard({required this.movie});
+  const _MovieCard({
+    required this.movie,
+  });
 
   final MediaItem movie;
 
@@ -295,13 +497,18 @@ final class _MovieCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  MImage(source: movie.poster, fit: BoxFit.cover),
+                  MImage(
+                    source: movie.poster,
+                    fit: BoxFit.cover,
+                  ),
 
                   if (movie.resolution != null)
                     Positioned(
                       top: 8,
                       left: 8,
-                      child: _Badge(text: movie.resolution!),
+                      child: _Badge(
+                        text: movie.resolution!,
+                      ),
                     ),
 
                   Positioned(
@@ -313,8 +520,11 @@ final class _MovieCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: .72),
-                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.black.withValues(
+                          alpha: .72,
+                        ),
+                        borderRadius:
+                            BorderRadius.circular(6),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -343,7 +553,10 @@ final class _MovieCard extends StatelessWidget {
                     right: 8,
                     child: CircleAvatar(
                       radius: 18,
-                      backgroundColor: scheme.surface.withValues(alpha: .9),
+                      backgroundColor:
+                          scheme.surface.withValues(
+                        alpha: .9,
+                      ),
                       child: Icon(
                         Icons.play_arrow_rounded,
                         size: 21,
@@ -362,7 +575,10 @@ final class _MovieCard extends StatelessWidget {
             movie.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
 
           const SizedBox(height: 4),
@@ -371,12 +587,17 @@ final class _MovieCard extends StatelessWidget {
             children: [
               Text(
                 movie.year,
-                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  movie.categories.map((e) => e.name).join(', '),
+                  movie.categories
+                      .map((e) => e.name)
+                      .join(', '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -398,14 +619,19 @@ final class _MovieCard extends StatelessWidget {
 // ============================================================
 
 final class _Badge extends StatelessWidget {
-  const _Badge({required this.text});
+  const _Badge({
+    required this.text,
+  });
 
   final String text;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 3,
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: .92),
         borderRadius: BorderRadius.circular(5),
@@ -425,3 +651,36 @@ final class _Badge extends StatelessWidget {
 // ============================================================
 // PLACEHOLDER PAGES
 // ============================================================
+
+final class _SimplePage extends StatelessWidget {
+  const _SimplePage({
+    required this.icon,
+    required this.title,
+  });
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 50,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge,
+          ),
+        ],
+      ),
+    );
+  }
+}
+

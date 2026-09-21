@@ -4,36 +4,79 @@ abstract class IControllerEvent {
   const IControllerEvent();
 }
 
+class Loading extends IControllerEvent {
+  const Loading();
+}
+
+class Loaded extends IControllerEvent {
+  const Loaded();
+}
+
+class Error extends IControllerEvent {
+  final String message;
+  const Error(this.message);
+}
+
 abstract class IController {
   Future<void> init();
-  Future<void> dispose() async {
-    await _con.close();
-  }
-
-  void addEvent(IControllerEvent event) {
-    _con.add(event);
-  }
 
   final _con = StreamController<IControllerEvent>.broadcast();
   Stream<IControllerEvent> get events => _con.stream;
+
+  void addEvent(IControllerEvent event) {
+    if (!_con.isClosed) {
+      _con.add(event);
+    }
+  }
+
+  Future<void> dispose() async {
+    await _con.close();
+  }
 }
 
 class ControllerManager {
-  static final _map = <Type, IController>{};
+  static final Map<Type, IController> _map = {};
 
   static void register(IController controller) {
-    final old = _map[controller.runtimeType];
-    if (old != null) {
-      throw Exception('controller already exists!');
+    final t = controller.runtimeType;
+    if (_map.containsKey(t)) {
+      throw Exception('Type ရှိနေပြီးသားဖြစ်နေတယ်; Type $t');
     }
-    _map[controller.runtimeType] = controller;
+    _map[t] = controller;
   }
 
   static T read<T extends IController>() {
-    final old = _map[T];
-    if (old == null) {
-      throw Exception('`$T`: controller need to register!');
+    final val = _map[T];
+    if (val == null) {
+      throw Exception('Type: `$T` Not Registered!');
     }
-    return old as T;
+    return val as T;
+  }
+
+  static Future<void> initAll() async {
+    for (var val in _map.values) {
+      await val.init();
+    }
+  }
+
+  static Future<void> dispose<T extends IController>() async {
+    final val = _map[T];
+    if (val == null) return;
+    await val.dispose();
+    _map.remove(T);
+  }
+
+  static Future<void> disposeAll() async {
+    for (final controller in _map.values) {
+      await controller.dispose();
+    }
+
+    _map.clear();
+  }
+}
+
+extension IControllerExt on Stream<IControllerEvent> {
+  Stream<T> whereType<T extends IControllerEvent>() {
+    return where((e) => e is T).cast<T>();
   }
 }

@@ -1,5 +1,12 @@
-const String appThemKey = 'appThemKey';
+const String appThemeKey = 'appThemeKey';
+const String appWindowWidthKey = 'appWindowWidthKey';
+const String appWindowHeightKey = 'appWindowHeightKey';
 
+const String forwardProxy = 'https://ex-for-proxy.vercel.app';
+const String devPageApiUrl =
+    'https://github.com/ThanCoder/server_repo/raw/refs/heads/main/dev_page_api.json';
+const String forwardProxyApiUrl =
+    'https://github.com/ThanCoder/server_repo/raw/refs/heads/main/forward_proxy_api.json';
 /*
 api/search?keyword=viciou&page=1
 api/tv-show-genres
