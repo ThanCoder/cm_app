@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/ui/trending_data.dart';
+import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/routes.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +18,89 @@ class MobileHomePage extends StatefulWidget {
 }
 
 class _MobileHomePageState extends State<MobileHomePage> {
+  List<MediaItem> movies = [];
+  List<MediaItem> tvShows = [];
+  @override
+  void initState() {
+    fetchMovie();
+    fetchShow();
+    super.initState();
+  }
+
+  bool movieFetching = false;
+  bool showFetching = false;
+  String? movieError;
+  String? showError;
+
+  Future<void> fetchMovie() async {
+    setState(() {
+      movieFetching = true;
+      movieError = null;
+    });
+
+    final movieUrl = '${ApiUtils.currentApiUrl()}/api/trending/movies';
+    final movieRes = await ApiUtils.getApiContent(movieUrl);
+    if (!mounted) return;
+
+    if (movieRes.isErr) {
+      setState(() {
+        movieFetching = false;
+        movieError = movieRes.unwrapError();
+      });
+
+      return;
+    }
+    try {
+      List<dynamic> movieList = movieRes.unwrap()['data'];
+      movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+      setState(() {
+        movieFetching = false;
+      });
+    } catch (e) {
+      setState(() {
+        movieFetching = false;
+        movieError = e.toString();
+      });
+    }
+  }
+
+  Future<void> fetchShow() async {
+    setState(() {
+      showFetching = true;
+      showError = null;
+    });
+
+    // show
+    final showUrl = '${ApiUtils.currentApiUrl()}/api/trending/tv-shows';
+    final showRes = await ApiUtils.getApiContent(showUrl);
+    if (!mounted) return;
+
+    if (showRes.isErr) {
+      setState(() {
+        showError = showRes.unwrapError();
+        showFetching = false;
+      });
+      return;
+    }
+    try {
+      List<dynamic> showList = showRes.unwrap()['data'];
+      tvShows = showList.map((e) => MediaItem.fromMap(e)).toList();
+      setState(() {
+        showFetching = false;
+      });
+    } catch (e) {
+      setState(() {
+        showError = showRes.unwrapError();
+        showFetching = false;
+      });
+    }
+  }
+
+  Future<void> fetch() async {
+    fetchMovie();
+    fetchShow();
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -43,50 +129,99 @@ class _MobileHomePageState extends State<MobileHomePage> {
         ],
       ),
 
-      body: CustomScrollView(
-        slivers: [
-          const SliverToBoxAdapter(child: _MobileSearch()),
+      body: RefreshIndicator.adaptive(
+        onRefresh: fetch,
+        child: CustomScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          slivers: [
+            const SliverToBoxAdapter(child: _MobileSearch()),
+            if (movies.isNotEmpty)
+              SliverToBoxAdapter(
+                child: _FeaturedMovie(
+                  movie: movies[Random().nextInt(movies.length)],
+                ),
+              ),
 
-          SliverToBoxAdapter(child: _FeaturedMovie(movie: trendingMovies[4])),
-
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Trending Movies'),
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _MovieCard(movie: trendingMovies[index]);
-              }, childCount: trendingMovies.length),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 22,
-                childAspectRatio: .61,
+            SliverToBoxAdapter(
+              child: _SectionTitle(
+                title: 'Trending Movies',
+                onClicked: () => goMoviePage(context),
               ),
             ),
-          ),
-
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Trending TV Shows'),
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _MovieCard(movie: trendingTvShows[index]);
-              }, childCount: trendingTvShows.length),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 22,
-                childAspectRatio: .61,
+            if (movieFetching)
+              SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator.adaptive()),
+              )
+            else if (movieError != null)
+              SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'Error: $movieError',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return _MovieCard(
+                      movie: movies[index],
+                      onClicked: (movie) {
+                        goMovieDetail(context, item: movie);
+                      },
+                    );
+                  }, childCount: movies.length),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 22,
+                    childAspectRatio: .61,
+                  ),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: _SectionTitle(
+                title: 'Trending TV Shows',
+                onClicked: () => goTvShowPage(context),
               ),
             ),
-          ),
-        ],
+            if (showFetching)
+              SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator.adaptive()),
+              )
+            else if (showError != null)
+              SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'Error: $showError',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return _MovieCard(
+                      movie: tvShows[index],
+                      onClicked: (movie) {
+                        goMovieDetail(context, item: movie);
+                      },
+                    );
+                  }, childCount: tvShows.length),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 22,
+                    childAspectRatio: .61,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -247,9 +382,10 @@ final class _FeaturedMovie extends StatelessWidget {
 // ============================================================
 
 final class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+  const _SectionTitle({required this.title, this.onClicked});
 
   final String title;
+  final void Function()? onClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +399,7 @@ final class _SectionTitle extends StatelessWidget {
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
           const Spacer(),
-          TextButton(onPressed: () {}, child: const Text('See all')),
+          TextButton(onPressed: onClicked, child: const Text('See all')),
         ],
       ),
     );
@@ -275,9 +411,10 @@ final class _SectionTitle extends StatelessWidget {
 // ============================================================
 
 final class _MovieCard extends StatelessWidget {
-  const _MovieCard({required this.movie});
+  const _MovieCard({required this.movie, this.onClicked});
 
   final MediaItem movie;
+  final void Function(MediaItem movie)? onClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +422,7 @@ final class _MovieCard extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: () {},
+      onTap: () => onClicked?.call(movie),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

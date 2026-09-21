@@ -1,4 +1,5 @@
 import 'package:cm_app/core/models/movie.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 
 final class TvShowItem {
   const TvShowItem({
@@ -24,10 +25,32 @@ final class TvShowItem {
   final String poster;
   final String rating;
   final String? resolution;
-  final String isAdult;
+  final bool isAdult;
   final List<MediaCategory> categories;
   final int seasons;
   final MediaType type;
   final int homietv;
   final int ysflix;
+
+  factory TvShowItem.fromJson(Map<String, dynamic> json) {
+    return TvShowItem(
+      id: json['id'],
+      title: json['title'],
+      slug: json['slug'],
+      year: json['year'],
+      poster: json['poster'],
+      rating: json['rating'],
+      resolution: json['resolution'],
+      isAdult: json.getInt(['isAdult']) == 1,
+      categories: (json['categories'] as List? ?? const [])
+          .map(
+            (e) => MediaCategory.fromMap(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList(),
+      seasons: json['seasons'],
+      type: MediaType.fromValue(json['type']),
+      homietv: json['homietv'],
+      ysflix: json['ysflix'],
+    );
+  }
 }

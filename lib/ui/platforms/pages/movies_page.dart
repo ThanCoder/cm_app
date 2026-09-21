@@ -1,7 +1,10 @@
 import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/ui/movies_data.dart';
+import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/routes.dart';
+import 'package:cm_app/ui/platforms/components/dialog/error_alert_dialog.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
+import 'package:t_client/t_client.dart';
 
 // import 'package:your_app/widgets/m_image.dart';
 
@@ -22,6 +25,7 @@ class _MoviesPageState extends State<MoviesPage> {
 
   bool _isLoading = false;
   bool _hasMore = true;
+  final client = TClient();
 
   @override
   void initState() {
@@ -58,10 +62,23 @@ class _MoviesPageState extends State<MoviesPage> {
     final nextPage = _page + 1;
 
     // Mock page data
-    final newMovies = _mockPage(nextPage);
+    // final newMovies = _mockPage(nextPage);
+    final url = '${ApiUtils.currentApiUrl()}/api/movies?page=$nextPage';
+    // print(':Dev $url');
+    final res = await ApiUtils.getApiContent(url);
+    if (!mounted) return;
 
+    if (res.isErr) {
+      setState(() {
+        _isLoading = false;
+      });
+      showErrorDialog(context, res.unwrapError());
+      return;
+    }
+    List<dynamic> list = res.unwrap()['data'];
+    final movies = list.map((e) => MediaItem.fromMap(e)).toList();
     setState(() {
-      _movies.addAll(newMovies);
+      _movies.addAll(movies);
 
       _page = nextPage;
 
@@ -69,31 +86,6 @@ class _MoviesPageState extends State<MoviesPage> {
 
       _isLoading = false;
     });
-  }
-
-  List<MediaItem> _mockPage(int page) {
-    if (page == 1) {
-      return mockMovies;
-    }
-
-    // Page 2, 3 ... ကို mock လုပ်ဖို့
-    // same data ကို duplicate မဖြစ်အောင် id/title ပြောင်းပေးထားတယ်။
-    return mockMovies.map((movie) {
-      return MediaItem(
-        id: movie.id + (page * 100000),
-        title: '${movie.title} $page',
-        slug: '${movie.slug}-$page',
-        year: movie.year,
-        poster: movie.poster,
-        rating: movie.rating,
-        resolution: movie.resolution,
-        isAdult: movie.isAdult,
-        categories: movie.categories,
-        type: movie.type,
-        homietv: movie.homietv,
-        ysflix: movie.ysflix,
-      );
-    }).toList();
   }
 
   Future<void> _refresh() async {
@@ -133,7 +125,7 @@ class _MoviesPageState extends State<MoviesPage> {
           const SizedBox(width: 8),
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.noSpinner(
         onRefresh: _refresh,
         child: CustomScrollView(
           controller: _scrollController,
@@ -148,7 +140,7 @@ class _MoviesPageState extends State<MoviesPage> {
                   return _MovieCard(
                     movie: movie,
                     onTap: () {
-                      // TODO: open movie detail
+                      goMovieDetail(context, item: movie);
                     },
                   );
                 }, childCount: _movies.length),

@@ -1,6 +1,8 @@
 import 'package:cm_app/core/models/tv_show.dart';
+import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/routes.dart';
+import 'package:cm_app/ui/platforms/components/dialog/error_alert_dialog.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
-import 'package:cm_app/ui/tv_shows_data.dart';
 import 'package:flutter/material.dart';
 
 class TvShowsPage extends StatefulWidget {
@@ -54,8 +56,20 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
     final nextPage = _page + 1;
 
-    final newShows = _mockPage(nextPage);
+    final url = '${ApiUtils.currentApiUrl()}/api/tv-shows?page=$nextPage';
+    // print(':Dev $url');
+    final res = await ApiUtils.getApiContent(url);
+    if (!mounted) return;
 
+    if (res.isErr) {
+      setState(() {
+        _isLoading = false;
+      });
+      showErrorDialog(context, res.unwrapError());
+      return;
+    }
+    List<dynamic> list = res.unwrap()['data'];
+    final newShows = list.map((e) => TvShowItem.fromJson(e)).toList();
     setState(() {
       _shows.addAll(newShows);
 
@@ -65,30 +79,6 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
       _isLoading = false;
     });
-  }
-
-  List<TvShowItem> _mockPage(int page) {
-    if (page == 1) {
-      return mockTvShows;
-    }
-
-    return mockTvShows.map((show) {
-      return TvShowItem(
-        id: show.id + (page * 100000),
-        title: '${show.title} $page',
-        slug: '${show.slug}-$page',
-        year: show.year,
-        poster: show.poster,
-        rating: show.rating,
-        resolution: show.resolution,
-        isAdult: show.isAdult,
-        categories: show.categories,
-        seasons: show.seasons,
-        type: show.type,
-        homietv: show.homietv,
-        ysflix: show.ysflix,
-      );
-    }).toList();
   }
 
   Future<void> _refresh() async {
@@ -129,7 +119,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
           const SizedBox(width: 8),
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.noSpinner(
         onRefresh: _refresh,
         child: CustomScrollView(
           controller: _scrollController,
@@ -144,7 +134,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
                   return _TvShowCard(
                     show: show,
                     onTap: () {
-                      // TODO: open TV show detail
+                      goTvShowDetail(context, item: show);
                     },
                   );
                 }, childCount: _shows.length),

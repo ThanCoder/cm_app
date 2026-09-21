@@ -1,4 +1,5 @@
 import 'package:cm_app/core/models/movie_detail.dart';
+import 'package:cm_app/funcs.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
@@ -550,7 +551,7 @@ class MovieDetailPage extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => launchPageUrl(context, link.url),
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
           ),
         ],

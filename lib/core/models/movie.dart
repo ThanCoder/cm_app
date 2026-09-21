@@ -1,4 +1,15 @@
-enum MediaType { movie, tvShow }
+enum MediaType {
+  movie,
+  tvShow;
+
+  static MediaType fromValue(String value) {
+    return switch (value) {
+      'movie' => MediaType.movie,
+      'tv-show' => MediaType.tvShow,
+      _ => throw FormatException('Unknown media type: $value'),
+    };
+  }
+}
 
 final class MediaCategory {
   const MediaCategory({
@@ -6,6 +17,14 @@ final class MediaCategory {
     required this.tmdbGenreId,
     required this.name,
   });
+
+  factory MediaCategory.fromMap(Map<String, dynamic> map) {
+    return MediaCategory(
+      id: map['id'] as int,
+      tmdbGenreId: map['tmdb_genre_id']?.toString() ?? '',
+      name: map['name'] as String? ?? '',
+    );
+  }
 
   final int id;
   final String tmdbGenreId;
@@ -27,6 +46,27 @@ final class MediaItem {
     required this.homietv,
     required this.ysflix,
   });
+
+  factory MediaItem.fromMap(Map<String, dynamic> map) {
+    return MediaItem(
+      id: map['id'] as int,
+      title: map['title'] as String? ?? '',
+      slug: map['slug'] as String? ?? '',
+      year: map['year'] as String? ?? '',
+      poster: map['poster'] as String? ?? '',
+      rating: map['rating'] as String? ?? '',
+      resolution: map['resolution'] as String?,
+      isAdult: map['is_adult'] as String? ?? '0',
+      categories: (map['categories'] as List? ?? const [])
+          .map(
+            (e) => MediaCategory.fromMap(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList(),
+      type: MediaType.fromValue(map['type'] as String? ?? ''),
+      homietv: map['homietv'] as int? ?? 0,
+      ysflix: map['ysflix'] as int? ?? 0,
+    );
+  }
 
   final int id;
   final String title;

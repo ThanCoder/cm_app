@@ -1,12 +1,10 @@
 import 'package:cm_app/core/models/tv_show_detail.dart';
+import 'package:cm_app/funcs.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
 class TvShowDetailPage extends StatelessWidget {
-  const TvShowDetailPage({
-    super.key,
-    required this.tvShow,
-  });
+  const TvShowDetailPage({super.key, required this.tvShow});
 
   final TvShowDetail tvShow;
 
@@ -80,10 +78,7 @@ class TvShowDetailPage extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            MImage(
-              source: tvShow.backdropPath,
-              fit: BoxFit.cover,
-            ),
+            MImage(source: tvShow.backdropPath, fit: BoxFit.cover),
 
             DecoratedBox(
               decoration: BoxDecoration(
@@ -96,12 +91,7 @@ class TvShowDetailPage extends StatelessWidget {
                     colorScheme.surface.withValues(alpha: .85),
                     colorScheme.surface,
                   ],
-                  stops: const [
-                    0,
-                    .35,
-                    .85,
-                    1,
-                  ],
+                  stops: const [0, .35, .85, 1],
                 ),
               ),
             ),
@@ -120,12 +110,8 @@ class TvShowDetailPage extends StatelessWidget {
                       tvShow.title,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
                 ],
@@ -218,8 +204,6 @@ class TvShowDetailPage extends StatelessWidget {
     if (!episode.hasDownloads) {
       return;
     }
-
-    // TODO: Open player with episode.downloadLinks.
   }
 
   Widget _buildMeta(BuildContext context) {
@@ -227,48 +211,25 @@ class TvShowDetailPage extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        _metaItem(
-          context,
-          Icons.calendar_today_outlined,
-          tvShow.year,
-        ),
-        _metaItem(
-          context,
-          Icons.tv_rounded,
-          tvShow.status,
-        ),
-        _metaItem(
-          context,
-          Icons.movie_outlined,
-          tvShow.type,
-        ),
+        _metaItem(context, Icons.calendar_today_outlined, tvShow.year),
+        _metaItem(context, Icons.tv_rounded, tvShow.status),
+        _metaItem(context, Icons.movie_outlined, tvShow.type),
         _metaItem(
           context,
           Icons.layers_outlined,
           '${tvShow.episodeCount} Episodes',
         ),
         if (tvShow.ratingValue > 0)
-          _metaItem(
-            context,
-            Icons.star_rounded,
-            tvShow.rating,
-          ),
+          _metaItem(context, Icons.star_rounded, tvShow.rating),
       ],
     );
   }
 
-  Widget _metaItem(
-    BuildContext context,
-    IconData icon,
-    String text,
-  ) {
+  Widget _metaItem(BuildContext context, IconData icon, String text) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 7,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
@@ -276,11 +237,7 @@ class TvShowDetailPage extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: colorScheme.primary,
-          ),
+          Icon(icon, size: 16, color: colorScheme.primary),
           const SizedBox(width: 5),
           Text(text),
         ],
@@ -299,10 +256,7 @@ class TvShowDetailPage extends StatelessWidget {
             visualDensity: VisualDensity.compact,
           ),
         for (final tag in tvShow.tags)
-          Chip(
-            label: Text(tag.name),
-            visualDensity: VisualDensity.compact,
-          ),
+          Chip(label: Text(tag.name), visualDensity: VisualDensity.compact),
       ],
     );
   }
@@ -356,9 +310,7 @@ class TvShowDetailPage extends StatelessWidget {
                     radius: 23,
                     child: Text(
                       director.isEmpty ? '?' : director[0],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -437,10 +389,7 @@ class TvShowDetailPage extends StatelessWidget {
       width: 76,
       height: 76,
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: const Icon(
-        Icons.person_outline_rounded,
-        size: 32,
-      ),
+      child: const Icon(Icons.person_outline_rounded, size: 32),
     );
   }
 
@@ -458,43 +407,25 @@ class TvShowDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        for (final season in tvShow.seasons)
-          _buildSeason(
-            context,
-            season,
-          ),
+        for (final season in tvShow.seasons) _buildSeason(context, season),
       ],
     );
   }
 
-  Widget _buildSeason(
-    BuildContext context,
-    TvShowSeason season,
-  ) {
+  Widget _buildSeason(BuildContext context, TvShowSeason season) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: ExpansionTile(
         initiallyExpanded: true,
-        tilePadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-        ),
-        childrenPadding: const EdgeInsets.fromLTRB(
-          14,
-          0,
-          14,
-          12,
-        ),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 14),
+        childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         leading: Icon(
           Icons.video_library_outlined,
@@ -502,43 +433,28 @@ class TvShowDetailPage extends StatelessWidget {
         ),
         title: Text(
           season.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w700),
         ),
-        subtitle: Text(
-          '${season.episodes.length} Episodes',
-        ),
+        subtitle: Text('${season.episodes.length} Episodes'),
         children: [
           for (final episode in season.episodes)
-            _buildEpisode(
-              context,
-              episode,
-            ),
+            _buildEpisode(context, episode),
         ],
       ),
     );
   }
 
-  Widget _buildEpisode(
-    BuildContext context,
-    TvShowEpisode episode,
-  ) {
+  Widget _buildEpisode(BuildContext context, TvShowEpisode episode) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
-        _showEpisodeServers(
-          context,
-          episode,
-        );
+        _showEpisodeServers(context, episode);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
             ClipRRect(
@@ -574,8 +490,7 @@ class TvShowDetailPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     [
-                      if (episode.runtime != null)
-                        episode.runtime!,
+                      if (episode.runtime != null) episode.runtime!,
                       episode.airDate,
                     ].join(' • '),
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -599,10 +514,7 @@ class TvShowDetailPage extends StatelessWidget {
     );
   }
 
-  void _showEpisodeServers(
-    BuildContext context,
-    TvShowEpisode episode,
-  ) {
+  void _showEpisodeServers(BuildContext context, TvShowEpisode episode) {
     if (!episode.hasDownloads) {
       return;
     }
@@ -614,21 +526,12 @@ class TvShowDetailPage extends StatelessWidget {
         return SafeArea(
           child: ListView(
             shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(
-              16,
-              8,
-              16,
-              24,
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             children: [
               Text(
                 'Episode ${episode.episodeNumber}',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 4),
               Text(
@@ -639,10 +542,7 @@ class TvShowDetailPage extends StatelessWidget {
               const SizedBox(height: 18),
 
               for (final link in episode.downloadLinks)
-                _serverItem(
-                  context,
-                  link,
-                ),
+                _serverItem(context, link),
             ],
           ),
         );
@@ -650,10 +550,7 @@ class TvShowDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _serverItem(
-    BuildContext context,
-    TvShowDownloadLink link,
-  ) {
+  Widget _serverItem(BuildContext context, TvShowDownloadLink link) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -666,10 +563,7 @@ class TvShowDetailPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.cloud_download_outlined,
-            color: colorScheme.primary,
-          ),
+          Icon(Icons.cloud_download_outlined, color: colorScheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -694,12 +588,9 @@ class TvShowDetailPage extends StatelessWidget {
           IconButton(
             onPressed: () {
               Navigator.pop(context);
-
-              // TODO: Open player/download.
+              launchPageUrl(context, link.url);
             },
-            icon: const Icon(
-              Icons.play_arrow_rounded,
-            ),
+            icon: const Icon(Icons.play_arrow_rounded),
           ),
         ],
       ),
@@ -719,14 +610,9 @@ class TvShowDetailPage extends StatelessWidget {
         onTap: onPressed,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 22,
-          ),
+          child: Icon(icon, color: Colors.white, size: 22),
         ),
       ),
     );
   }
 }
-
