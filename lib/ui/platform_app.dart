@@ -60,5 +60,23 @@ class _PlatformAppState extends State<PlatformApp> {
         return DesktopHomeScreen();
       },
     );
+
+    // return WebsiteProviderScreen(
+    //   childBuilder: (provider) {
+    //     return LayoutBuilder(
+    //       builder: (context, constraints) {
+    //         final isMobile = constraints.maxWidth <= 500;
+    //         AppUtil.instance.isMobileNotifier.value = isMobile;
+    //         this.constraints = constraints;
+    //         saveSize();
+
+    //         if (isMobile) {
+    //           return MobileHomeScreen(provider: provider);
+    //         }
+    //         return DesktopHomeScreen(provider: provider);
+    //       },
+    //     );
+    //   },
+    // );
   }
 }

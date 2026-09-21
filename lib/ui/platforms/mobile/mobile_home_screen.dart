@@ -1,5 +1,7 @@
 import 'package:cm_app/ui/platforms/pages/more_page.dart';
 import 'package:cm_app/ui/platforms/mobile/mobile_home_page.dart';
+import 'package:cm_app/ui/platforms/pages/movies_page.dart';
+import 'package:cm_app/ui/platforms/pages/tv_shows_page.dart';
 import 'package:flutter/material.dart';
 
 class MobileHomeScreen extends StatefulWidget {
@@ -19,8 +21,8 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
         index: selectedIndex,
         children: const [
           MobileHomePage(),
-          Placeholder(),
-          Placeholder(),
+          MoviesPage(),
+          TvShowsPage(),
           Placeholder(),
           MorePage(),
         ],

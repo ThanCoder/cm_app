@@ -1,5 +1,7 @@
 import 'package:cm_app/ui/platforms/pages/more_page.dart';
 import 'package:cm_app/ui/platforms/desktop/desktop_home_page.dart';
+import 'package:cm_app/ui/platforms/pages/movies_page.dart';
+import 'package:cm_app/ui/platforms/pages/tv_shows_page.dart';
 import 'package:flutter/material.dart';
 
 class DesktopHomeScreen extends StatefulWidget {
@@ -29,8 +31,8 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
               index: selectedIndex,
               children: [
                 DesktopHomePage(),
-                Placeholder(),
-                Placeholder(),
+                MoviesPage(),
+                TvShowsPage(),
                 Placeholder(),
                 Placeholder(),
                 MorePage(),

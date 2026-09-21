@@ -1,5 +1,6 @@
 import 'package:cm_app/core/utils/app_util.dart';
 import 'package:cm_app/ui/platforms/pages/cache_manager.dart';
+import 'package:cm_app/ui/platforms/pages/forward_proxy_page.dart';
 import 'package:cm_app/ui/platforms/pages/version_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
@@ -19,6 +20,7 @@ class MorePage extends StatelessWidget {
           CacheManagerListTile(
             cacheDirPath: AppUtil.instance.getPlatformCachePath(),
           ),
+          ForwardProxyPageListTile(),
         ],
       ),
     );

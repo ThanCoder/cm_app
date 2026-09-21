@@ -1,5 +1,5 @@
 import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/ui/movie_data.dart';
+import 'package:cm_app/ui/trending_data.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 

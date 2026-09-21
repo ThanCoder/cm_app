@@ -1,5 +1,6 @@
 import 'package:cm_app/core/models/movie.dart';
-import 'package:cm_app/ui/movie_data.dart';
+import 'package:cm_app/routes.dart';
+import 'package:cm_app/ui/trending_data.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
@@ -279,7 +280,12 @@ final class _Section extends StatelessWidget {
               itemCount: items.length,
               separatorBuilder: (_, _) => const SizedBox(width: 18),
               itemBuilder: (context, index) {
-                return _MediaCard(item: items[index]);
+                return _MediaCard(
+                  item: items[index],
+                  onClicked: (item) {
+                    goMovieDetail(context, item: item);
+                  },
+                );
               },
             ),
           ),
@@ -294,9 +300,9 @@ final class _Section extends StatelessWidget {
 // ============================================================
 
 final class _MediaCard extends StatefulWidget {
-  const _MediaCard({required this.item});
-
+  const _MediaCard({required this.item, this.onClicked});
   final MediaItem item;
+  final void Function(MediaItem item)? onClicked;
 
   @override
   State<_MediaCard> createState() => _MediaCardState();
@@ -310,133 +316,138 @@ class _MediaCardState extends State<_MediaCard> {
     final scheme = Theme.of(context).colorScheme;
     final item = widget.item;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) {
-        setState(() {
-          hovered = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          hovered = false;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 190,
-        transform: hovered
-            ? (Matrix4.identity()..translateByVector3(.new(0.0, -7.0, 0)))
-            : Matrix4.identity(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    MImage(source: item.poster),
+    return GestureDetector(
+      onTap: () => widget.onClicked?.call(item),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) {
+          setState(() {
+            hovered = true;
+          });
+        },
+        onExit: (_) {
+          setState(() {
+            hovered = false;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 190,
+          transform: hovered
+              ? (Matrix4.identity()..translateByVector3(.new(0.0, -7.0, 0)))
+              : Matrix4.identity(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      MImage(source: item.poster),
 
-                    if (item.resolution != null)
+                      if (item.resolution != null)
+                        Positioned(
+                          left: 9,
+                          top: 9,
+                          child: _Badge(text: item.resolution!),
+                        ),
+
                       Positioned(
-                        left: 9,
+                        right: 9,
                         top: 9,
-                        child: _Badge(text: item.resolution!),
-                      ),
-
-                    Positioned(
-                      right: 9,
-                      top: 9,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: .75),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              size: 14,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              item.rating,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: .75),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.star_rounded,
+                                size: 14,
+                                color: Colors.amber,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 3),
+                              Text(
+                                item.rating,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 160),
-                      opacity: hovered ? 1 : 0,
-                      child: Container(
-                        color: Colors.black.withValues(alpha: .48),
-                        child: Center(
-                          child: CircleAvatar(
-                            radius: 27,
-                            backgroundColor: scheme.primary,
-                            child: Icon(
-                              Icons.play_arrow_rounded,
-                              size: 32,
-                              color: scheme.onPrimary,
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 160),
+                        opacity: hovered ? 1 : 0,
+                        child: Container(
+                          color: Colors.black.withValues(alpha: .48),
+                          child: Center(
+                            child: CircleAvatar(
+                              radius: 27,
+                              backgroundColor: scheme.primary,
+                              child: Icon(
+                                Icons.play_arrow_rounded,
+                                size: 32,
+                                color: scheme.onPrimary,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Text(
-              item.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-
-            const SizedBox(height: 5),
-
-            Row(
-              children: [
-                Text(
-                  item.year,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: scheme.onSurfaceVariant,
+                    ],
                   ),
                 ),
-                const SizedBox(width: 7),
-                Expanded(
-                  child: Text(
-                    item.categories.map((category) => category.name).join(', '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                item.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(height: 5),
+
+              Row(
+                children: [
+                  Text(
+                    item.year,
                     style: TextStyle(
                       fontSize: 12,
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Text(
+                      item.categories
+                          .map((category) => category.name)
+                          .join(', '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
