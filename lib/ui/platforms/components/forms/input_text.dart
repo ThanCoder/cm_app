@@ -9,10 +9,12 @@ class InputText extends StatelessWidget {
     this.errorText,
     this.onChanged,
     this.onSubmitted,
+    this.hint,
   });
   final TextEditingController controller;
   final int? maxLines;
   final Widget? label;
+  final Widget? hint;
   final String? errorText;
   final void Function(String val)? onChanged;
   final void Function(String val)? onSubmitted;
@@ -26,6 +28,7 @@ class InputText extends StatelessWidget {
         label: label,
         border: OutlineInputBorder(borderRadius: .circular(6)),
         errorText: errorText,
+        hint: hint,
       ),
       onChanged: onChanged,
       onSubmitted: onSubmitted,

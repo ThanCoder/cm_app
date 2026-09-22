@@ -1,9 +1,12 @@
 import 'package:cm_app/core/utils/app_util.dart';
+import 'package:cm_app/ui/platforms/components/dialog/app_about_dialog.dart';
 import 'package:cm_app/ui/platforms/pages/cache_manager.dart';
 import 'package:cm_app/ui/platforms/pages/forward_proxy_page.dart';
 import 'package:cm_app/ui/platforms/pages/version_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+
+import 'dev_pages/dev_route_tile.dart';
 
 class MorePage extends StatelessWidget {
   const new({super.key});
@@ -21,6 +24,8 @@ class MorePage extends StatelessWidget {
             cacheDirPath: AppUtil.instance.getPlatformCachePath(),
           ),
           ForwardProxyPageListTile(),
+          DevRouteTile(),
+          AppAboutDialogListTile(),
         ],
       ),
     );

@@ -257,10 +257,12 @@ class _ProxyEditUrlPageState extends State<_ProxyEditUrlPage> {
 
   final cf = AppUtil.instance.config;
   final controller = TextEditingController();
+  // http://10.187.230.241:8080
   String get url => cf.getString(appProxyUrlKey);
 
   @override
   Widget build(BuildContext context) {
+    final col = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -269,6 +271,12 @@ class _ProxyEditUrlPageState extends State<_ProxyEditUrlPage> {
             controller: controller,
             maxLines: 1,
             label: Text('Custom Proxy Url'),
+            hint: Text(
+              'http[s]://[host]:[port]',
+              style: TextStyle(
+                color: col.onSurfaceVariant.withValues(alpha: .45),
+              ),
+            ),
           ),
           SizedBox(height: 10),
           Row(
@@ -276,7 +284,7 @@ class _ProxyEditUrlPageState extends State<_ProxyEditUrlPage> {
             children: [
               FilledButton(
                 onPressed: () {
-                  cf.putAndWriteAll(appProxyTypeKey, controller.text);
+                  cf.putAndWriteAll(appProxyUrlKey, controller.text);
                   context.pop();
                 },
                 child: Text('Save Url'),

@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cm_app/core/models/movie.dart';
+import 'package:cm_app/core/utils/api_utils.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/trending_data.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 final class DesktopHomePage extends StatefulWidget {
@@ -12,22 +16,162 @@ final class DesktopHomePage extends StatefulWidget {
 }
 
 class _DesktopHomePageState extends State<DesktopHomePage> {
+  List<MediaItem> movies = [];
+  List<MediaItem> tvShows = [];
+  StreamSubscription? subscription;
+  @override
+  void initState() {
+    fetchMovie();
+    fetchShow();
+    super.initState();
+    subscription = Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> result,
+    ) {
+      print('result: $result');
+    });
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
+
+  bool movieFetching = false;
+  bool showFetching = false;
+  String? movieError;
+  String? showError;
+
+  Future<void> fetchMovie() async {
+    setState(() {
+      movieFetching = true;
+      movieError = null;
+    });
+
+    final movieUrl = '${ApiUtils.currentApiUrl()}/api/trending/movies';
+    final movieRes = await ApiUtils.getApiContent(movieUrl);
+    if (!mounted) return;
+
+    if (movieRes.isErr) {
+      setState(() {
+        movieFetching = false;
+        movieError = movieRes.unwrapError();
+      });
+
+      return;
+    }
+    try {
+      List<dynamic> movieList = movieRes.unwrap()['data'];
+      movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+      setState(() {
+        movieFetching = false;
+      });
+    } catch (e) {
+      setState(() {
+        movieFetching = false;
+        movieError = e.toString();
+      });
+    }
+  }
+
+  Future<void> fetchShow() async {
+    setState(() {
+      showFetching = true;
+      showError = null;
+    });
+
+    // show
+    final showUrl = '${ApiUtils.currentApiUrl()}/api/trending/tv-shows';
+    final showRes = await ApiUtils.getApiContent(showUrl);
+    if (!mounted) return;
+
+    if (showRes.isErr) {
+      setState(() {
+        showError = showRes.unwrapError();
+        showFetching = false;
+      });
+      return;
+    }
+    try {
+      List<dynamic> showList = showRes.unwrap()['data'];
+      tvShows = showList.map((e) => MediaItem.fromMap(e)).toList();
+      setState(() {
+        showFetching = false;
+      });
+    } catch (e) {
+      setState(() {
+        showError = showRes.unwrapError();
+        showFetching = false;
+      });
+    }
+  }
+
+  Future<void> fetch() async {
+    fetchMovie();
+    fetchShow();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverToBoxAdapter(child: _TopBar()),
-
-          SliverToBoxAdapter(child: _HeroSection(movie: trendingMovies[4])),
-
-          const SliverToBoxAdapter(
-            child: _Section(title: 'Trending Movies', items: trendingMovies),
-          ),
-
-          const SliverToBoxAdapter(
-            child: _Section(title: 'Trending TV Shows', items: trendingTvShows),
-          ),
+          SliverToBoxAdapter(child: _TopBar(onRefresh: fetch)),
+          if (movies.isNotEmpty)
+            SliverToBoxAdapter(
+              child: _HeroSection(
+                movie: movies[Random().nextInt(movies.length)],
+              ),
+            ),
+          if (movieFetching)
+            SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator.adaptive()),
+            )
+          else if (movieError != null)
+            SliverFillRemaining(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SelectableText(
+                    'Movies Error: $movieError',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverToBoxAdapter(
+              child: _Section(
+                title: 'Trending Movies',
+                items: movies,
+                onClicked: () => goMoviePage(context),
+              ),
+            ),
+          // tv show
+          if (showFetching)
+            SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator.adaptive()),
+            )
+          else if (showError != null)
+            SliverFillRemaining(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'TV Shows Error: $showError',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverToBoxAdapter(
+              child: _Section(
+                title: 'Trending TV Shows',
+                items: tvShows,
+                onClicked: () => goTvShowPage(context),
+              ),
+            ),
 
           const SliverPadding(padding: EdgeInsets.only(bottom: 50)),
         ],
@@ -41,7 +185,8 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
 // ============================================================
 
 final class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({this.onRefresh});
+  final void Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -81,11 +226,18 @@ final class _TopBar extends StatelessWidget {
 
           const SizedBox(width: 8),
 
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: scheme.primaryContainer,
-            child: Icon(Icons.person_rounded, color: scheme.onPrimaryContainer),
+          IconButton(
+            onPressed: onRefresh,
+            icon: const Icon(Icons.refresh_outlined),
           ),
+
+          const SizedBox(width: 8),
+
+          // CircleAvatar(
+          //   radius: 20,
+          //   backgroundColor: scheme.primaryContainer,
+          //   child: Icon(Icons.person_rounded, color: scheme.onPrimaryContainer),
+          // ),
         ],
       ),
     );
@@ -247,10 +399,15 @@ final class _HeroSection extends StatelessWidget {
 // ============================================================
 
 final class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.items});
+  const _Section({
+    required this.title,
+    required this.items,
+    required this.onClicked,
+  });
 
   final String title;
   final List<MediaItem> items;
+  final void Function() onClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +424,7 @@ final class _Section extends StatelessWidget {
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              TextButton(onPressed: () {}, child: const Text('View all')),
+              TextButton(onPressed: onClicked, child: const Text('View all')),
             ],
           ),
 

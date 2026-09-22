@@ -23,6 +23,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
   bool _isLoading = false;
   bool _hasMore = true;
+  String? errorText;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
     setState(() {
       _isLoading = true;
+      errorText = null;
     });
 
     await Future<void>.delayed(const Duration(milliseconds: 800));
@@ -63,6 +65,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
     if (res.isErr) {
       setState(() {
+        errorText = res.unwrapError();
         _isLoading = false;
       });
       showErrorDialog(context, res.unwrapError());
@@ -125,6 +128,19 @@ class _TvShowsPageState extends State<TvShowsPage> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
+            if (errorText != null)
+              SliverFillRemaining(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SelectableText(
+                      'Error: $errorText',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ),
+
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
               sliver: SliverGrid(

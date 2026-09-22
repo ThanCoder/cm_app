@@ -181,6 +181,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   ),
                 ),
               ),
+            // tv show
             SliverToBoxAdapter(
               child: _SectionTitle(
                 title: 'Trending TV Shows',

@@ -1,7 +1,6 @@
 import 'package:cm_app/core/models/movie.dart';
 import 'package:cm_app/core/utils/api_utils.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/platforms/components/dialog/error_alert_dialog.dart';
 import 'package:cm_app/ui/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
@@ -26,6 +25,7 @@ class _MoviesPageState extends State<MoviesPage> {
   bool _isLoading = false;
   bool _hasMore = true;
   final client = TClient();
+  String? errorText;
 
   @override
   void initState() {
@@ -51,6 +51,7 @@ class _MoviesPageState extends State<MoviesPage> {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;
+    errorText = null;
 
     setState(() {});
 
@@ -70,9 +71,10 @@ class _MoviesPageState extends State<MoviesPage> {
 
     if (res.isErr) {
       setState(() {
+        errorText = res.unwrapError();
         _isLoading = false;
       });
-      showErrorDialog(context, res.unwrapError());
+      // showErrorDialog(context, res.unwrapError());
       return;
     }
     List<dynamic> list = res.unwrap()['data'];
@@ -131,6 +133,18 @@ class _MoviesPageState extends State<MoviesPage> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
+            if (errorText != null)
+              SliverFillRemaining(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SelectableText(
+                      'Error: $errorText',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
               sliver: SliverGrid(

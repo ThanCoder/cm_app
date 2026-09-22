@@ -34,13 +34,12 @@ class ApiUtils {
     return url;
   }
 
-  static Future<Result<dynamic, String>> getApiContent(
-    String url,
-  ) async {
+  static Future<Result<dynamic, String>> getApiContent(String url) async {
     final client = TClient();
     if (ApiUtils.currentProxyType == .proxy) {
       final cf = AppUtil.instance.config;
-      client.setProxy((uri) => 'PROXY: ${cf.getString(appProxyTypeKey)}');
+      final proxy = cf.getString(appProxyUrlKey);
+      client.setProxy((uri) => 'PROXY $proxy');
     }
     final res = await client.get(url);
     if (res.isErr) {
@@ -49,6 +48,7 @@ class ApiUtils {
     try {
       return Ok(jsonDecode(res.unwrap().body));
     } catch (e) {
+      client.close();
       return Err(e.toString());
     }
   }
