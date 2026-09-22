@@ -21,16 +21,19 @@ class MImage extends StatelessWidget {
     // return Icon(Icons.broken_image_outlined, size: 80);
     // print('url: ${ApiUtils.getAutoForwardProxyUrl(source)}');
     return CachedNetworkImage(
-      imageUrl:ApiUtils.getAutoForwardProxyUrl(source),
-      progressIndicatorBuilder: (context, url, downloadProgress) =>
-          Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+      width: width,
+      height: height,
+      imageUrl: ApiUtils.getAutoForwardProxyUrl(source),
+      progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+        child: CircularProgressIndicator(value: downloadProgress.progress),
+      ),
       errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
     );
 
     // return Image.network(
     //   ApiUtils.getAutoForwardProxyUrl(source),
-    //   width: width,
-    //   height: height,
+    // width: width,
+    // height: height,
     //   fit: BoxFit.cover,
     //   errorBuilder: (_, _, _) {
     //     return Container(
