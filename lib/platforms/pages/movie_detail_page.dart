@@ -1,13 +1,49 @@
 import 'package:cm_app/core/models/movie_detail.dart';
 import 'package:cm_app/funcs.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
-class MovieDetailPage extends StatelessWidget {
-  const MovieDetailPage({super.key, required this.movie});
-
+class MovieDetailPage extends StatefulWidget {
+  const MovieDetailPage({
+    super.key,
+    required this.fetchUrl,
+    required this.contentId,
+    required this.contentHashId,
+    required this.movie,
+    this.onUpdated,
+  });
+  final String fetchUrl;
+  final String contentHashId;
+  final String contentId;
   final MovieDetail movie;
+  final Future<MovieDetail?> Function(
+    String fetchUrl,
+    String lateContentId,
+    String lastContenthashId,
+  )?
+  onUpdated;
 
+  @override
+  State<MovieDetailPage> createState() => _MovieDetailPageState();
+}
+
+class _MovieDetailPageState extends State<MovieDetailPage> {
+  @override
+  void initState() {
+    movie = widget.movie;
+    if (widget.onUpdated != null) {
+      widget.onUpdated!(widget.fetchUrl, widget.contentId, widget.contentHashId)
+          .then((value) {
+            if (value == null) return;
+            movie = value;
+            if (!mounted) return;
+            setState(() {});
+          });
+    }
+    super.initState();
+  }
+
+  late MovieDetail movie;
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -79,7 +115,7 @@ class MovieDetailPage extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            MImage(source: movie.backdropPath),
+            MImage(source: widget.movie.backdropPath),
             // Image.network(
             //   movie.backdropPath,
             //   fit: BoxFit.cover,
@@ -113,7 +149,7 @@ class MovieDetailPage extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      movie.title,
+                      widget.movie.title,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headlineSmall
@@ -133,7 +169,7 @@ class MovieDetailPage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Image.network(
-        movie.poster,
+        widget.movie.poster,
         width: 120,
         height: 175,
         fit: BoxFit.cover,
@@ -156,14 +192,14 @@ class MovieDetailPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          movie.title,
+          widget.movie.title,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          movie.originalTitle,
+          widget.movie.originalTitle,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -186,7 +222,7 @@ class MovieDetailPage extends StatelessWidget {
         IconButton.filledTonal(
           onPressed: () {},
           icon: Icon(
-            movie.bookmarked
+            widget.movie.bookmarked
                 ? Icons.bookmark_rounded
                 : Icons.bookmark_border_rounded,
           ),
@@ -205,16 +241,20 @@ class MovieDetailPage extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        _metaItem(context, Icons.calendar_today_outlined, movie.year),
-        _metaItem(context, Icons.access_time_rounded, movie.durationText),
-        _metaItem(context, Icons.star_rounded, movie.rating),
+        _metaItem(context, Icons.calendar_today_outlined, widget.movie.year),
+        _metaItem(
+          context,
+          Icons.access_time_rounded,
+          widget.movie.durationText,
+        ),
+        _metaItem(context, Icons.star_rounded, widget.movie.rating),
         _metaItem(context, Icons.hd_rounded, _bestResolution),
       ],
     );
   }
 
   String get _bestResolution {
-    final links = movie.movieDownloadLinks;
+    final links = widget.movie.movieDownloadLinks;
 
     if (links.isEmpty) {
       return 'HD';
@@ -250,7 +290,7 @@ class MovieDetailPage extends StatelessWidget {
       spacing: 8,
       runSpacing: 4,
       children: [
-        for (final category in movie.categories)
+        for (final category in widget.movie.categories)
           Chip(
             label: Text(category.name),
             visualDensity: VisualDensity.compact,
@@ -275,7 +315,7 @@ class MovieDetailPage extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              movie.tagline,
+              widget.movie.tagline,
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.w600,
@@ -301,7 +341,7 @@ class MovieDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          movie.overview,
+          widget.movie.overview,
           style: theme.textTheme.bodyLarge?.copyWith(
             height: 1.65,
             color: theme.colorScheme.onSurfaceVariant,
@@ -328,7 +368,7 @@ class MovieDetailPage extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: [
-            for (final director in movie.directors)
+            for (final director in widget.movie.directors)
               _directorItem(context, director),
           ],
         ),
@@ -377,10 +417,10 @@ class MovieDetailPage extends StatelessWidget {
           height: 150,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: movie.casts.length,
+            itemCount: widget.movie.casts.length,
             separatorBuilder: (_, _) => const SizedBox(width: 14),
             itemBuilder: (context, index) {
-              final cast = movie.casts[index];
+              final cast = widget.movie.casts[index];
 
               return SizedBox(
                 width: 88,
@@ -431,7 +471,7 @@ class MovieDetailPage extends StatelessWidget {
   Widget _buildDownloads(BuildContext context) {
     final theme = Theme.of(context);
 
-    final links = movie.movieDownloadLinks;
+    final links = widget.movie.movieDownloadLinks;
 
     if (links.isEmpty) {
       return const SizedBox();
@@ -493,7 +533,13 @@ class MovieDetailPage extends StatelessWidget {
         subtitle: Text('${links.length} servers'),
         leading: Icon(Icons.hd_rounded, color: theme.colorScheme.primary),
         children: [
-          for (final link in links) _downloadItem(context, link: link),
+          for (final link in links)
+            GestureDetector(
+              onTap: () {
+                launchPageUrl(context, link.url);
+              },
+              child: _downloadItem(context, link: link),
+            ),
         ],
       ),
     );

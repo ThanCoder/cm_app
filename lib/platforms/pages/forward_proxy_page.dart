@@ -2,14 +2,14 @@
 import 'dart:convert';
 
 import 'package:cm_app/core/types/proxy_type.dart';
-import 'package:cm_app/ui/platforms/components/forms/input_text.dart';
+import 'package:cm_app/platforms/components/forms/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
 import 'package:t_widgets/t_widgets.dart';
 
 import 'package:cm_app/core/utils/app_util.dart';
 import 'package:cm_app/keys.dart';
-import 'package:cm_app/ui/platforms/components/dialog/error_alert_dialog.dart';
+import 'package:cm_app/platforms/components/dialog/error_alert_dialog.dart';
 
 class ForwardProxyItem({
   required final String title,

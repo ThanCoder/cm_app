@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cm_app/core/utils/app_util.dart';
 import 'package:cm_app/keys.dart';
-import 'package:cm_app/ui/platform_app.dart';
+import 'package:cm_app/platform_app.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 

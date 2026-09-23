@@ -1,12 +1,50 @@
 import 'package:cm_app/core/models/tv_show_detail.dart';
 import 'package:cm_app/funcs.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
-class TvShowDetailPage extends StatelessWidget {
-  const TvShowDetailPage({super.key, required this.tvShow});
-
+class TvShowDetailPage extends StatefulWidget {
+  const TvShowDetailPage({
+    super.key,
+    required this.fetchUrl,
+    required this.contentId,
+    required this.contentHashId,
+    required this.tvShow,
+    this.onUpdated,
+  });
+  final String fetchUrl;
+  final String contentHashId;
+  final String contentId;
   final TvShowDetail tvShow;
+  final Future<TvShowDetail?> Function(
+    String fetchUrl,
+    String lateContentId,
+    String lastContentHashId,
+  )?
+  onUpdated;
+
+  @override
+  State<TvShowDetailPage> createState() => _TvShowDetailPageState();
+}
+
+class _TvShowDetailPageState extends State<TvShowDetailPage> {
+  @override
+  void initState() {
+    tvShow = widget.tvShow;
+    if (widget.onUpdated != null) {
+      widget.onUpdated!(widget.fetchUrl, widget.contentId, widget.contentHashId)
+          .then((value) {
+            if (value == null) return;
+            tvShow = value;
+            if (!mounted) return;
+            setState(() {});
+          });
+    }
+    super.initState();
+  }
+
+  late TvShowDetail tvShow;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +116,7 @@ class TvShowDetailPage extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            MImage(source: tvShow.backdropPath, fit: BoxFit.cover),
+            MImage(source: widget.tvShow.backdropPath, fit: BoxFit.cover),
 
             DecoratedBox(
               decoration: BoxDecoration(
@@ -107,7 +145,7 @@ class TvShowDetailPage extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      tvShow.title,
+                      widget.tvShow.title,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headlineSmall
@@ -127,7 +165,7 @@ class TvShowDetailPage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: MImage(
-        source: tvShow.poster,
+        source: widget.tvShow.poster,
         width: 120,
         height: 175,
         fit: BoxFit.cover,
@@ -142,14 +180,14 @@ class TvShowDetailPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          tvShow.title,
+          widget.tvShow.title,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          tvShow.originalTitle,
+          widget.tvShow.originalTitle,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -174,7 +212,7 @@ class TvShowDetailPage extends StatelessWidget {
         IconButton.filledTonal(
           onPressed: () {},
           icon: Icon(
-            tvShow.bookmarked
+            widget.tvShow.bookmarked
                 ? Icons.bookmark_rounded
                 : Icons.bookmark_border_rounded,
           ),
@@ -189,11 +227,11 @@ class TvShowDetailPage extends StatelessWidget {
   }
 
   void _playFirstEpisode(BuildContext context) {
-    if (tvShow.seasons.isEmpty) {
+    if (widget.tvShow.seasons.isEmpty) {
       return;
     }
 
-    final season = tvShow.seasons.first;
+    final season = widget.tvShow.seasons.first;
 
     if (season.episodes.isEmpty) {
       return;
@@ -211,16 +249,16 @@ class TvShowDetailPage extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        _metaItem(context, Icons.calendar_today_outlined, tvShow.year),
-        _metaItem(context, Icons.tv_rounded, tvShow.status),
-        _metaItem(context, Icons.movie_outlined, tvShow.type),
+        _metaItem(context, Icons.calendar_today_outlined, widget.tvShow.year),
+        _metaItem(context, Icons.tv_rounded, widget.tvShow.status),
+        _metaItem(context, Icons.movie_outlined, widget.tvShow.type),
         _metaItem(
           context,
           Icons.layers_outlined,
-          '${tvShow.episodeCount} Episodes',
+          '${widget.tvShow.episodeCount} Episodes',
         ),
-        if (tvShow.ratingValue > 0)
-          _metaItem(context, Icons.star_rounded, tvShow.rating),
+        if (widget.tvShow.ratingValue > 0)
+          _metaItem(context, Icons.star_rounded, widget.tvShow.rating),
       ],
     );
   }
@@ -250,12 +288,12 @@ class TvShowDetailPage extends StatelessWidget {
       spacing: 8,
       runSpacing: 4,
       children: [
-        for (final category in tvShow.categories)
+        for (final category in widget.tvShow.categories)
           Chip(
             label: Text(category.name),
             visualDensity: VisualDensity.compact,
           ),
-        for (final tag in tvShow.tags)
+        for (final tag in widget.tvShow.tags)
           Chip(label: Text(tag.name), visualDensity: VisualDensity.compact),
       ],
     );
@@ -263,6 +301,18 @@ class TvShowDetailPage extends StatelessWidget {
 
   Widget _buildOverview(BuildContext context) {
     final theme = Theme.of(context);
+    final hasHtmlTag = RegExp(r'<[^>]+>').hasMatch(widget.tvShow.overview);
+    print(':Dev hasHtml');
+    if (hasHtmlTag) {
+      return Html(
+        data: widget.tvShow.overview,
+        style: {'*': Style(fontSize: .large)},
+        onLinkTap: (url, attributes, element) {
+          if (url == null || url.isEmpty) return;
+          launchPageUrl(context, url);
+        },
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +325,7 @@ class TvShowDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          tvShow.overview,
+          widget.tvShow.overview,
           style: theme.textTheme.bodyLarge?.copyWith(
             height: 1.65,
             color: theme.colorScheme.onSurfaceVariant,
@@ -302,7 +352,7 @@ class TvShowDetailPage extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: [
-            for (final director in tvShow.directors)
+            for (final director in widget.tvShow.directors)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -345,10 +395,10 @@ class TvShowDetailPage extends StatelessWidget {
           height: 150,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: tvShow.casts.length,
+            itemCount: widget.tvShow.casts.length,
             separatorBuilder: (_, _) => const SizedBox(width: 14),
             itemBuilder: (context, index) {
-              final cast = tvShow.casts[index];
+              final cast = widget.tvShow.casts[index];
 
               return SizedBox(
                 width: 88,
@@ -407,7 +457,8 @@ class TvShowDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        for (final season in tvShow.seasons) _buildSeason(context, season),
+        for (final season in widget.tvShow.seasons)
+          _buildSeason(context, season),
       ],
     );
   }
@@ -554,45 +605,51 @@ class TvShowDetailPage extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        color: colorScheme.surfaceContainerHighest,
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.cloud_download_outlined, color: colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  link.serverName,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+        launchPageUrl(context, link.url);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: colorScheme.surfaceContainerHighest,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.cloud_download_outlined, color: colorScheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    link.serverName,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${link.quality} • '
-                  '${link.resolution} • '
-                  '${link.size}',
-                  style: theme.textTheme.bodySmall,
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    '${link.quality} • '
+                    '${link.resolution} • '
+                    '${link.size}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-              launchPageUrl(context, link.url);
-            },
-            icon: const Icon(Icons.play_arrow_rounded),
-          ),
-        ],
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+                launchPageUrl(context, link.url);
+              },
+              icon: const Icon(Icons.play_arrow_rounded),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cm_app/core/models/movie.dart';
 import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/core/utils/cache_utils.dart';
+import 'package:cm_app/platforms/components/card_button.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
 // ============================================================
@@ -37,7 +40,16 @@ class _MobileHomePageState extends State<MobileHomePage> {
       movieFetching = true;
       movieError = null;
     });
-
+    // check cache
+    final cached = await CacheUtils.getContent('trending-movies');
+    if (cached != null) {
+      try {
+        List<dynamic> movieList = jsonDecode(cached)['data'];
+        movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+        setState(() {});
+        // ignore: empty_catches
+      } catch (e) {}
+    }
     final movieUrl = '${ApiUtils.currentApiUrl()}/api/trending/movies';
     final movieRes = await ApiUtils.getApiContent(movieUrl);
     if (!mounted) return;
@@ -51,11 +63,14 @@ class _MobileHomePageState extends State<MobileHomePage> {
       return;
     }
     try {
-      List<dynamic> movieList = movieRes.unwrap()['data'];
+      final map = jsonDecode(movieRes.unwrap());
+      List<dynamic> movieList = map['data'];
       movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
       setState(() {
         movieFetching = false;
       });
+      // save cache
+      await CacheUtils.setContent('trending-movies', movieRes.unwrap());
     } catch (e) {
       setState(() {
         movieFetching = false;
@@ -69,7 +84,15 @@ class _MobileHomePageState extends State<MobileHomePage> {
       showFetching = true;
       showError = null;
     });
-
+    final cached = await CacheUtils.getContent('trending-tv-shows');
+    if (cached != null) {
+      try {
+        List<dynamic> movieList = jsonDecode(cached)['data'];
+        movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+        setState(() {});
+        // ignore: empty_catches
+      } catch (e) {}
+    }
     // show
     final showUrl = '${ApiUtils.currentApiUrl()}/api/trending/tv-shows';
     final showRes = await ApiUtils.getApiContent(showUrl);
@@ -83,14 +106,17 @@ class _MobileHomePageState extends State<MobileHomePage> {
       return;
     }
     try {
-      List<dynamic> showList = showRes.unwrap()['data'];
+      final map = jsonDecode(showRes.unwrap());
+      List<dynamic> showList = map['data'];
       tvShows = showList.map((e) => MediaItem.fromMap(e)).toList();
       setState(() {
         showFetching = false;
       });
+      // save cache
+      await CacheUtils.setContent('trending-tv-shows', showRes.unwrap());
     } catch (e) {
       setState(() {
-        showError = showRes.unwrapError();
+        showError = e.toString();
         showFetching = false;
       });
     }
@@ -139,92 +165,125 @@ class _MobileHomePageState extends State<MobileHomePage> {
               SliverToBoxAdapter(
                 child: _FeaturedMovie(
                   movie: movies[Random().nextInt(movies.length)],
+                  onWatch: (movie) {
+                    goMovieDetail(context, item: movie);
+                  },
                 ),
               ),
 
-            SliverToBoxAdapter(
-              child: _SectionTitle(
-                title: 'Trending Movies',
-                onClicked: () => goMoviePage(context),
-              ),
-            ),
-            if (movieFetching)
-              SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              )
-            else if (movieError != null)
-              SliverFillRemaining(
-                child: Center(
-                  child: Text(
-                    'Error: $movieError',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return _MovieCard(
-                      movie: movies[index],
-                      onClicked: (movie) {
-                        goMovieDetail(context, item: movie);
-                      },
-                    );
-                  }, childCount: movies.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 22,
-                    childAspectRatio: .61,
-                  ),
-                ),
-              ),
-            // tv show
-            SliverToBoxAdapter(
-              child: _SectionTitle(
-                title: 'Trending TV Shows',
-                onClicked: () => goTvShowPage(context),
-              ),
-            ),
-            if (showFetching)
-              SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              )
-            else if (showError != null)
-              SliverFillRemaining(
-                child: Center(
-                  child: Text(
-                    'Error: $showError',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return _MovieCard(
-                      movie: tvShows[index],
-                      onClicked: (movie) {
-                        goMovieDetail(context, item: movie);
-                      },
-                    );
-                  }, childCount: tvShows.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 22,
-                    childAspectRatio: .61,
-                  ),
-                ),
-              ),
+            ...movieSections, // tv show
+            ...showSections,
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> get movieSections {
+    return [
+      if (movieFetching && movies.isNotEmpty)
+        SliverToBoxAdapter(child: LinearProgressIndicator()),
+
+      SliverToBoxAdapter(
+        child: _SectionTitle(
+          title: 'Trending Movies',
+          onClicked: () => goMoviePage(context),
+        ),
+      ),
+      if (movieFetching && movies.isEmpty)
+        SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator.adaptive()),
+        ),
+      if (movieError != null && movies.isEmpty)
+        SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'Movies Error: $movieError',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ),
+      if (movieError == null && movies.isEmpty)
+        SliverFillRemaining(
+          child: Center(
+            child: CardButton(title: 'Movies Empty', onRefresh: fetchShow),
+          ),
+        ),
+      if (movies.isNotEmpty)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return _MovieCard(
+                movie: movies[index],
+                onClicked: (movie) {
+                  goMovieDetail(context, item: movie);
+                },
+              );
+            }, childCount: movies.length),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 22,
+              childAspectRatio: .61,
+            ),
+          ),
+        ),
+    ];
+  }
+
+  List<Widget> get showSections {
+    return [
+      if (showFetching && tvShows.isNotEmpty)
+        SliverToBoxAdapter(child: LinearProgressIndicator()),
+
+      SliverToBoxAdapter(
+        child: _SectionTitle(
+          title: 'Trending TV Shows',
+          onClicked: () => goTvShowPage(context),
+        ),
+      ),
+      if (showFetching && tvShows.isEmpty)
+        SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator.adaptive()),
+        ),
+
+      if (showError != null && tvShows.isEmpty)
+        SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'Error: $showError',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ),
+      if (showError == null && tvShows.isEmpty)
+        SliverFillRemaining(
+          child: Center(
+            child: CardButton(title: 'Tv Shows Empty', onRefresh: fetchShow),
+          ),
+        ),
+      if (tvShows.isNotEmpty)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return _MovieCard(
+                movie: tvShows[index],
+                onClicked: (movie) {
+                  goMovieDetail(context, item: movie);
+                },
+              );
+            }, childCount: tvShows.length),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 22,
+              childAspectRatio: .61,
+            ),
+          ),
+        ),
+    ];
   }
 }
 
@@ -265,9 +324,10 @@ final class _MobileSearch extends StatelessWidget {
 // ============================================================
 
 final class _FeaturedMovie extends StatelessWidget {
-  const _FeaturedMovie({required this.movie});
+  const _FeaturedMovie({required this.movie, required this.onWatch});
 
   final MediaItem movie;
+  final void Function(MediaItem movie) onWatch;
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +419,7 @@ final class _FeaturedMovie extends StatelessWidget {
                       const SizedBox(height: 11),
 
                       FilledButton.icon(
-                        onPressed: () {},
+                        onPressed: () => onWatch(movie),
                         style: FilledButton.styleFrom(
                           minimumSize: const Size(0, 38),
                         ),

@@ -1,7 +1,7 @@
-import 'package:cm_app/ui/platforms/pages/more_page.dart';
-import 'package:cm_app/ui/platforms/mobile/mobile_home_page.dart';
-import 'package:cm_app/ui/platforms/pages/movies_page.dart';
-import 'package:cm_app/ui/platforms/pages/tv_shows_page.dart';
+import 'package:cm_app/platforms/pages/more_page.dart';
+import 'package:cm_app/platforms/mobile/mobile_home_page.dart';
+import 'package:cm_app/platforms/pages/movies_page.dart';
+import 'package:cm_app/platforms/pages/tv_shows_page.dart';
 import 'package:flutter/material.dart';
 
 class MobileHomeScreen extends StatefulWidget {
@@ -19,10 +19,10 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
     return Scaffold(
       body: IndexedStack(
         index: selectedIndex,
-        children: const [
+        children: [
           MobileHomePage(),
-          MoviesPage(),
-          TvShowsPage(),
+          MoviesPage(needToFetch: selectedIndex == 1),
+          TvShowsPage(needToFetch: selectedIndex == 2),
           Placeholder(),
           MorePage(),
         ],

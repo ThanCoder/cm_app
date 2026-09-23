@@ -23,6 +23,7 @@ class MImage extends StatelessWidget {
     return CachedNetworkImage(
       width: width,
       height: height,
+      fit: BoxFit.cover,
       imageUrl: ApiUtils.getAutoForwardProxyUrl(source),
       progressIndicatorBuilder: (context, url, downloadProgress) => Center(
         child: CircularProgressIndicator(value: downloadProgress.progress),

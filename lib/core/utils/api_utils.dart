@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cm_app/core/result_t.dart';
 import 'package:cm_app/core/types/proxy_type.dart';
 import 'package:cm_app/core/utils/app_util.dart';
@@ -36,6 +34,7 @@ class ApiUtils {
 
   static Future<Result<dynamic, String>> getApiContent(String url) async {
     final client = TClient();
+    
     if (ApiUtils.currentProxyType == .proxy) {
       final cf = AppUtil.instance.config;
       final proxy = cf.getString(appProxyUrlKey);
@@ -43,13 +42,17 @@ class ApiUtils {
     }
     final res = await client.get(url);
     if (res.isErr) {
-      return Err(res.unwrapError());
+      client.close();
+      // return Err(res.unwrapError());
+      return Err('Error ရှိနေပါတယ်!...');
     }
     try {
-      return Ok(jsonDecode(res.unwrap().body));
+      final body = res.unwrap().body;
+      return Ok(body);
     } catch (e) {
-      client.close();
       return Err(e.toString());
+    } finally {
+      client.close();
     }
   }
 }

@@ -33,7 +33,7 @@ const String apiMovieUrl = '$hostUrl/api/movies';
 const String apiMovieTagsUrl = '$hostUrl/api/movie-tags';
 const String apiMovieGenresUrl = '$hostUrl/api/movie-genres';
 // tv
-const String apiTvShowUrl = '$hostUrl/api/tv-shows';
+const String apiTvShowUrl = '$hostUrl/api/tv-shows/all';
 const String apiTvShowGenresUrl = '$hostUrl/api/tv-show-genres';
 const String apiTvShowTagsUrl = '$hostUrl/api/tv-show-tags';
 // search

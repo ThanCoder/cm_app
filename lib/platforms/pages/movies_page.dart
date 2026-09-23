@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:cm_app/core/models/movie.dart';
 import 'package:cm_app/core/utils/api_utils.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:cm_app/platforms/components/card_button.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:t_client/t_client.dart';
 
 // import 'package:your_app/widgets/m_image.dart';
 
 class MoviesPage extends StatefulWidget {
-  const MoviesPage({super.key});
+  const new({super.key, this.needToFetch = true});
+  final bool needToFetch;
 
   @override
   State<MoviesPage> createState() => _MoviesPageState();
@@ -20,7 +25,7 @@ class _MoviesPageState extends State<MoviesPage> {
   final List<MediaItem> _movies = [];
 
   int _page = 0;
-  static const int _lastPage = 313;
+  int lastPage = 0;
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -33,7 +38,19 @@ class _MoviesPageState extends State<MoviesPage> {
 
     _scrollController.addListener(_onScroll);
 
-    _loadNextPage();
+    if (widget.needToFetch) {
+      _loadNextPage();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant MoviesPage oldWidget) {
+    if (oldWidget.needToFetch != widget.needToFetch) {
+      if (widget.needToFetch) {
+        _loadNextPage();
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   void _onScroll() {
@@ -74,17 +91,22 @@ class _MoviesPageState extends State<MoviesPage> {
         errorText = res.unwrapError();
         _isLoading = false;
       });
-      // showErrorDialog(context, res.unwrapError());
       return;
     }
-    List<dynamic> list = res.unwrap()['data'];
+    final json = jsonDecode(res.unwrap());
+    try {
+      final map = Map<String, dynamic>.from(json);
+      lastPage = map.getInt(['meta', 'last_page']);
+      // ignore: empty_catches
+    } catch (e) {}
+    List<dynamic> list = json['data'];
     final movies = list.map((e) => MediaItem.fromMap(e)).toList();
     setState(() {
       _movies.addAll(movies);
 
       _page = nextPage;
 
-      _hasMore = _page < _lastPage;
+      _hasMore = _page < lastPage;
 
       _isLoading = false;
     });
@@ -133,39 +155,39 @@ class _MoviesPageState extends State<MoviesPage> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            if (errorText != null)
+            if (errorText != null && _movies.isEmpty)
               SliverFillRemaining(
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SelectableText(
-                      'Error: $errorText',
-                      style: TextStyle(color: Colors.red),
-                    ),
+                  child: CardButton(
+                    title: 'Error',
+                    bgColor: Theme.of(context).colorScheme.errorContainer,
+                    subTitle: 'Movie Error: $errorText',
+                    onRefresh: _refresh,
                   ),
                 ),
               ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final movie = _movies[index];
+            if (_movies.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final movie = _movies[index];
 
-                  return _MovieCard(
-                    movie: movie,
-                    onTap: () {
-                      goMovieDetail(context, item: movie);
-                    },
-                  );
-                }, childCount: _movies.length),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: .62,
+                    return _MovieCard(
+                      movie: movie,
+                      onTap: () {
+                        goMovieDetail(context, item: movie);
+                      },
+                    );
+                  }, childCount: _movies.length),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 20,
+                    childAspectRatio: .62,
+                  ),
                 ),
               ),
-            ),
 
             // Page loading indicator
             SliverToBoxAdapter(

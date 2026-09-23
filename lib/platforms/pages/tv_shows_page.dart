@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:cm_app/core/models/tv_show.dart';
 import 'package:cm_app/core/utils/api_utils.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/platforms/components/dialog/error_alert_dialog.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
+import 'package:cm_app/platforms/components/card_button.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 
 class TvShowsPage extends StatefulWidget {
-  const TvShowsPage({super.key});
+  const TvShowsPage({super.key, this.needToFetch = true});
+  final bool needToFetch;
 
   @override
   State<TvShowsPage> createState() => _TvShowsPageState();
@@ -19,7 +23,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
   int _page = 0;
 
-  static const int _lastPage = 71;
+  int lastPage = 0;
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -30,8 +34,19 @@ class _TvShowsPageState extends State<TvShowsPage> {
     super.initState();
 
     _scrollController.addListener(_onScroll);
+    if (widget.needToFetch) {
+      _loadNextPage();
+    }
+  }
 
-    _loadNextPage();
+  @override
+  void didUpdateWidget(covariant TvShowsPage oldWidget) {
+    if (oldWidget.needToFetch != widget.needToFetch) {
+      if (widget.needToFetch) {
+        _loadNextPage();
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   void _onScroll() {
@@ -58,8 +73,7 @@ class _TvShowsPageState extends State<TvShowsPage> {
 
     final nextPage = _page + 1;
 
-    final url = '${ApiUtils.currentApiUrl()}/api/tv-shows?page=$nextPage';
-    // print(':Dev $url');
+    final url = '${ApiUtils.currentApiUrl()}/api/tv-shows/all?page=$nextPage';
     final res = await ApiUtils.getApiContent(url);
     if (!mounted) return;
 
@@ -68,17 +82,19 @@ class _TvShowsPageState extends State<TvShowsPage> {
         errorText = res.unwrapError();
         _isLoading = false;
       });
-      showErrorDialog(context, res.unwrapError());
       return;
     }
-    List<dynamic> list = res.unwrap()['data'];
+    final json = jsonDecode(res.unwrap());
+    final map = Map<String, dynamic>.from(json);
+    lastPage = map.getInt(['meta', 'last_page']);
+    List<dynamic> list = map['data'];
     final newShows = list.map((e) => TvShowItem.fromJson(e)).toList();
     setState(() {
       _shows.addAll(newShows);
 
       _page = nextPage;
 
-      _hasMore = _page < _lastPage;
+      _hasMore = _page < lastPage;
 
       _isLoading = false;
     });
@@ -131,12 +147,11 @@ class _TvShowsPageState extends State<TvShowsPage> {
             if (errorText != null)
               SliverFillRemaining(
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SelectableText(
-                      'Error: $errorText',
-                      style: TextStyle(color: Colors.red),
-                    ),
+                  child: CardButton(
+                    title: 'Error',
+                    bgColor: Theme.of(context).colorScheme.errorContainer,
+                    subTitle: 'TV Show Error: $errorText',
+                    onRefresh: _refresh,
                   ),
                 ),
               ),

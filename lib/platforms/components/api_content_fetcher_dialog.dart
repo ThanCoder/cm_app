@@ -35,7 +35,7 @@ class _ApiContentFetcherDialogState extends State<ApiContentFetcherDialog> {
     try {
       if (ApiUtils.currentProxyType == .proxy) {
         final cf = AppUtil.instance.config;
-        client.setProxy((uri) => 'PROXY: ${cf.getString(appProxyTypeKey)}');
+        client.setProxy((uri) => 'PROXY ${cf.getString(appProxyUrlKey)}');
       }
       setState(() {
         isLoading = true;

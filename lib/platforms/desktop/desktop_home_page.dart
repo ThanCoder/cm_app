@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cm_app/core/models/movie.dart';
 import 'package:cm_app/core/utils/api_utils.dart';
+import 'package:cm_app/core/utils/cache_utils.dart';
 import 'package:cm_app/routes.dart';
-import 'package:cm_app/ui/platforms/components/m_image.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cm_app/platforms/components/card_button.dart';
+import 'package:cm_app/platforms/components/m_image.dart';
 import 'package:flutter/material.dart';
 
 final class DesktopHomePage extends StatefulWidget {
@@ -24,11 +26,11 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
     fetchMovie();
     fetchShow();
     super.initState();
-    subscription = Connectivity().onConnectivityChanged.listen((
-      List<ConnectivityResult> result,
-    ) {
-      print('result: $result');
-    });
+    // subscription = Connectivity().onConnectivityChanged.listen((
+    //   List<ConnectivityResult> result,
+    // ) {
+    //   print('result: $result');
+    // });
   }
 
   @override
@@ -47,7 +49,16 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       movieFetching = true;
       movieError = null;
     });
-
+    // check cache
+    final cached = await CacheUtils.getContent('trending-movies');
+    if (cached != null) {
+      try {
+        List<dynamic> movieList = jsonDecode(cached)['data'];
+        movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+        setState(() {});
+        // ignore: empty_catches
+      } catch (e) {}
+    }
     final movieUrl = '${ApiUtils.currentApiUrl()}/api/trending/movies';
     final movieRes = await ApiUtils.getApiContent(movieUrl);
     if (!mounted) return;
@@ -61,11 +72,14 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       return;
     }
     try {
-      List<dynamic> movieList = movieRes.unwrap()['data'];
+      final json = jsonDecode(movieRes.unwrap());
+      List<dynamic> movieList = json['data'];
       movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
       setState(() {
         movieFetching = false;
       });
+      // save cache
+      await CacheUtils.setContent('trending-movies', movieRes.unwrap());
     } catch (e) {
       setState(() {
         movieFetching = false;
@@ -79,7 +93,15 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       showFetching = true;
       showError = null;
     });
-
+    final cached = await CacheUtils.getContent('trending-tv-shows');
+    if (cached != null) {
+      try {
+        List<dynamic> movieList = jsonDecode(cached)['data'];
+        movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+        setState(() {});
+        // ignore: empty_catches
+      } catch (e) {}
+    }
     // show
     final showUrl = '${ApiUtils.currentApiUrl()}/api/trending/tv-shows';
     final showRes = await ApiUtils.getApiContent(showUrl);
@@ -93,11 +115,14 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       return;
     }
     try {
-      List<dynamic> showList = showRes.unwrap()['data'];
+      final json = jsonDecode(showRes.unwrap());
+      List<dynamic> showList = json['data'];
       tvShows = showList.map((e) => MediaItem.fromMap(e)).toList();
       setState(() {
         showFetching = false;
       });
+      // save cache
+      await CacheUtils.setContent('trending-tv-shows', showRes.unwrap());
     } catch (e) {
       setState(() {
         showError = showRes.unwrapError();
@@ -117,66 +142,83 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _TopBar(onRefresh: fetch)),
+
           if (movies.isNotEmpty)
             SliverToBoxAdapter(
               child: _HeroSection(
                 movie: movies[Random().nextInt(movies.length)],
+                onPressed: (movie) {
+                  goMovieDetail(context, item: movie);
+                },
               ),
             ),
-          if (movieFetching)
-            SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator.adaptive()),
-            )
-          else if (movieError != null)
-            SliverFillRemaining(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SelectableText(
-                    'Movies Error: $movieError',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              ),
-            )
-          else
-            SliverToBoxAdapter(
-              child: _Section(
-                title: 'Trending Movies',
-                items: movies,
-                onClicked: () => goMoviePage(context),
-              ),
-            ),
+          ...movieSection,
           // tv show
-          if (showFetching)
-            SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator.adaptive()),
-            )
-          else if (showError != null)
-            SliverFillRemaining(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'TV Shows Error: $showError',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              ),
-            )
-          else
-            SliverToBoxAdapter(
-              child: _Section(
-                title: 'Trending TV Shows',
-                items: tvShows,
-                onClicked: () => goTvShowPage(context),
-              ),
-            ),
-
+          ...showSection,
           const SliverPadding(padding: EdgeInsets.only(bottom: 50)),
         ],
       ),
     );
+  }
+
+  List<Widget> get movieSection {
+    return [
+      if (movieFetching && movies.isEmpty)
+        SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator.adaptive()),
+        ),
+      if (movieError != null && movies.isEmpty)
+        SliverToBoxAdapter(
+          child: Center(
+            child: CardButton(
+              title: 'Error',
+              bgColor: Theme.of(context).colorScheme.errorContainer,
+              subTitle: 'Movie Error: $movieError',
+              onRefresh: fetchMovie,
+            ),
+          ),
+        ),
+      if (movies.isNotEmpty && movieFetching)
+        SliverToBoxAdapter(child: LinearProgressIndicator()),
+      if (movies.isNotEmpty)
+        SliverToBoxAdapter(
+          child: _Section(
+            title: 'Trending Movies',
+            items: movies,
+            onClicked: () => goMoviePage(context),
+          ),
+        ),
+    ];
+  }
+
+  List<Widget> get showSection {
+    return [
+      if (movieFetching && movies.isEmpty)
+        SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator.adaptive()),
+        ),
+      if (movieError != null && movies.isEmpty)
+        SliverToBoxAdapter(
+          child: Center(
+            child: CardButton(
+              title: 'Error',
+              bgColor: Theme.of(context).colorScheme.errorContainer,
+              subTitle: 'TV Show Error: $showError',
+              onRefresh: fetchShow,
+            ),
+          ),
+        ),
+      if (movies.isNotEmpty && movieFetching)
+        SliverToBoxAdapter(child: LinearProgressIndicator()),
+      if (movies.isNotEmpty)
+        SliverToBoxAdapter(
+          child: _Section(
+            title: 'Trending TV Shows',
+            items: tvShows,
+            onClicked: () => goTvShowPage(context),
+          ),
+        ),
+    ];
   }
 }
 
@@ -249,9 +291,10 @@ final class _TopBar extends StatelessWidget {
 // ============================================================
 
 final class _HeroSection extends StatelessWidget {
-  const _HeroSection({required this.movie});
+  const _HeroSection({required this.movie, this.onPressed});
 
   final MediaItem movie;
+  final void Function(MediaItem movie)? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -372,15 +415,15 @@ final class _HeroSection extends StatelessWidget {
                     Row(
                       children: [
                         FilledButton.icon(
-                          onPressed: () {},
+                          onPressed: () => onPressed?.call(movie),
                           icon: const Icon(Icons.play_arrow_rounded),
                           label: const Text('Watch Now'),
                         ),
                         const SizedBox(width: 10),
-                        IconButton.filledTonal(
-                          onPressed: () {},
-                          icon: const Icon(Icons.add_rounded),
-                        ),
+                        // IconButton.filledTonal(
+                        //   onPressed: () {},
+                        //   icon: const Icon(Icons.add_rounded),
+                        // ),
                       ],
                     ),
                   ],
