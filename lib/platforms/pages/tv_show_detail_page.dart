@@ -302,7 +302,6 @@ class _TvShowDetailPageState extends State<TvShowDetailPage> {
   Widget _buildOverview(BuildContext context) {
     final theme = Theme.of(context);
     final hasHtmlTag = RegExp(r'<[^>]+>').hasMatch(widget.tvShow.overview);
-    print(':Dev hasHtml');
     if (hasHtmlTag) {
       return Html(
         data: widget.tvShow.overview,
