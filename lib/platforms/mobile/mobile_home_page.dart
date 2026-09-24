@@ -87,8 +87,8 @@ class _MobileHomePageState extends State<MobileHomePage> {
     final cached = await CacheUtils.getContent('trending-tv-shows');
     if (cached != null) {
       try {
-        List<dynamic> movieList = jsonDecode(cached)['data'];
-        movies = movieList.map((e) => MediaItem.fromMap(e)).toList();
+        List<dynamic> showList = jsonDecode(cached)['data'];
+        tvShows = showList.map((e) => MediaItem.fromMap(e)).toList();
         setState(() {});
         // ignore: empty_catches
       } catch (e) {}
@@ -619,7 +619,3 @@ final class _Badge extends StatelessWidget {
     );
   }
 }
-
-// ============================================================
-// PLACEHOLDER PAGES
-// ============================================================
