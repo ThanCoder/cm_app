@@ -168,19 +168,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget _poster(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        widget.movie.poster,
+      child: MImage(
+        source: widget.movie.poster,
         width: 120,
         height: 175,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) {
-          return Container(
-            width: 120,
-            height: 175,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: const Icon(Icons.movie_outlined),
-          );
-        },
+        // errorBuilder: (_, _, _) {
+        //   return Container(
+        //     width: 120,
+        //     height: 175,
+        //     color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        //     child: const Icon(Icons.movie_outlined),
+        //   );
+        // },
       ),
     );
   }
